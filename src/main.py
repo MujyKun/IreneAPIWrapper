@@ -82,8 +82,8 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     try:
         # connect to db.
-        t_token = "TEST_TOKEN"
-        t_user_id = 99999999999
+        t_token = "test"
+        t_user_id = 169401247374376960
         client = IreneAPIClient(t_token, t_user_id)
         loop.run_until_complete(client.connect())
     except KeyboardInterrupt:
