@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "IreneAPIWrapper"
+version = "2.0"
+description = "The Wrapper for the Websocket and REST API of Irene."
+authors = ["MujyKun <mujy@irenebot.com>", "A-Phamfam <alextampham3000@gmail.com>"]
+classifiers = [
+        "Development Status :: 5 - Production/Stable",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python",
+]
+readme = "README.md"
+repository = "https://github.com/MujyKun/IreneAPIWrapper"
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+asyncio = "3.4.3"
+aiohttp = "3.8.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
