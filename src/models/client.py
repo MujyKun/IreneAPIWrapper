@@ -19,7 +19,7 @@ class IreneAPIClient:
 
     """
 
-    def __init__(self, token: str, user_id: Union[int, str], test=None):
+    def __init__(self, token: str, user_id: Union[int, str], test=False):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
 
@@ -37,14 +37,12 @@ class IreneAPIClient:
         self._queue = asyncio.Queue()
         # asyncio.run_coroutine_threadsafe(self.connect, loop)
 
-        if test:
-            loop = asyncio.get_event_loop()
-            asyncio.run_coroutine_threadsafe(test.run_tests(self), loop)
-
         self._disconnect = dict({'disconnect': True})
 
         self._callback_ids = []  # new callback ids
         self._completed_callbacks = []  # completed callback ids
+
+        self.in_testing = test
 
     async def add_to_queue(self, body: CallBack):
         """
@@ -67,6 +65,12 @@ class IreneAPIClient:
             # async with self._ws_client.ws_connect(self._ws_url, headers=self._headers) as ws:
             async with self._ws_client.ws_connect(self._ws_url, headers=self._headers, params=self._query_params) as ws:
                 while True:
+
+                    # test cases
+                    if self.in_testing and self._queue.empty():
+                        await self._ws_client.close()
+                        break
+
                     # wait for a request.
                     callback: CallBack = await self._queue.get()
 
