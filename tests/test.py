@@ -45,10 +45,10 @@ async def add_tests(client):
             _callbacks[callback.id] = callback
             await client.add_to_queue(callback)
 
+
 async def check_tests():
     for callback in _callbacks.values():
         ...
-
 
 
 class Tests(TestCase):
