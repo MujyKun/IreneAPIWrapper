@@ -44,13 +44,22 @@ class IreneAPIClient:
 
         self.in_testing = test
 
-    async def add_to_queue(self, body: CallBack):
+    async def add_to_queue(self, callback: CallBack):
         """
         Add a request to the queue.
 
-        :param body: (CallBack) The request to send to the server.
+        :param callback: (CallBack) The request to send to the server.
         """
-        await self._queue.put(body)
+        await self._queue.put(callback)
+
+    async def add_and_wait(self, callback: CallBack):
+        """
+        Add a callback to the queue and wait for it to complete.
+
+        :param callback: The callback to add to the queue and wait for.
+        """
+        await self.add_to_queue(callback)
+        await callback.wait_for_completion()
 
     async def connect(self):
         """
@@ -68,6 +77,8 @@ class IreneAPIClient:
 
                     # test cases
                     if self.in_testing and self._queue.empty():
+                        # pass if the api is using a debugger so the session does not close.
+                        # pass
                         await self._ws_client.close()
                         break
 

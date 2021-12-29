@@ -19,6 +19,7 @@ class CallBack:
         self.request: Optional[dict] = request  # request data
         self.response: Optional[dict] = None  # data received from API
         self._completion_time = None
+        self._expected_result = None  # used for testing.
 
     async def wait_for_completion(self):
         while True:
@@ -30,7 +31,7 @@ class CallBack:
     def set_as_done(self):
         """Set the current callback as finished and lease the callback id to another object."""
         self.done = True
-        callbacks.pop(self.id)
+        # callbacks.pop(self.id)
 
     @staticmethod
     def _get_unused_callback_id() -> int:
