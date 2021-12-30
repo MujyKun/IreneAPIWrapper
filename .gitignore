@@ -12,3 +12,6 @@ API/
 bias_game/
 idol/
 languages/IreneBot (translations).zip
+build/
+dist/
+IreneAPIWrapper.egg-info/

@@ -11,7 +11,7 @@ _users = dict()
 
 
 class User(BaseUser):
-    def __init__(self, user_id: int):
+    def __init__(self, user_id: int, *args, **kwargs):
         self.id: int = user_id
         self.is_patron: bool = False
         self.is_super_patron: bool = False
@@ -204,12 +204,12 @@ class User(BaseUser):
             return await User.fetch(user_id)
 
     @staticmethod
-    async def fetch(user_id: int = -1) -> Union[List[BaseUser], BaseUser]:
+    async def fetch(user_id: int = 0) -> Union[List[BaseUser], BaseUser]:
         """Fetch updated User objects from the API.
 
         If the user is not in the DB, it will add it.
 
-        :param user_id: (int) The user id to fetch. Will fetch all users if set to -1 .
+        :param user_id: (int) The user id to fetch. Will fetch all users if set to 0.
         """
         # NOTE: User objects are added to cache on creation.
         callback = CallBack(request={
@@ -218,7 +218,7 @@ class User(BaseUser):
         )
         await outer.client.add_and_wait(callback)
 
-        if user_id == -1:
+        if user_id == 0:
             if not callback.response["result"]:
                 return []
 

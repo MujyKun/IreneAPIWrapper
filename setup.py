@@ -4,7 +4,7 @@ import re
 with open("README.md", "r") as f:
     long_description = f.read()
 
-with open('IreneAPIWrapper/__init__.py') as f:
+with open('src/__init__.py') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1) or ''
 
 if not version:
