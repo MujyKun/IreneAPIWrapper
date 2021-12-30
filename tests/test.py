@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.models import IreneAPIClient, CallBack
+from IreneAPIWrapper.models import IreneAPIClient, CallBack
 
 """
 Test the routes for IreneAPI.

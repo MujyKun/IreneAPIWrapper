@@ -1,6 +1,6 @@
 from typing import Union, List, Optional
 
-from src.sections import outer
+from IreneAPIWrapper.sections import outer
 from . import CallBack, Access
 
 

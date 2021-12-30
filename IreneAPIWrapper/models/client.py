@@ -1,9 +1,9 @@
 import aiohttp
 import asyncio
-from src.exceptions import InvalidToken
-from src.sections import outer as ref_outer_client
+from IreneAPIWrapper.exceptions import InvalidToken
+from IreneAPIWrapper.sections import outer as ref_outer_client
 from typing import Union, Optional
-from src.models import CallBack, callbacks
+from IreneAPIWrapper.models import CallBack, callbacks
 
 
 class IreneAPIClient:
