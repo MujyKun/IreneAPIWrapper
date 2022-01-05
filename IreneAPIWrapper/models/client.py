@@ -15,7 +15,7 @@ class IreneAPIClient:
     token: str
         The API token provided.
     user_id: str
-        The id of the user that has access to that token.
+        The name of the user that has access to that token.
 
     """
 
@@ -94,7 +94,7 @@ class IreneAPIClient:
                     await ws.send_json(callback.request)
 
                     # get response from server.
-                    # in case of any inconsistencies, a callback id is sent back and forth and is checked for
+                    # in case of any inconsistencies, a callback name is sent back and forth and is checked for
                     # authenticity before completing a request.
                     data_response = (await ws.receive()).json()
                     response_callback_id = int(data_response.get('callback_id') or 0)
@@ -103,11 +103,11 @@ class IreneAPIClient:
                         callback = callbacks.get(response_callback_id)
 
                     if callback:
-                        # we shouldn't be receiving a response without a callback id, but if we do
+                        # we shouldn't be receiving a response without a callback name, but if we do
                         # then we will take care of it as if it is for the same request.
                         callback.response = data_response
                         # A method should already have the CallBack object,
-                        # so we can now finish the callback and lease out the callback id to a new object.
+                        # so we can now finish the callback and lease out the callback name to a new object.
                         callback.set_as_done()
                     else:
                         print(f"Could not find CallBack instance for: {data_response}")

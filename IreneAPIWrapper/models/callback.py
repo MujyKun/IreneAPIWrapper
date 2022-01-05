@@ -29,13 +29,13 @@ class CallBack:
                 return True
 
     def set_as_done(self):
-        """Set the current callback as finished and lease the callback id to another object."""
+        """Set the current callback as finished and lease the callback name to another object."""
         self.done = True
-        # callbacks.pop(self.id)
+        # callbacks.pop(self.name)
 
     @staticmethod
     def _get_unused_callback_id() -> int:
-        """Get an unused callback id."""
+        """Get an unused callback name."""
         while True:
             callback_id = int(f"{randint(0, 50000)}{datetime.utcnow().strftime('%Y%m%d%H%M%S')}")
             existing_callback = callbacks.get(callback_id)

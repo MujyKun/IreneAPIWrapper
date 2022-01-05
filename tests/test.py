@@ -27,7 +27,7 @@ _existing_keys = []
 
 def get_test_callback_id(expectation: bool = None) -> int:
     """
-    Get a test call back id where the id does not already exist
+    Get a test call back name where the name does not already exist
     and is not a multiple of the below expectation values.
 
     False = Multiple of 5
@@ -35,7 +35,7 @@ def get_test_callback_id(expectation: bool = None) -> int:
     True = Multiple of 4
 
     :param expectation: True/False/None
-    :return: (int) The callback id to use for a test.
+    :return: (int) The callback name to use for a test.
     """
     callback_id = 0
 

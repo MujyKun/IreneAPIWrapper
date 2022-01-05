@@ -1,13 +1,10 @@
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
 from . import CallBack, Access
 
 
 class BaseUser: ...  # used for type hints
-
-
-_users = dict()
 
 
 class User(BaseUser):
@@ -168,7 +165,7 @@ class User(BaseUser):
         """
         Add a user to the database.
 
-        This will happen automatically when attempting to fetch a user's id that does not exist.
+        This will happen automatically when attempting to fetch a user's name that does not exist.
 
         :param user_id: The user ID to add.
         """
@@ -220,7 +217,7 @@ class User(BaseUser):
 
         If the user is not in the DB, it will add it.
 
-        :param user_id: (int) The user id to fetch. Will fetch all users if set to 0.
+        :param user_id: (int) The user name to fetch. Will fetch all users if set to 0.
         """
         # NOTE: User objects are added to cache on creation.
         callback = CallBack(request={
@@ -244,3 +241,6 @@ class User(BaseUser):
 
                 return await User.fetch(user_id)  # recursive
             return User(callback.response["results"]['userid'], **callback.response["results"])
+
+
+_users: Dict[int, User] = dict()
