@@ -37,7 +37,7 @@ class CallBack:
     def _get_unused_callback_id() -> int:
         """Get an unused callback id."""
         while True:
-            callback_id = randint(0, 500000000)
+            callback_id = int(f"{randint(0, 50000)}{datetime.utcnow().strftime('%Y%m%d%H%M%S')}")
             existing_callback = callbacks.get(callback_id)
             if existing_callback:
                 continue

@@ -13,14 +13,25 @@ _users = dict()
 class User(BaseUser):
     def __init__(self, user_id: int, *args, **kwargs):
         self.id: int = user_id
-        self.is_patron: bool = False
-        self.is_super_patron: bool = False
-        self.is_banned: bool = False
-        self.is_mod: bool = False
-        self.is_data_mod: bool = False
-        self.is_translator: bool = False
-        self.is_proofreader: bool = False
-        self.api_access: Optional[Access] = None
+        self.is_patron: bool = False or kwargs.get("ispatron")
+        self.is_super_patron: bool = False or kwargs.get("issuperpatron")
+        self.is_banned: bool = False or kwargs.get("isbanned")
+        self.is_mod: bool = False or kwargs.get("ismod")
+        self.is_data_mod: bool = False or kwargs.get("isdatamod")
+        self.is_translator: bool = False or kwargs.get("istranslator")
+        self.is_proofreader: bool = False or kwargs.get("isproofreader")
+        self.balance = int(kwargs.get("balance")) or 0
+        self.xp = kwargs.get("xp") or 0
+        access_id = kwargs.get("access")
+        self.api_access: Optional[Access] = None if access_id is None else Access(access_id)
+        self.gg_filter_active = False or kwargs.get("ggfilteractive")
+        self.language = "en-US" or kwargs.get("language")
+        self.lastfm = None or kwargs.get("lastfmusername")
+        self.timezone = None or kwargs.get("timezone")
+        self.rob_level = kwargs.get("roblevel") or 0
+        self.daily_level = kwargs.get("dailylevel") or 0
+        self.beg_level = kwargs.get("beglevel") or 0
+        self.profile_level = kwargs.get("profilelevel") or 0
         _users[self.id] = self
         ...
 
@@ -31,7 +42,7 @@ class User(BaseUser):
         :param active: Whether the status should be active.
         """
         callback = CallBack(request={
-            'route': 'user/patron_status',
+            'route': 'user/patron_status/$user_id',
             'user_id': self.id,
             'method': 'POST' if active else 'DELETE',
         })
@@ -46,7 +57,7 @@ class User(BaseUser):
         :param access: (Access) An Access object that is predefined in models/access
         """
         callback = CallBack(request={
-            'route': 'user/token',
+            'route': 'user/token/$user_id',
             'user_id': self.id,
             'unhashed_token': unhashed_token,
             'access_id': access.id,
@@ -60,7 +71,7 @@ class User(BaseUser):
         Delete the user's current API token if they have one.
         """
         callback = CallBack(request={
-            'route': 'user/token',
+            'route': 'user/token/$user_id',
             'user_id': self.id,
             'method': 'DELETE',
         })
@@ -74,7 +85,7 @@ class User(BaseUser):
         :param active: Whether the status should be active.
         """
         callback = CallBack(request={
-            'route': 'user/superpatron_status',
+            'route': 'user/superpatron_status/$user_id',
             'user_id': self.id,
             'method': 'POST' if active else 'DELETE',
         })
@@ -89,7 +100,7 @@ class User(BaseUser):
         :param active: Whether the status should be active.
         """
         callback = CallBack(request={
-            'route': 'user/mod_status',
+            'route': 'user/mod_status/$user_id',
             'user_id': self.id,
             'method': 'POST' if active else 'DELETE',
         })
@@ -103,7 +114,7 @@ class User(BaseUser):
         :param active: Whether the status should be active.
         """
         callback = CallBack(request={
-            'route': 'user/data_mod_status',
+            'route': 'user/data_mod_status/$user_id',
             'user_id': self.id,
             'method': 'POST' if active else 'DELETE',
         })
@@ -117,7 +128,7 @@ class User(BaseUser):
         :param active: Whether the status should be active.
         """
         callback = CallBack(request={
-            'route': 'user/proofreader_status',
+            'route': 'user/proofreader_status/$user_id',
             'user_id': self.id,
             'method': 'POST' if active else 'DELETE',
         })
@@ -131,7 +142,7 @@ class User(BaseUser):
         :param active: Whether the status should be active.
         """
         callback = CallBack(request={
-            'route': 'user/translator_status',
+            'route': 'user/translator_status/$user_id',
             'user_id': self.id,
             'method': 'POST' if active else 'DELETE',
         })
@@ -145,7 +156,7 @@ class User(BaseUser):
         :param active: (bool) Whether the ban should be active.
         """
         callback = CallBack(request={
-            'route': 'user/ban_status',
+            'route': 'user/ban_status/$user_id',
             'user_id': self.id,
             'method': 'POST' if active else 'DELETE',
         })
@@ -162,7 +173,7 @@ class User(BaseUser):
         :param user_id: The user ID to add.
         """
         callback = CallBack(request={
-            'route': 'user/',
+            'route': 'user/$user_id',
             'user_id': user_id,
             'method': 'POST',
         })
@@ -179,7 +190,7 @@ class User(BaseUser):
         :param user_id: The user ID to delete.
         """
         callback = CallBack(request={
-            'route': 'user/',
+            'route': 'user/$user_id',
             'user_id': user_id,
             'method': 'DELETE',
         })
@@ -193,7 +204,7 @@ class User(BaseUser):
             ...
 
     @staticmethod
-    async def get(user_id: int) -> BaseUser:
+    async def get(user_id: int):
         """Get a User object.
 
         If the User object does not exist in cache, it will fetch the user from the API.
@@ -204,7 +215,7 @@ class User(BaseUser):
             return await User.fetch(user_id)
 
     @staticmethod
-    async def fetch(user_id: int = 0) -> Union[List[BaseUser], BaseUser]:
+    async def fetch(user_id: int = 0):
         """Fetch updated User objects from the API.
 
         If the user is not in the DB, it will add it.
@@ -213,21 +224,23 @@ class User(BaseUser):
         """
         # NOTE: User objects are added to cache on creation.
         callback = CallBack(request={
-            'route': 'fetch_user',
-            'user_id': user_id}
+            'route': 'user/$user_id',
+            'user_id': user_id,
+            'method': 'GET'}
         )
+
         await outer.client.add_and_wait(callback)
 
         if user_id == 0:
-            if not callback.response["result"]:
+            if not callback.response["results"]:
                 return []
 
-            return [User(**user_info) for user_info in callback.response["result"]]
+            return [User(user_info['userid'], **user_info) for user_info in callback.response["results"]]
 
         else:
             # return single user.
-            if not callback.response["result"]:
+            if not callback.response["results"]:
                 await User.add(user_id)
 
                 return await User.fetch(user_id)  # recursive
-            return User(**callback.response)
+            return User(callback.response["results"]['userid'], **callback.response["results"])

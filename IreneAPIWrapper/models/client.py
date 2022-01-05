@@ -1,6 +1,6 @@
 import aiohttp
 import asyncio
-from IreneAPIWrapper.exceptions import InvalidToken
+from IreneAPIWrapper.exceptions import InvalidToken, APIError
 from IreneAPIWrapper.sections import outer as ref_outer_client
 from typing import Union, Optional
 from IreneAPIWrapper.models import CallBack, callbacks
@@ -23,6 +23,8 @@ class IreneAPIClient:
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
 
+        self.connected = False
+
         self._headers = {
             'Authorization': f'Bearer {token}'
         }
@@ -38,9 +40,6 @@ class IreneAPIClient:
         # asyncio.run_coroutine_threadsafe(self.connect, loop)
 
         self._disconnect = dict({'disconnect': True})
-
-        self._callback_ids = []  # new callback ids
-        self._completed_callbacks = []  # completed callback ids
 
         self.in_testing = test
 
@@ -60,19 +59,21 @@ class IreneAPIClient:
         """
         await self.add_to_queue(callback)
         await callback.wait_for_completion()
+        if callback.response.get("error"):
+            raise APIError(callback)
 
     async def connect(self):
         """
         Connect to the API via a websocket indefinitely.
 
-        :param test: (bool) Whether this is a test instance.
         """
         if not self._ws_client:
             self._ws_client = aiohttp.ClientSession()
 
         try:
-            # async with self._ws_client.ws_connect(self._ws_url, headers=self._headers) as ws:
             async with self._ws_client.ws_connect(self._ws_url, headers=self._headers, params=self._query_params) as ws:
+                self.connected = True
+
                 while True:
 
                     # test cases
@@ -113,6 +114,8 @@ class IreneAPIClient:
 
         except aiohttp.WSServerHandshakeError:
             raise InvalidToken
+
+        self.connected = False
 
     async def disconnect(self):
         """
