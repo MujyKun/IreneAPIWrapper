@@ -25,15 +25,17 @@ class Company(AbstractModel):
         return Company(*args)
 
     @staticmethod
-    async def get(company_id: int):
+    async def get(company_id: int, fetch=True):
         """Get a Company object.
 
         If the Company object does not exist in cache, it will fetch the name from the API.
         :param company_id: (int) The ID of the name to get/fetch.
+        :param fetch: (bool) Whether to fetch from the API if not found in cache.
         """
-        existing_person = _companies.get(company_id)
-        if not existing_person:
+        existing = _companies.get(company_id)
+        if not existing and fetch:
             return await Company.fetch(company_id)
+        return existing
 
     @staticmethod
     async def fetch(company_id: int):
@@ -43,7 +45,7 @@ class Company(AbstractModel):
 
         :param company_id: (int) The company's ID to fetch.
         """
-        return internal_fetch(obj=Company, request={
+        return await internal_fetch(obj=Company, request={
             'route': 'company/$company_id',
             'company_id': company_id,
             'method': 'GET'}
@@ -55,7 +57,7 @@ class Company(AbstractModel):
 
         # NOTE: Company objects are added to cache on creation.
         """
-        return internal_fetch_all(obj=Company, request={
+        return await internal_fetch_all(obj=Company, request={
             'route': 'company/',
             'method': 'GET'}
         )

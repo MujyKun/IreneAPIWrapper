@@ -1,8 +1,11 @@
-from typing import Union, List, Optional, Dict
+from typing import Union, List, Optional, Dict, TYPE_CHECKING
 
 from IreneAPIWrapper.sections import outer
 from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Date, Company, \
     Display, Social, Tag, GroupAlias
+
+if TYPE_CHECKING:
+    from . import Affiliation
 
 
 class Group(AbstractModel):
@@ -18,6 +21,7 @@ class Group(AbstractModel):
         self.social: Social = social
         self.tags: List[Tag] = tags
         self.aliases: List[GroupAlias] = aliases
+        self.affiliations: List[Affiliation] = []
         _groups[self.id] = self
 
     @staticmethod
@@ -31,15 +35,15 @@ class Group(AbstractModel):
         description = kwargs.get("description")
 
         company_id = kwargs.get("companyid")
-        company = Company.get(company_id)
+        company = await Company.get(company_id)
 
         display_id = kwargs.get("displayid")
-        display = Display.get(display_id)
+        display = await Display.get(display_id)
 
         website = kwargs.get("website")
 
         social_id = kwargs.get("socialid")
-        social = Social.get(social_id)
+        social = await Social.get(social_id)
 
         tag_ids = kwargs.get("tagids")
         tags = [] if not tag_ids else [await Tag.get(tag_id) for tag_id in tag_ids]
@@ -52,15 +56,17 @@ class Group(AbstractModel):
         return Group(*group_args)
 
     @staticmethod
-    async def get(group_id: int):
+    async def get(group_id: int, fetch=True):
         """Get a Group object.
 
         If the Group object does not exist in cache, it will fetch the name from the API.
         :param group_id: (int) The ID of the name to get/fetch.
+        :param fetch: (bool) Whether to fetch from the API if not found in cache.
         """
-        existing_person = _groups.get(group_id)
-        if not existing_person:
+        existing = _groups.get(group_id)
+        if not existing and fetch:
             return await Group.fetch(group_id)
+        return existing
 
     @staticmethod
     async def fetch(group_id: int):
@@ -70,7 +76,7 @@ class Group(AbstractModel):
 
         :param group_id: (int) The group's ID to fetch.
         """
-        return internal_fetch(obj=Group, request={
+        return await internal_fetch(obj=Group, request={
             'route': 'group/$group_id',
             'group_id': group_id,
             'method': 'GET'}
@@ -82,7 +88,7 @@ class Group(AbstractModel):
 
         # NOTE: Group objects are added to cache on creation.
         """
-        return internal_fetch_all(obj=Group, request={
+        return await internal_fetch_all(obj=Group, request={
             'route': 'group/',
             'method': 'GET'}
         )

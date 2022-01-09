@@ -30,7 +30,8 @@ class User(AbstractModel):
         _users[self.id] = self
         ...
 
-    async def create(self, *args, **kwargs):
+    @staticmethod
+    async def create(*args, **kwargs):
         # TODO: Create
         return User(*args)
 
@@ -203,15 +204,17 @@ class User(AbstractModel):
             ...
 
     @staticmethod
-    async def get(user_id: int):
+    async def get(user_id: int, fetch=True):
         """Get a User object.
 
         If the User object does not exist in cache, it will fetch the user from the API.
         :param user_id: (int) The ID of the user to get/fetch.
+        :param fetch: (bool) Whether to fetch from the API if not found in cache.
         """
-        existing_user = _users.get(user_id)
-        if not existing_user:
+        existing = _users.get(user_id)
+        if not existing and fetch:
             return await User.fetch(user_id)
+        return existing
 
     @staticmethod
     async def fetch(user_id: int):
@@ -242,7 +245,7 @@ class User(AbstractModel):
 
         # NOTE: User objects are added to cache on creation.
         """
-        return internal_fetch_all(User, request={
+        return await internal_fetch_all(User, request={
             'route': 'user/',
             'method': 'GET'}
         )

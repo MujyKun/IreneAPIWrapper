@@ -5,8 +5,7 @@ from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_al
 
 
 class Social(AbstractModel):
-    def __init__(self, social_id, twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok,
-                 *args, **kwargs):
+    def __init__(self, social_id, twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok):
         super(Social, self).__init__()
         self.id = social_id
         self.twitter = twitter
@@ -35,19 +34,20 @@ class Social(AbstractModel):
         facebook = kwargs.get("facebook")
         tiktok = kwargs.get("tiktok")
 
-        social_args = {social_id, twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok}
-        return Social(*args)
+        return Social(social_id, twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok)
 
     @staticmethod
-    async def get(social_id: int):
+    async def get(social_id: int, fetch=True):
         """Get a Social object.
 
         If the Social object does not exist in cache, it will fetch the name from the API.
         :param social_id: (int) The ID of the name to get/fetch.
+        :param fetch: (bool) Whether to fetch from the API if not found in cache.
         """
-        existing_person = _socials.get(social_id)
-        if not existing_person:
+        existing = _socials.get(social_id)
+        if not existing and fetch:
             return await Social.fetch(social_id)
+        return existing
 
     @staticmethod
     async def fetch(social_id: int):
@@ -57,7 +57,7 @@ class Social(AbstractModel):
 
         :param social_id: (int) The social's ID to fetch.
         """
-        return internal_fetch(obj=Social, request={
+        return await internal_fetch(obj=Social, request={
             'route': 'social/$social_id',
             'social_id': social_id,
             'method': 'GET'}
@@ -69,7 +69,7 @@ class Social(AbstractModel):
 
         # NOTE: Social objects are added to cache on creation.
         """
-        return internal_fetch_all(obj=Social, request={
+        return await internal_fetch_all(obj=Social, request={
             'route': 'social/',
             'method': 'GET'}
         )

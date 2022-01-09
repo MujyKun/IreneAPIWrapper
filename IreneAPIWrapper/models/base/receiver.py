@@ -33,4 +33,4 @@ async def internal_fetch_all(obj: AbstractModel, request: dict) -> List[Abstract
     if not callback.response["results"]:
         return []
 
-    return [await obj.create(**info) for info in callback.response["results"]]
+    return [await obj.create(**info) for info in callback.response["results"].values()]

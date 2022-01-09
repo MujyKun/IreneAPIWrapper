@@ -155,8 +155,6 @@ class TwitterAccount(Subscription):
 
             return await TwitterAccount.fetch(username=username)
 
-        ...  # check local cache, then fetch/add
-
     @staticmethod
     async def fetch(username) -> Optional[Subscription]:
         """

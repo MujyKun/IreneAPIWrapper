@@ -11,21 +11,24 @@ class Tag(AbstractModel):
         self.name = name
         _tags[self.id] = self
 
-    async def create(self, *args, **kwargs):
+    @staticmethod
+    async def create(*args, **kwargs):
         tag_id = kwargs.get('tagid')
         name = kwargs.get('name')
         return Tag(tag_id, name)
 
     @staticmethod
-    async def get(tag_id: int):
+    async def get(tag_id: int, fetch=True):
         """Get a Tag object.
 
         If the Tag object does not exist in cache, it will fetch the tag from the API.
         :param tag_id: (int) The ID of the tag to get/fetch.
+        :param fetch: (bool) Whether to fetch from the API if not found in cache.
         """
-        existing_person = _tags.get(tag_id)
-        if not existing_person:
+        existing = _tags.get(tag_id)
+        if not existing and fetch:
             return await Tag.fetch(tag_id)
+        return existing
 
     @staticmethod
     async def fetch(tag_id: int):
@@ -35,7 +38,7 @@ class Tag(AbstractModel):
 
         :param tag_id: (int) The tag's ID to fetch.
         """
-        return internal_fetch(Tag, request={
+        return await internal_fetch(obj=Tag, request={
             'route': 'tag/$tag_id',
             'tag_id': tag_id,
             'method': 'GET'})
@@ -46,7 +49,7 @@ class Tag(AbstractModel):
 
         # NOTE: Tag objects are added to cache on creation.
         """
-        return internal_fetch_all(obj=Tag, request={
+        return await internal_fetch_all(obj=Tag, request={
             'route': 'tag/',
             'method': 'GET'})
 

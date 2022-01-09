@@ -13,15 +13,17 @@ class Name(AbstractModel):
         _names[self.id] = self
 
     @staticmethod
-    async def get(name_id: int):
+    async def get(name_id: int, fetch=True):
         """Get a Name object.
 
         If the Name object does not exist in cache, it will fetch the name from the API.
         :param name_id: (int) The ID of the name to get/fetch.
+        :param fetch: (bool) Whether to fetch from the API if not found in cache.
         """
-        existing_person = _names.get(name_id)
-        if not existing_person:
+        existing = _names.get(name_id)
+        if not existing and fetch:
             return await Name.fetch(name_id)
+        return existing
 
     @staticmethod
     async def fetch(name_id: int):
@@ -31,7 +33,7 @@ class Name(AbstractModel):
 
         :param name_id: (int) The name's ID to fetch.
         """
-        return internal_fetch(obj=Name, request={
+        return await internal_fetch(obj=Name, request={
             'route': 'name/$name_id',
             'name_id': name_id,
             'method': 'GET'}
@@ -43,7 +45,7 @@ class Name(AbstractModel):
 
         # NOTE: Name objects are added to cache on creation.
         """
-        return internal_fetch_all(obj=Name, request={
+        return await internal_fetch_all(obj=Name, request={
             'route': 'name/',
             'method': 'GET'}
         )

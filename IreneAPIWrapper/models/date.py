@@ -12,21 +12,24 @@ class Date(AbstractModel):
         self.end: str = kwargs.get("enddate")
         _dates[self.id] = self
 
-    async def create(self, *args, **kwargs):
+    @staticmethod
+    async def create(*args, **kwargs):
         # TODO: Create
 
         return Date(*args)
 
     @staticmethod
-    async def get(date_id: int):
+    async def get(date_id: int, fetch=True):
         """Get a Date object.
 
         If the Date object does not exist in cache, it will fetch the date from the API.
         :param date_id: (int) The ID of the date to get/fetch.
+        :param fetch: (bool) Whether to fetch from the API if not found in cache.
         """
-        existing_person = _dates.get(date_id)
-        if not existing_person:
+        existing = _dates.get(date_id)
+        if not existing and fetch:
             return await Date.fetch(date_id)
+        return existing
 
     @staticmethod
     async def fetch(date_id: int):
@@ -48,7 +51,7 @@ class Date(AbstractModel):
         return Date(**callback.response["results"])
 
     @staticmethod
-    async def fetch_all_dates(self):
+    async def fetch_all():
         """Fetch all dates.
 
         # NOTE: Date objects are added to cache on creation.
@@ -63,7 +66,7 @@ class Date(AbstractModel):
         if not callback.response["results"]:
             return []
 
-        return [Date(**info) for info in callback.response["results"]]
+        return [Date(**info) for info in callback.response["results"].values()]
 
 
 _dates: Dict[int, Date] = dict()

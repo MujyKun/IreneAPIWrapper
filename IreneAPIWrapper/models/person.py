@@ -1,66 +1,89 @@
-from typing import Union, List, Optional, Dict
+from typing import Union, List, Optional, Dict, TYPE_CHECKING
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, Date, AbstractModel, internal_fetch, internal_fetch_all, Name
+from . import CallBack, Access, Date, AbstractModel, internal_fetch, internal_fetch_all, Name, Display, Social, \
+    PersonAlias, Location, BloodType, Tag
+
+if TYPE_CHECKING:
+    from . import Affiliation
 
 
 class Person(AbstractModel):
-    def __init__(self, person_id, date, name, former_name, display, social, location, bloodtype,
-                 gender, description, height, call_count, tags, **kwargs):
+    def __init__(self, person_id, date, name, former_name, display, social, location, blood_type, gender,
+                 description, height, call_count, tags, aliases):
         super(Person, self).__init__()
-        self.id: int = kwargs.get("personid")
-        self.date: Date = Date.get(kwargs.get("dateid"))
-        self.birth_date: str = kwargs.get("startdate")
-        self.death_date: str = kwargs.get("enddate")
-        self.first_name: str = kwargs.get("firstname")
-        self.last_name: str = kwargs.get("lastname")
-        self.former_first_name: str = kwargs.get("formerfirstname")
-        self.former_last_name: str = kwargs.get("formerlastname")
-        self.avatar: str = kwargs.get("avatar")
-        self.banner: str = kwargs.get("banner")
-        self.twitter: str = kwargs.get("twitter")
-        self.youtube: str = kwargs.get("youtube")
-        self.melon: str = kwargs.get("melon")
-        self.instagram: str = kwargs.get("instagram")
-        self.vlive: str = kwargs.get("vlive")
-        self.spotify: str = kwargs.get("spotify")
-        self.fancafe: str = kwargs.get("fancafe")
-        self.facebook: str = kwargs.get("facebook")
-        self.tiktok: str = kwargs.get("tiktok")
-        self.city: str = kwargs.get("city")
-        self.country: str = kwargs.get("country")
-        self.blood_type: str = kwargs.get("bloodtype")
-        self.gender: str = kwargs.get("gender")
-        self.description: str = kwargs.get("description")
-        self.height: int = kwargs.get("height")
-        self.call_count: int = kwargs.get("callcount")
-        self.tags = kwargs.get("tags")
+        self.id = person_id
+        self.date: Date = date
+        self.name: Name = name
+        self.former_name: Name = former_name
+        self.display: Display = display
+        self.social: Social = social
+        self.location: Location = location
+        self.blood_type: BloodType = blood_type
+        self.gender: str = gender
+        self.description: str = description
+        self.height: int = height
+        self.call_count: int = call_count
+        self.tags: List[Tag] = tags
+        self.aliases: List[PersonAlias] = aliases
+        self.affiliations: List[Affiliation] = []
         _persons[self.id] = self
-        ...
 
     @staticmethod
     async def create(*args, **kwargs):
         """Create a Person object."""
         person_id = kwargs.get("personid")
-        date = await Date.get(kwargs.get("dateid"))
-        name = await Name.get(kwargs.get("nameid"))
-        # TODO: Create
 
-        former_name = await Name.get(kwargs.get("formernameid"))
+        date_id = kwargs.get("dateid")
+        date = await Date.get(date_id)
 
+        name_id = kwargs.get("nameid")
+        name = await Name.get(name_id)
 
-        return Person(*args)
+        former_name_id = kwargs.get("nameid")
+        former_name = await Name.get(former_name_id)
+
+        display_id = kwargs.get("displayid")
+        display: Display = await Display.get(display_id)
+
+        social_id = kwargs.get("socialid")
+        social: Social = await Social.get(social_id)
+
+        location_id = kwargs.get("locationid")
+        location: Location = await Location.get(location_id)
+
+        blood_id = kwargs.get("bloodid")
+        blood_type: BloodType = await BloodType.get(blood_id)
+
+        gender = kwargs.get("gender")
+
+        description = kwargs.get("description")
+
+        height = kwargs.get("height")
+
+        call_count = kwargs.get("callcount")
+
+        tag_ids = kwargs.get("tagids")
+        tags = [] if not tag_ids else [await Tag.get(tag_id) for tag_id in tag_ids]
+
+        alias_ids = kwargs.get("aliasids")
+        aliases = [] if not alias_ids else [await PersonAlias.get(alias_id) for alias_id in alias_ids]
+
+        return Person(person_id, date, name, former_name, display, social, location, blood_type, gender,
+                      description, height, call_count, tags, aliases)
 
     @staticmethod
-    async def get(person_id: int):
+    async def get(person_id: int, fetch=True):
         """Get a Person object.
 
         If the Person object does not exist in cache, it will fetch the person from the API.
         :param person_id: (int) The ID of the person to get/fetch.
+        :param fetch: (bool) Whether to fetch from the API if not found in cache.
         """
-        existing_person = _persons.get(person_id)
-        if not existing_person:
+        existing = _persons.get(person_id)
+        if not existing and fetch:
             return await Person.fetch(person_id)
+        return existing
 
     @staticmethod
     async def fetch(person_id: int):
@@ -70,23 +93,22 @@ class Person(AbstractModel):
 
         :param person_id: (int) The person's ID to fetch.
         """
-        return internal_fetch(obj=Person, request={
+        return await internal_fetch(obj=Person, request={
             'route': 'person/$person_id',
             'person_id': person_id,
             'method': 'GET'}
-        )
+            )
 
     @staticmethod
-    async def fetch_all_persons():
+    async def fetch_all():
         """Fetch all persons.
 
         # NOTE: Person objects are added to cache on creation.
         """
-        return internal_fetch_all(obj=Person, request={
+        return await internal_fetch_all(obj=Person, request={
             'route': 'person/',
             'method': 'GET'}
-        )
+                                  )
 
 
 _persons: Dict[int, Person] = dict()
-

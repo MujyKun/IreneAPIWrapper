@@ -8,7 +8,7 @@ class AbstractModel:
         ...
 
     @staticmethod
-    async def get(unique_id: int):
+    async def get(unique_id: int, fetch: bool):
         ...
 
     @staticmethod

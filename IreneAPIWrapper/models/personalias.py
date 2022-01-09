@@ -4,12 +4,13 @@ from IreneAPIWrapper.sections import outer
 from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Alias
 
 
-class PersonAlias(AbstractModel, Alias):
+class PersonAlias(Alias, AbstractModel):
     def __init__(self, alias_id, alias_name, person_id, guild_id):
         super(PersonAlias, self).__init__(alias_id=alias_id, alias_name=alias_name, obj_id=person_id, guild_id=guild_id)
         _personaliases[self.id] = self
 
-    async def create(self, *args, **kwargs):
+    @staticmethod
+    async def create(*args, **kwargs):
         alias_id = kwargs.get("aliasid")
         name = kwargs.get("alias")
         person_id = kwargs.get("personid")
@@ -17,15 +18,17 @@ class PersonAlias(AbstractModel, Alias):
         return PersonAlias(alias_id, name, person_id, guild_id)
 
     @staticmethod
-    async def get(person_alias_id: int):
+    async def get(person_alias_id: int, fetch=True):
         """Get a PersonAlias object.
 
         If the PersonAlias object does not exist in cache, it will fetch the name from the API.
         :param person_alias_id: (int) The ID of the name to get/fetch.
+        :param fetch: (bool) Whether to fetch from the API if not found in cache.
         """
-        existing_person = _personaliases.get(person_alias_id)
-        if not existing_person:
+        existing = _personaliases.get(person_alias_id)
+        if not existing and fetch:
             return await PersonAlias.fetch(person_alias_id)
+        return existing
 
     @staticmethod
     async def fetch(person_alias_id: int):
@@ -35,9 +38,9 @@ class PersonAlias(AbstractModel, Alias):
 
         :param person_alias_id: (int) The person alias's ID to fetch.
         """
-        return internal_fetch(obj=PersonAlias, request={
-            'route': 'personalias/$person_alias_id',
-            'person_alias_id': person_alias_id,
+        return await internal_fetch(obj=PersonAlias, request={
+            'route': 'personalias/$alias_id',
+            'alias_id': person_alias_id,
             'method': 'GET'}
         )
 
@@ -47,7 +50,7 @@ class PersonAlias(AbstractModel, Alias):
 
         # NOTE: PersonAlias objects are added to cache on creation.
         """
-        return internal_fetch_all(obj=PersonAlias, request={
+        return await internal_fetch_all(obj=PersonAlias, request={
             'route': 'personalias/',
             'method': 'GET'}
         )

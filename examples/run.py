@@ -10,9 +10,7 @@ class Example:
         asyncio.run_coroutine_threadsafe(self.client.connect(), loop)
 
         while not self.client.connected:
-            print(0)
             await asyncio.sleep(0)
-        print(1)
 
         print("Connected to IreneAPI")
         await self.test()
@@ -20,22 +18,20 @@ class Example:
     async def test(self):
         from IreneAPIWrapper.models import TwitterAccount, Channel, Person
 
-        # twitter_accs = await TwitterAccount.fetch_all_accounts()
-        person = await Person.get(1)
+        # persons = await Person.get(1)
 
-        # twitter_acc: TwitterAccount = await TwitterAccount.get("mujykun")
-        # accounts = await TwitterAccount.fetch_all_accounts()
-        print('here')
-        # channel = await Channel.get(689684459083137092)
-        # await twitter_acc.subscribe(channel=channel)
-
-
+        print("HERE")
 
         """
         pham = await User.get(429779375072870400)
         await pham.add_token("test", DEVELOPER)
         print("here")
         """
+
+        while True:
+            await asyncio.sleep(60)
+
+
 
 
 if __name__ == '__main__':

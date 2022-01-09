@@ -21,11 +21,22 @@ class IreneAPIClient:
 
     def __init__(self, token: str, user_id: Union[int, str],
                  load_all_tags=True,
+                 load_all_person_aliases=True,
+                 load_all_group_aliases=True,
                  load_all_persons=True,
+                 load_all_groups=True,
                  load_all_twitter_accounts=True,
                  load_all_users=False,
-                 load_all_channels=False,
                  load_all_guilds=False,
+                 load_all_affiliations=True,
+                 load_all_bloodtypes=True,
+                 load_all_media=True,
+                 load_all_displays=True,
+                 load_all_companies=True,
+                 load_all_dates=True,
+                 load_all_locations=True,
+                 load_all_positions=True,
+                 load_all_socials=True,
                  test=False):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
@@ -48,12 +59,29 @@ class IreneAPIClient:
 
         self._disconnect = dict({'disconnect': True})
 
-        self.__load_all_tags = load_all_tags
-        self.__load_all_persons = load_all_persons
-        self.__load_all_twitter_accounts = load_all_twitter_accounts
-        self.__load_all_users = load_all_users
-        self.__load_all_channels = load_all_channels
-        self.__load_all_guilds = load_all_guilds
+        from . import Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, \
+            Position, Social, Person, TwitterAccount, User, Channel, Group  # guild, fandom
+
+        self.__cache_preload = {
+            Tag: load_all_tags,
+            PersonAlias: load_all_person_aliases,
+            GroupAlias: load_all_group_aliases,
+            Affiliation: load_all_affiliations,
+            BloodType: load_all_bloodtypes,
+            Media: load_all_media,
+            Display: load_all_displays,
+            Company: load_all_companies,
+            Date: load_all_dates,
+            Location: load_all_locations,
+            Position: load_all_positions,
+            Social: load_all_socials,
+            # Fandom: load_all_fandom,
+            Person: load_all_persons,
+            Group: load_all_groups,
+            TwitterAccount: load_all_twitter_accounts,
+            User: load_all_users,
+            # Guild: load_all_guilds
+        }
 
         self.in_testing = test
 
@@ -76,15 +104,20 @@ class IreneAPIClient:
         if callback.response.get("error"):
             raise APIError(callback)
 
+        try:
+            error = callback.response["results"]["error"]  # forcing a KeyError (if raised, is a success)
+            raise APIError(callback)
+        except KeyError:
+            pass    
+
     async def __load_up_cache(self):
         """
         Preload the cache based on client preferences.
 
         # NOTE: If an object is dependent on another object, it will create the other object.
         """
-        ...
-
-
+        for category_class, load_cache in self.__cache_preload.items():
+            asyncio.run_coroutine_threadsafe(category_class.fetch_all(), asyncio.get_event_loop())
 
     async def connect(self):
         """
@@ -119,9 +152,10 @@ class IreneAPIClient:
                     await ws.send_json(callback.request)
 
                     # get response from server.
-                    # in case of any inconsistencies, a callback name is sent back and forth and is checked for
+                    # in case of any inconsistencies, a callback id is sent back and forth and is checked for
                     # authenticity before completing a request.
                     data_response = (await ws.receive()).json()
+
                     response_callback_id = int(data_response.get('callback_id') or 0)
                     if response_callback_id and (response_callback_id != callback.id):
                         # we replace the current callback with the response
