@@ -19,7 +19,14 @@ class IreneAPIClient:
 
     """
 
-    def __init__(self, token: str, user_id: Union[int, str], test=False):
+    def __init__(self, token: str, user_id: Union[int, str],
+                 load_all_tags=True,
+                 load_all_persons=True,
+                 load_all_twitter_accounts=True,
+                 load_all_users=False,
+                 load_all_channels=False,
+                 load_all_guilds=False,
+                 test=False):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
 
@@ -40,6 +47,13 @@ class IreneAPIClient:
         # asyncio.run_coroutine_threadsafe(self.connect, loop)
 
         self._disconnect = dict({'disconnect': True})
+
+        self.__load_all_tags = load_all_tags
+        self.__load_all_persons = load_all_persons
+        self.__load_all_twitter_accounts = load_all_twitter_accounts
+        self.__load_all_users = load_all_users
+        self.__load_all_channels = load_all_channels
+        self.__load_all_guilds = load_all_guilds
 
         self.in_testing = test
 
@@ -62,6 +76,16 @@ class IreneAPIClient:
         if callback.response.get("error"):
             raise APIError(callback)
 
+    async def __load_up_cache(self):
+        """
+        Preload the cache based on client preferences.
+
+        # NOTE: If an object is dependent on another object, it will create the other object.
+        """
+        ...
+
+
+
     async def connect(self):
         """
         Connect to the API via a websocket indefinitely.
@@ -73,6 +97,7 @@ class IreneAPIClient:
         try:
             async with self._ws_client.ws_connect(self._ws_url, headers=self._headers, params=self._query_params) as ws:
                 self.connected = True
+                await self.__load_up_cache()
 
                 while True:
 

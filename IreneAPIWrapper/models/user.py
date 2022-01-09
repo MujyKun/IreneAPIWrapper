@@ -1,15 +1,13 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access
+from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all
 
 
-class BaseUser: ...  # used for type hints
-
-
-class User(BaseUser):
-    def __init__(self, user_id: int, *args, **kwargs):
-        self.id: int = user_id
+class User(AbstractModel):
+    def __init__(self, *args, **kwargs):
+        super(User, self).__init__()
+        self.id: int = kwargs.get("userid")
         self.is_patron: bool = False or kwargs.get("ispatron")
         self.is_super_patron: bool = False or kwargs.get("issuperpatron")
         self.is_banned: bool = False or kwargs.get("isbanned")
@@ -31,6 +29,10 @@ class User(BaseUser):
         self.profile_level = kwargs.get("profilelevel") or 0
         _users[self.id] = self
         ...
+
+    async def create(self, *args, **kwargs):
+        # TODO: Create
+        return User(*args)
 
     async def set_patron(self, active=True):
         """
@@ -212,14 +214,14 @@ class User(BaseUser):
             return await User.fetch(user_id)
 
     @staticmethod
-    async def fetch(user_id: int = 0):
-        """Fetch updated User objects from the API.
+    async def fetch(user_id: int):
+        """Fetch an updated User object from the API.
 
         If the user is not in the DB, it will add it.
-
-        :param user_id: (int) The user name to fetch. Will fetch all users if set to 0.
-        """
         # NOTE: User objects are added to cache on creation.
+
+        :param user_id: (int) The user's ID to fetch.
+        """
         callback = CallBack(request={
             'route': 'user/$user_id',
             'user_id': user_id,
@@ -228,19 +230,22 @@ class User(BaseUser):
 
         await outer.client.add_and_wait(callback)
 
-        if user_id == 0:
-            if not callback.response["results"]:
-                return []
+        if not callback.response["results"]:
+            await User.add(user_id)
 
-            return [User(user_info['userid'], **user_info) for user_info in callback.response["results"]]
+            return await User.fetch(user_id)  # recursive
+        return User(**callback.response["results"])
 
-        else:
-            # return single user.
-            if not callback.response["results"]:
-                await User.add(user_id)
+    @staticmethod
+    async def fetch_all():
+        """Fetch all users.
 
-                return await User.fetch(user_id)  # recursive
-            return User(callback.response["results"]['userid'], **callback.response["results"])
+        # NOTE: User objects are added to cache on creation.
+        """
+        return internal_fetch_all(User, request={
+            'route': 'user/',
+            'method': 'GET'}
+        )
 
 
 _users: Dict[int, User] = dict()

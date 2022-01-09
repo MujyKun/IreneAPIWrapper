@@ -46,7 +46,7 @@ class TwitterAccount(Subscription):
         return callback
 
     @staticmethod
-    async def fetch_all_accounts() -> dict:
+    async def fetch_all() -> dict:
         """
         Fetch a dict of all Twitter accounts and subscriptions in the database.
 
@@ -54,20 +54,20 @@ class TwitterAccount(Subscription):
         """
 
         callback = CallBack(request={
-            'route': 'twitter/subscriptions',
+            'route': 'twitter/accounts',
             'method': 'GET'}
         )
 
         await outer.client.add_and_wait(callback)
 
-        for account_id, account_name in callback.response["results"]:
-            _twitter_accounts[account_id] = TwitterAccount(account_id, account_name)
+        for key, acc_info in (callback.response["results"]).items():
+            _twitter_accounts[acc_info["accountid"]] = TwitterAccount(acc_info["accountid"], acc_info["username"])
 
         subs_callback = await TwitterAccount._fetch_all_subscriptions()
 
-        for account_id, channel_id, role_id in subs_callback.response["results"]:
-            channel = Channel.get(channel_id)
-            _twitter_accounts[account_id]._add_to_cache(channel, role_id)
+        for key, sub_info in (subs_callback.response["results"]).items():
+            channel = await Channel.get(sub_info["channelid"])
+            _twitter_accounts[sub_info["accountid"]]._add_to_cache(channel, sub_info["roleid"])
 
         return _twitter_accounts
 

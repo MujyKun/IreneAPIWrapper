@@ -18,13 +18,16 @@ class Example:
         await self.test()
 
     async def test(self):
-        from IreneAPIWrapper.models import TwitterAccount, Channel
+        from IreneAPIWrapper.models import TwitterAccount, Channel, Person
 
         # twitter_accs = await TwitterAccount.fetch_all_accounts()
+        person = await Person.get(1)
 
-        twitter_acc: TwitterAccount = await TwitterAccount.get("mujykun")
-        channel = await Channel.get(689684459083137092)
-        await twitter_acc.subscribe(channel=channel)
+        # twitter_acc: TwitterAccount = await TwitterAccount.get("mujykun")
+        # accounts = await TwitterAccount.fetch_all_accounts()
+        print('here')
+        # channel = await Channel.get(689684459083137092)
+        # await twitter_acc.subscribe(channel=channel)
 
 
 

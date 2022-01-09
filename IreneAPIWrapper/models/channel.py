@@ -38,6 +38,7 @@ class Channel:
         Add the channel ID to the Database.
 
         The API will deal with already existing channels.
+        Does not add to cache.
         :param channel_id: The channel ID to add.
         """
 
@@ -48,11 +49,12 @@ class Channel:
         )
         await outer.client.add_and_wait(callback)
 
-    async def delete(self):
+    async def _delete(self):
         """
         Delete the channel from the Database.
 
         This is a permanent change and cascades all existing objects that are dependent on the channel.
+        Will remove the object from cache.
         """
 
         callback = CallBack(request={
