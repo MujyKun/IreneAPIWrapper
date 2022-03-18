@@ -5,9 +5,33 @@ from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_al
 
 
 class BloodType(AbstractModel):
+    r"""Represents a BloodType.
+
+    A BloodType object inherits from :ref:`AbstractModel`.
+
+    Please note that the blood types are metadata.
+    While it may be possible to delete/remove blood types from the API, it will not be possible in this wrapper
+    to avoid unnecessary changes.
+
+    Possible Blood Types (if not already known):
+        O-
+        O+
+        A-
+        A+
+        B-
+        B+
+        AB-
+        AB+
+
+    Attributes
+    ----------
+    id: int
+        The blood type's id.
+    name: :ref:`Person`
+        The name of the blood type.
+    """
     def __init__(self, blood_id, name):
-        super(BloodType, self).__init__()
-        self.id = blood_id
+        super(BloodType, self).__init__(blood_id)
         self.name = name
         _blood_types[self.id] = self
 
@@ -18,13 +42,22 @@ class BloodType(AbstractModel):
 
         return BloodType(blood_id, name)
 
+    async def _remove_from_cache(self):
+        """Remove the blood type from cache."""
+        _blood_types.pop(self.id)
+
     @staticmethod
     async def get(blood_id: int, fetch=True):
         """Get a BloodType object.
 
         If the BloodType object does not exist in cache, it will fetch the name from the API.
-        :param blood_id: (int) The ID of the name to get/fetch.
-        :param fetch: (bool) Whether to fetch from the API if not found in cache.
+
+        :param blood_id: int
+            The ID of the blood type to get/fetch.
+        :param fetch: bool
+            Whether to fetch from the API if not found in cache.
+        :returns: Optional[:ref:`BloodType`]
+            The blood type object requested.
         """
         existing = _blood_types.get(blood_id)
         if not existing and fetch:
@@ -37,7 +70,10 @@ class BloodType(AbstractModel):
 
         # NOTE: BloodType objects are added to cache on creation.
 
-        :param blood_id: (int) The blood's ID to fetch.
+        :param blood_id: int
+            The blood's ID to fetch.
+        :returns: Optional[:ref:`BloodType`]
+            The blood type object requested.
         """
         return await internal_fetch(obj=BloodType, request={
             'route': 'bloodtype/$blood_id',

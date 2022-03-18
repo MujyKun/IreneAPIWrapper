@@ -2,17 +2,86 @@ from typing import Union, List, Optional, Dict, TYPE_CHECKING
 
 from IreneAPIWrapper.sections import outer
 from . import CallBack, Access, Date, AbstractModel, internal_fetch, internal_fetch_all, Name, Display, Social, \
-    PersonAlias, Location, BloodType, Tag
+    Location, BloodType, Tag, internal_delete, internal_insert
 
 if TYPE_CHECKING:
-    from . import Affiliation
+    from . import Affiliation, PersonAlias
 
 
 class Person(AbstractModel):
+    r"""Represents a Person (or a living entity).
+
+    A Person object inherits from :ref:`AbstractModel`.
+
+    Note: Several Person objects will be referenced as "persons" and not "people".
+
+    Parameters
+    ----------
+    person_id: int
+        The person's ID.
+    date: :ref:`Date`
+        Birth/Death date of a person.
+    name: :ref:`Name`
+        The official Name of the person.
+    former_name: :ref:`Name`
+        The former Name object of the person.
+    display: :ref:`Display`
+        The avatar/banner displays for the person.
+    social: :ref:`Social`
+        All social media references for the person.
+    location: :ref:`Location`
+        The birth location of the person.
+    blood_type: :ref:`BloodType`
+        The blood type of the person.
+    gender: str
+        The gender of the person.
+    description: str
+        A general overview of the person.
+    height: int
+        The height of the person in centimeters (cm)
+    call_count: int
+        The amount of times the person has been called. (Increment determined by client side and not from the API)
+    tags: List[:ref:`Tag`]
+        The tags associated with the person.
+    aliases: List[:ref:`PersonAlias`]
+        The aliases associated with the person.
+
+    Attributes
+    ----------
+    id: int
+        The person's ID.
+    date: :ref:`Date`
+        Birth/Death date of a person.
+    name: :ref:`Name`
+        The official Name of the person.
+    former_name: :ref:`Name`
+        The former Name object of the person.
+    display: :ref:`Display`
+        The avatar/banner displays for the person.
+    social: :ref:`Social`
+        All social media references for the person.
+    location: :ref:`Location`
+        The birth location of the person.
+    blood_type: :ref:`BloodType`
+        The blood type of the person.
+    gender: str
+        The gender of the person.
+    description: str
+        A general overview of the person.
+    height: int
+        The height of the person in centimeters (cm)
+    call_count: int
+        The amount of times the person has been called. (Increment determined by client side and not from the API)
+    tags: List[:ref:`Tag`]
+        The tags associated with the person.
+    aliases: List[:ref:`PersonAlias`]
+        The aliases associated with the person.
+    affiliations: List[:ref:`Affiliation`]
+        The :ref:`Affiliation`s between the person and the :ref:`Group`s they are in.
+    """
     def __init__(self, person_id, date, name, former_name, display, social, location, blood_type, gender,
                  description, height, call_count, tags, aliases):
-        super(Person, self).__init__()
-        self.id = person_id
+        super(Person, self).__init__(person_id)
         self.date: Date = date
         self.name: Name = name
         self.former_name: Name = former_name
@@ -67,18 +136,98 @@ class Person(AbstractModel):
         tags = [] if not tag_ids else [await Tag.get(tag_id) for tag_id in tag_ids]
 
         alias_ids = kwargs.get("aliasids")
+
+        # avoiding circular import when updating cache on PersonAlias insertions.
+        from . import PersonAlias
         aliases = [] if not alias_ids else [await PersonAlias.get(alias_id) for alias_id in alias_ids]
 
         return Person(person_id, date, name, former_name, display, social, location, blood_type, gender,
                       description, height, call_count, tags, aliases)
+
+    async def delete(self) -> None:
+        """
+        Delete the Person object from the database and remove it from cache.
+
+        :returns: None
+        """
+        await internal_delete(self, request={
+            'route': 'person/$person_id',
+            'person_id': self.id,
+            'method': 'DELETE'
+        })
+        await self._remove_from_cache()
+
+    async def _remove_from_cache(self) -> None:
+        """
+        Remove the Person object from cache.
+
+        :returns: None
+        """
+        _persons.pop(self.id)
+
+    @staticmethod
+    async def insert(date_id, name_id, former_name_id, gender, description, height, display_id,
+                     social_id, location_id, tag_ids, blood_id, call_count) -> None:
+        r"""
+        Insert a new person into the database.
+
+
+        Parameters
+        ----------
+        date_id: int
+            The :ref:`Date` ID of the person.
+        name_id: int
+            The official :ref:`Name` ID of the person.
+        former_name_id: int
+            The former :ref:`Name` ID of the person.
+        gender: str
+            The gender of the person.
+        description: str
+            An overview of the person.
+        height: int
+            The height of the person in centimeters (cm).
+        display_id: int
+            The :ref:`Display` ID of the person.
+        social_id: int
+            The :ref:`Social` ID of the person.
+        location_id: int
+            The Birth :ref:`Location` ID of the person.
+        tag_ids: List[int]
+            A list of :ref:`Tag` IDs of the person.
+        blood_id: int
+            The :ref:`BloodType` ID of the person.
+        call_count: int
+            The number of times the person has been called.
+
+        :returns: None
+        """
+        await internal_insert(request={
+            'route': 'person',
+            "date_id": date_id,
+            "name_id": name_id,
+            "former_name_id": former_name_id,
+            "gender": gender,
+            "description": description,
+            "height": height,
+            "display_id": display_id,
+            "social_id": social_id,
+            "location_id": location_id,
+            "tag_ids": tag_ids,
+            "blood_id": blood_id,
+            "call_count": call_count,
+            'method': 'POST'
+        })
 
     @staticmethod
     async def get(person_id: int, fetch=True):
         """Get a Person object.
 
         If the Person object does not exist in cache, it will fetch the person from the API.
-        :param person_id: (int) The ID of the person to get/fetch.
-        :param fetch: (bool) Whether to fetch from the API if not found in cache.
+        :param person_id: int
+            The ID of the person to get/fetch.
+        :param fetch: bool
+            Whether to fetch from the API if not found in cache.
+        :returns: :ref:`Person`
         """
         existing = _persons.get(person_id)
         if not existing and fetch:
@@ -91,7 +240,9 @@ class Person(AbstractModel):
 
         # NOTE: Person objects are added to cache on creation.
 
-        :param person_id: (int) The person's ID to fetch.
+        :param person_id: int
+            The person's ID to fetch.
+        :returns: :ref:`Person`
         """
         return await internal_fetch(obj=Person, request={
             'route': 'person/$person_id',
@@ -107,8 +258,8 @@ class Person(AbstractModel):
         """
         return await internal_fetch_all(obj=Person, request={
             'route': 'person/',
-            'method': 'GET'}
-                                  )
+            'method': 'GET'
+        })
 
 
 _persons: Dict[int, Person] = dict()

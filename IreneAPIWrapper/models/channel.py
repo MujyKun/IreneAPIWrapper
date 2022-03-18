@@ -1,69 +1,123 @@
-from typing import Dict
-from . import CallBack
+from typing import Union, List, Optional, Dict
+
 from IreneAPIWrapper.sections import outer
+from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Position, Person, \
+    Group, internal_delete, internal_insert
 
 
-class Channel:
+class Channel(AbstractModel):
+    r"""Represents a discord channel.
+
+    A Channel object inherits from :ref:`AbstractModel`.
+
+    Parameters
+    ----------
+    channel_id: int
+        The channel id.
+
+    Attributes
+    ----------
+    id: int
+        The channel id.
+    """
     def __init__(self, channel_id):
-        self.id = channel_id
-
-    def __eq__(self, other):
-        return self.id == other.id
-
-    def __ne__(self, other):
-        return self.id != other.id
+        super(Channel, self).__init__(channel_id)
+        _channels[self.id] = self
 
     @staticmethod
-    async def get(channel_id):
+    async def create(*args, **kwargs):
         """
-        Get a channel object.
+        Create a Channel object.
 
-        Will attempt to insert if it is not already existing in cache, then add it to cache.
-        :param channel_id: The channel ID to retrieve.
-        :return: (Channel) The channel object requested.
+        :returns: :ref:`Channel`
         """
-        channel = _channels.get(channel_id)
-        if channel:
-            return channel
+        channel_id = kwargs.get("channelid")
+        channel_obj = Channel(channel_id)
+        return channel_obj
 
-        if not channel:
-            channel = Channel(channel_id)
-            await Channel._add(channel_id)
-            _channels[channel_id] = channel
-        return channel
-
-    @staticmethod
-    async def _add(channel_id):
+    async def delete(self) -> None:
         """
-        Add the channel ID to the Database.
+        Delete a Channel object from the database and remove it from cache.
 
-        The API will deal with already existing channels.
-        Does not add to cache.
-        :param channel_id: The channel ID to add.
+        WARNING: This will cascade all objects dependent on the object.
+
+        :return: None
         """
-
-        callback = CallBack(request={
-            'route': 'channel/$channel_id',
-            'channel_id': channel_id,
-            'method': 'POST'}
-        )
-        await outer.client.add_and_wait(callback)
-
-    async def _delete(self):
-        """
-        Delete the channel from the Database.
-
-        This is a permanent change and cascades all existing objects that are dependent on the channel.
-        Will remove the object from cache.
-        """
-
-        callback = CallBack(request={
+        await internal_delete(self, request={
             'route': 'channel/$channel_id',
             'channel_id': self.id,
-            'method': 'DELETE'}
-        )
-        outer.client.add_and_wait(callback)
+            'method': 'DELETE'
+        })
+
+    async def _remove_from_cache(self) -> None:
+        """
+        Remove the Channel object from cache.
+
+        :return: None
+        """
         _channels.pop(self.id)
+
+    @staticmethod
+    async def insert(channel_id) -> None:
+        """
+        Insert a new channel into the database.
+
+        :param channel_id: The channel ID to insert.
+        :return: None
+        """
+        await internal_insert(request={
+            'route': 'channel',
+            'channel_id': channel_id,
+            'method': 'POST'
+        })
+
+    @staticmethod
+    async def get(channel_id: int, fetch=True):
+        r"""
+        Get a Channel object.
+
+        If the Channel object does not exist in cache, it will fetch the name from the API.
+
+        :param channel_id: int
+            The channel ID to retrieve.
+        :param fetch: bool
+            Whether to fetch from the API if not found in cache.
+        :returns: Optional[:ref:`Channel`]
+            The channel object requested.
+        """
+        existing = _channels.get(channel_id)
+        if not existing and fetch:
+            return await Channel.fetch(channel_id)
+        return existing
+
+    @staticmethod
+    async def fetch(channel_id):
+        """
+        Fetch an updated channel object from the API.
+
+        # NOTE: channel objects are added to cache on creation.
+
+        :param channel_id: int
+            The channel ID to fetch.
+        :returns: Optional[:ref:`Channel`]
+            The channel object requested.
+        """
+        return await internal_fetch(obj=Channel, request={
+            'route': 'channel/$channel_id',
+            'affiliation_id': channel_id,
+            'method': 'GET'}
+        )
+
+    @staticmethod
+    async def fetch_all():
+        """Fetch all Channels.
+
+        # NOTE: Channel objects are added to cache on creation.
+        """
+        return await internal_fetch_all(obj=Channel, request={
+            'route': 'channel',
+            'method': 'GET'}
+        )
 
 
 _channels: Dict[int, Channel] = dict()

@@ -1,29 +1,94 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource
+from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, \
+    internal_insert, internal_delete
 
 
 class Display(AbstractModel):
-    def __init__(self, *args, **kwargs):
-        super(Display, self).__init__()
-        self.id = kwargs.get("displayid")
-        self.avatar: MediaSource = MediaSource(kwargs.get("avatar"))
-        self.banner: MediaSource = MediaSource(kwargs.get("banner"))
+    r"""Represents the images involved with an entity's profile such as an avatar or banner.
+
+    A Display object inherits from :ref:`AbstractModel`.
+
+    Parameters
+    ----------
+    display_id: int
+        The Affiliation id.
+    avatar: :ref:`MediaSource`
+        The person that is affiliated with a Group.
+    banner: :ref:`MediaSource`
+        The group that the Person is affiliated with.
+
+    Attributes
+    ----------
+    id: int
+        The Display id.
+    avatar: :ref:`MediaSource`
+        The person that is affiliated with a Group.
+    banner: :ref:`MediaSource`
+        The group that the Person is affiliated with.
+
+    """
+    def __init__(self, display_id, avatar: MediaSource, banner: MediaSource, *args, **kwargs):
+        super(Display, self).__init__(display_id)
+        self.avatar: MediaSource = avatar
+        self.banner: MediaSource = banner
         _displays[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
-        # TODO: Create
-        return Display(*args)
+        """
+        Create a Display object.
+
+        :returns: :ref:`Display`
+        """
+        display_id = kwargs.get("displayid")
+        avatar = MediaSource(kwargs.get("avatar"))
+        banner = MediaSource(kwargs.get("banner"))
+        return Display(display_id, avatar, banner)
+
+    async def delete(self) -> None:
+        """Delete the Display object from the database and remove it from cache."""
+        await internal_delete(self, request={
+            'route': 'display/$display_id',
+            'display_id': self.id,
+            'method': 'DELETE'
+        })
+        await self._remove_from_cache()
+
+    async def _remove_from_cache(self) -> None:
+        """Remove the Display object from cache."""
+        _displays.pop(self.id)
+
+    @staticmethod
+    async def insert(avatar: str, banner: str) -> None:
+        """
+        Insert a new display into the database.
+
+        :param avatar: str
+            The avatar for the entity.
+        :param banner: str
+            The banner for the entity.
+        :return: None
+        """
+        await internal_insert(request={
+            'route': 'display',
+            'avatar': avatar,
+            'banner': banner,
+            'method': 'POST'
+        })
 
     @staticmethod
     async def get(display_id: int, fetch=True):
         """Get a Display object.
 
         If the Display object does not exist in cache, it will fetch the name from the API.
-        :param display_id: (int) The ID of the name to get/fetch.
-        :param fetch: (bool) Whether to fetch from the API if not found in cache.
+        :param display_id: int
+            The ID of the display to get/fetch.
+        :param fetch: bool
+            Whether to fetch from the API if not found in cache.
+        :returns: Optional[:ref:`Display`]
+            The display object requested.
         """
         existing = _displays.get(display_id)
         if not existing:
@@ -36,7 +101,10 @@ class Display(AbstractModel):
 
         # NOTE: Display objects are added to cache on creation.
 
-        :param display_id: (int) The display's ID to fetch.
+        :param display_id: int
+            The display's ID to fetch.
+        :returns: Optional[:ref:`Display`]
+            The display object requested.
         """
         return await internal_fetch(obj=Display, request={
             'route': 'display/$display_id',

@@ -18,7 +18,7 @@ class Example:
     async def test(self):
         from IreneAPIWrapper.models import TwitterAccount, Channel, Person
 
-        # persons = await Person.get(1)
+        persons = await Person.get(1)
 
         print("HERE")
 

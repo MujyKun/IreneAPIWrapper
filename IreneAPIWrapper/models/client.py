@@ -37,6 +37,7 @@ class IreneAPIClient:
                  load_all_locations=True,
                  load_all_positions=True,
                  load_all_socials=True,
+                 load_all_fandoms=True,
                  test=False):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
@@ -60,7 +61,7 @@ class IreneAPIClient:
         self._disconnect = dict({'disconnect': True})
 
         from . import Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, \
-            Position, Social, Person, TwitterAccount, User, Channel, Group  # guild, fandom
+            Position, Social, Person, TwitterAccount, User, Channel, Group, Fandom, Guild
 
         self.__cache_preload = {
             Tag: load_all_tags,
@@ -75,12 +76,12 @@ class IreneAPIClient:
             Location: load_all_locations,
             Position: load_all_positions,
             Social: load_all_socials,
-            # Fandom: load_all_fandom,
+            Fandom: load_all_fandoms,
             Person: load_all_persons,
             Group: load_all_groups,
             TwitterAccount: load_all_twitter_accounts,
             User: load_all_users,
-            # Guild: load_all_guilds
+            Guild: load_all_guilds
         }
 
         self.in_testing = test
@@ -116,13 +117,13 @@ class IreneAPIClient:
 
         # NOTE: If an object is dependent on another object, it will create the other object.
         """
+        loop = asyncio.get_event_loop()
         for category_class, load_cache in self.__cache_preload.items():
-            asyncio.run_coroutine_threadsafe(category_class.fetch_all(), asyncio.get_event_loop())
+            asyncio.run_coroutine_threadsafe(category_class.fetch_all(), loop)
 
     async def connect(self):
         """
         Connect to the API via a websocket indefinitely.
-
         """
         if not self._ws_client:
             self._ws_client = aiohttp.ClientSession()
@@ -169,6 +170,7 @@ class IreneAPIClient:
                         # so we can now finish the callback and lease out the callback name to a new object.
                         callback.set_as_done()
                     else:
+                        # TODO: Remove Print
                         print(f"Could not find CallBack instance for: {data_response}")
 
         except aiohttp.WSServerHandshakeError:

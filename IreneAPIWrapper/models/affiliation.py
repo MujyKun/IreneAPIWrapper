@@ -1,21 +1,59 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Position, Person, Group
+from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Position, Person, \
+    Group, internal_delete, internal_insert
 
 
 class Affiliation(AbstractModel):
-    def __init__(self, affiliation_id, person, group, positions, stage_name):
-        super(Affiliation, self).__init__()
-        self.id = affiliation_id
+    r"""Represents the connection between a Person and Group object.
+
+    An Affiliation object inherits from :ref:`AbstractModel`.
+
+    Parameters
+    ----------
+    affiliation_id: int
+        The Affiliation id.
+    person: :ref:`Person`
+        The person that is affiliated with a Group.
+    group: :ref:`Group`
+        The group that the Person is affiliated with.
+    positions: Optional[List[:ref:`Position`]]
+        The positions that the Person has in the Group.
+    stage_name: str
+        Exclusive name of the Person when they are in the Group.
+
+    Attributes
+    ----------
+    id: int
+        The Affiliation id.
+    person: :ref:`Person`
+        The person that is affiliated with a Group.
+    group: :ref:`Group`
+        The group that the Person is affiliated with.
+    positions: List[:ref:`Position`]
+        The positions that the Person has in the Group.
+    stage_name: str
+        Exclusive name of the Person when they are in the Group.
+
+    """
+
+    def __init__(self, affiliation_id: int, person: Person, group: Group, positions: Optional[List[Position]],
+                 stage_name: str):
+        super(Affiliation, self).__init__(affiliation_id)
         self.person: Person = person
         self.group: Group = group
-        self.positions: Position = positions
+        self.positions: Optional[List[Position]] = positions
         self.stage_name: str = stage_name
         _affiliations[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
+        """
+        Create an Affiliation object.
+
+        :returns: :ref:`Affiliation`
+        """
         affiliation_id = kwargs.get("affiliationid")
 
         person_id = kwargs.get("personid")
@@ -32,18 +70,84 @@ class Affiliation(AbstractModel):
         affiliation_args = {affiliation_id, person, group, positions, stage_name}
 
         aff_obj = Affiliation(*affiliation_args)
+
+        # Add the current Affiliation to the Person and Group objects.
         person.affiliations.append(aff_obj)
         group.affiliations.append(aff_obj)
 
         return aff_obj
+
+    async def delete(self) -> None:
+        """
+        Delete the Affiliation object from the database and remove it from cache.
+
+        :returns: None
+        """
+        await internal_delete(self, request={
+            'route': 'affiliation/$affiliation_id',
+            'affiliation_id': self.id,
+            'method': 'DELETE'
+        })
+        await self._remove_from_cache()
+
+    async def _remove_from_cache(self) -> None:
+        """
+        Remove the Affiliation object from cache.
+
+        :returns: None
+        """
+        _affiliations.pop(self.id)
+
+    @staticmethod
+    async def insert(person_id: int, group_id: int, position_ids: List[int], stage_name: str) -> bool:
+        """
+        Insert a new affiliation into the database.
+
+        :param person_id: int
+            The person id to affiliate with a Group.
+        :param group_id: int
+            The group id that is affiliated with a Person.
+        :param position_ids: List[:ref:`int`]
+            The Positions the Person has in the Group.
+        :param stage_name: str
+            The exclusive name of the Person in the Group.
+        :return: bool
+            Whether the affiliation was added to the existing objects as well as inserted into the DB.
+        """
+        callback = await internal_insert(request={
+            'route': 'affiliation',
+            'person_id': person_id,
+            'group_id': group_id,
+            'position_ids': position_ids,
+            'stage_name': stage_name,
+            'method': 'POST'
+        })
+        results = callback.response.get("results")
+        if not results:
+            return False
+
+        # TODO: Confirm the correct return is t_affiliation_id
+        affiliation = await Affiliation.fetch(callback.response["t_affiliation_id"])
+
+        group = await Group.get(group_id, fetch=False)
+        person = await Person.get(person_id, fetch=False)
+        if group:
+            group.affiliations.append(affiliation)
+        if person:
+            person.affiliations.append(affiliation)
+        return True
 
     @staticmethod
     async def get(affiliation_id: int, fetch=True):
         """Get an Affiliation object.
 
         If the Affiliation object does not exist in cache, it will fetch the name from the API.
-        :param affiliation_id: (int) The ID of the name to get/fetch.
-        :param fetch: (bool) Whether to fetch from the API if not found in cache.
+        :param affiliation_id: int
+            The ID of the affiliation to get/fetch.
+        :param fetch: bool
+            Whether to fetch from the API if not found in cache.
+        :returns: Optional[:ref:`Affiliation`]
+            The affiliation object requested.
         """
         existing = _affiliations.get(affiliation_id)
         if not existing and fetch:
@@ -56,13 +160,16 @@ class Affiliation(AbstractModel):
 
         # NOTE: affiliation objects are added to cache on creation.
 
-        :param affiliation_id: (int) The affiliation's ID to fetch.
+        :param affiliation_id: int
+            The affiliation's ID to fetch.
+        :returns: Optional[:ref:`Affiliation`]
+            The affiliation object requested.
         """
         return await internal_fetch(obj=Affiliation, request={
             'route': 'affiliation/$affiliation_id',
             'affiliation_id': affiliation_id,
             'method': 'GET'}
-        )
+                                    )
 
     @staticmethod
     async def fetch_all():
@@ -71,9 +178,9 @@ class Affiliation(AbstractModel):
         # NOTE: affiliation objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Affiliation, request={
-            'route': 'affiliation/',
+            'route': 'affiliation',
             'method': 'GET'}
-        )
+                                        )
 
 
 _affiliations: Dict[int, Affiliation] = dict()

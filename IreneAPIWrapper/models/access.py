@@ -1,4 +1,15 @@
 class Access:
+    r"""
+    Represents the Access level of the API.
+
+    Please note that these Access values are consistent across the API as well.
+
+    Attributes
+    ----------
+    id: int
+        The representative Access ID.
+
+    """
     def __init__(self, access_id: int):
         self.id = access_id
 
