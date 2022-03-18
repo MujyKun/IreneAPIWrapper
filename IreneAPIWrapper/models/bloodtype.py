@@ -27,7 +27,7 @@ class BloodType(AbstractModel):
     ----------
     id: int
         The blood type's id.
-    name: :ref:`Person`
+    name: str
         The name of the blood type.
     """
     def __init__(self, blood_id, name):
