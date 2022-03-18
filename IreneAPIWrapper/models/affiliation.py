@@ -158,7 +158,7 @@ class Affiliation(AbstractModel):
     async def fetch(affiliation_id: int):
         """Fetch an updated affiliation object from the API.
 
-        # NOTE: affiliation objects are added to cache on creation.
+        .. NOTE:: affiliation objects are added to cache on creation.
 
         :param affiliation_id: int
             The affiliation's ID to fetch.
@@ -175,7 +175,7 @@ class Affiliation(AbstractModel):
     async def fetch_all():
         """Fetch all affiliations.
 
-        # NOTE: affiliation objects are added to cache on creation.
+        .. NOTE:: affiliation objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Affiliation, request={
             'route': 'affiliation',

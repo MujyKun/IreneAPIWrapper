@@ -5,7 +5,7 @@ from . import Tweet
 
 class Timeline:
     r"""
-    Represents a Twitter Account's Timeline and contains a list of :ref:`Twwet`s
+    Represents a Twitter Account's Timeline and contains a list of :ref:`Tweet` objects.
 
     Attributes
     ----------

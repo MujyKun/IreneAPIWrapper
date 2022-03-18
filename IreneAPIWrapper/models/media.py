@@ -145,7 +145,7 @@ class Media(AbstractModel):
     async def fetch(object_id: int, affiliation=False, person=False, group=False):
         """Fetch an updated Media object from the API.
 
-        # NOTE: Media objects are added to cache on creation.
+        .. NOTE::: Media objects are added to cache on creation.
 
         :param object_id: int
             The object ID to fetch. This can be an affiliation, person, group, or media (default) ID if specified.
@@ -183,7 +183,7 @@ class Media(AbstractModel):
     async def fetch_all():
         """Fetch all media.
 
-        # NOTE: Media objects are added to cache on creation.
+        .. NOTE::: Media objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Media, request={
             'route': 'media/',

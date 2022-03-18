@@ -15,7 +15,7 @@ class IreneAPIClient:
     token: str
         The API token provided.
     user_id: str
-        The name of the user that has access to that token.
+        The id of the user that has access to that token.
 
     """
 
@@ -90,7 +90,7 @@ class IreneAPIClient:
         """
         Add a request to the queue.
 
-        :param callback: (CallBack) The request to send to the server.
+        :param callback: :ref:`CallBack` The request to send to the server.
         """
         await self._queue.put(callback)
 
@@ -115,7 +115,7 @@ class IreneAPIClient:
         """
         Preload the cache based on client preferences.
 
-        # NOTE: If an object is dependent on another object, it will create the other object.
+        .. NOTE::: If an object is dependent on another object, it will create the other object.
         """
         loop = asyncio.get_event_loop()
         for category_class, load_cache in self.__cache_preload.items():

@@ -132,7 +132,7 @@ class GroupAlias(Alias):
     async def fetch(group_alias_id: int):
         """Fetch an updated GroupAlias object from the API.
 
-        # NOTE: GroupAlias objects are added to cache on creation.
+        .. NOTE::: GroupAlias objects are added to cache on creation.
 
         :param group_alias_id: int
             The group alias's ID to fetch.
@@ -148,7 +148,7 @@ class GroupAlias(Alias):
     async def fetch_all():
         """Fetch all group aliases.
 
-        # NOTE: GroupAlias objects are added to cache on creation.
+        .. NOTE::: GroupAlias objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=GroupAlias, request={
             'route': 'groupalias/',

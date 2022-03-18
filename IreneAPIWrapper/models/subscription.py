@@ -13,7 +13,6 @@ class Subscription:
         .. describe:: x != y
             Checks if two service accounts do not have the same ID.
 
-
     Parameters
     ----------
     account_id: int
@@ -21,7 +20,7 @@ class Subscription:
     account_name: str
         The account's name.
     followed: Optional[List[:ref:`Channel`]]
-        The :ref:`Channel`s following the service account.
+        The :ref:`Channel` objects following the service account.
 
     Attributes
     ----------
@@ -30,12 +29,12 @@ class Subscription:
     name: str
         The account's name.
     _followed: List[:ref:`Channel`]
-        The list of :ref:`Channel`s followed to the service account.
+        The list of :ref:`Channel` objects followed to the service account.
     _mention_roles: Dict[:ref:`Channel`, int]
         :ref:`Channel` objects associated with role ids to mention on updates.
     _route: Unknown
         Unknown what this attribute is used for. Will find out eventually.
-        May have been in the early stages of the API where a REST routes were planned to be used instead of a Websocket.
+        May have been in the early stages of the API where REST routes were planned to be used instead of a Websocket.
 
     """
     def __init__(self, account_id: int, account_name: str, followed: Optional[List[Channel]] = None):

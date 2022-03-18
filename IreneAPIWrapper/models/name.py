@@ -109,7 +109,7 @@ class Name(AbstractModel):
     async def fetch(name_id: int):
         """Fetch an updated Name object from the API.
 
-        # NOTE: Name objects are added to cache on creation.
+        .. NOTE::: Name objects are added to cache on creation.
 
         :param name_id: int
             The name's ID to fetch.
@@ -125,7 +125,7 @@ class Name(AbstractModel):
     async def fetch_all():
         """Fetch all names.
 
-        # NOTE: Name objects are added to cache on creation.
+        .. NOTE::: Name objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Name, request={
             'route': 'name/',

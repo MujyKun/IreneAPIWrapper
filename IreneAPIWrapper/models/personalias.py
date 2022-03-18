@@ -134,7 +134,7 @@ class PersonAlias(Alias):
     async def fetch(person_alias_id: int):
         """Fetch an updated PersonAlias object from the API.
 
-        # NOTE: PersonAlias objects are added to cache on creation.
+        .. NOTE::: PersonAlias objects are added to cache on creation.
 
         :param person_alias_id: int
             The person alias's ID to fetch.
@@ -151,7 +151,7 @@ class PersonAlias(Alias):
     async def fetch_all():
         """Fetch all person aliases.
 
-        # NOTE: PersonAlias objects are added to cache on creation.
+        .. NOTE::: PersonAlias objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=PersonAlias, request={
             'route': 'personalias/',

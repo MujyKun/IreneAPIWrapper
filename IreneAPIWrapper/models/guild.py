@@ -346,7 +346,7 @@ class Guild(AbstractModel):
     async def fetch(guild_id: int):
         """Fetch an updated Guild object from the API.
 
-        # NOTE: Guild objects are added to cache on creation.
+        .. NOTE::: Guild objects are added to cache on creation.
 
         :param guild_id: int
             The guild's ID to fetch.

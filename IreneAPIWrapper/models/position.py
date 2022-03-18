@@ -97,7 +97,7 @@ class Position(AbstractModel):
     async def fetch(position_id: int):
         """Fetch an updated Position object from the API.
 
-        # NOTE: Position objects are added to cache on creation.
+        .. NOTE::: Position objects are added to cache on creation.
 
         :param position_id: int
             The position's ID to fetch.
@@ -113,7 +113,7 @@ class Position(AbstractModel):
     async def fetch_all():
         """Fetch all positions.
 
-        # NOTE: Position objects are added to cache on creation.
+        .. NOTE::: Position objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Position, request={
             'route': 'position/',

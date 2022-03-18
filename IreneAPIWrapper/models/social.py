@@ -170,7 +170,7 @@ class Social(AbstractModel):
     async def fetch(social_id: int):
         """Fetch an updated Social object from the API.
 
-        # NOTE: Social objects are added to cache on creation.
+        .. NOTE::: Social objects are added to cache on creation.
 
         :param social_id: int
             The social's ID to fetch.
@@ -186,7 +186,7 @@ class Social(AbstractModel):
     async def fetch_all():
         """Fetch all socials.
 
-        # NOTE: Social objects are added to cache on creation.
+        .. NOTE::: Social objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Social, request={
             'route': 'social/',

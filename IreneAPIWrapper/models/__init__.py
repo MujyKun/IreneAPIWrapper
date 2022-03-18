@@ -3,7 +3,7 @@ from .timeline import Timeline
 from .access import Access, GOD, OWNER, DEVELOPER, SUPER_PATRON, FRIEND, USER
 from .callback import CallBack, callbacks
 from .base import internal_fetch_all, internal_fetch, internal_delete, internal_insert, AbstractModel, MediaSource, \
-    Alias
+    Alias, File
 from .date import Date
 from .tag import Tag
 from .groupalias import GroupAlias

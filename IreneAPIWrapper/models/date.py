@@ -88,7 +88,7 @@ class Date(AbstractModel):
     async def fetch(date_id: int):
         """Fetch an updated Date object from the API.
 
-        # NOTE: Date objects are added to cache on creation.
+        .. NOTE::: Date objects are added to cache on creation.
 
         :param date_id: int
             The date's ID to fetch.
@@ -110,7 +110,7 @@ class Date(AbstractModel):
     async def fetch_all():
         """Fetch all dates.
 
-        # NOTE: Date objects are added to cache on creation.
+        .. NOTE::: Date objects are added to cache on creation.
         """
         callback = CallBack(request={
             'route': 'date/',

@@ -247,7 +247,7 @@ class User(AbstractModel):
         """Fetch an updated User object from the API.
 
         If the user is not in the DB, it will add it.
-        # NOTE: User objects are added to cache on creation.
+        .. NOTE:: User objects are added to cache on creation.
 
         :param user_id: int
             The user's ID to fetch.
@@ -262,7 +262,7 @@ class User(AbstractModel):
     async def fetch_all():
         """Fetch all users.
 
-        # NOTE: User objects are added to cache on creation.
+        .. NOTE:: User objects are added to cache on creation.
         """
         return await internal_fetch_all(User, request={
             'route': 'user/',

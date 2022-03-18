@@ -193,7 +193,7 @@ class Group(AbstractModel):
     async def fetch(group_id: int):
         """Fetch an updated Group object from the API.
 
-        # NOTE: Group objects are added to cache on creation.
+        .. NOTE::: Group objects are added to cache on creation.
 
         :param group_id: int
             The group's ID to fetch.
@@ -209,7 +209,7 @@ class Group(AbstractModel):
     async def fetch_all():
         """Fetch all groups.
 
-        # NOTE: Group objects are added to cache on creation.
+        .. NOTE::: Group objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Group, request={
             'route': 'group/',

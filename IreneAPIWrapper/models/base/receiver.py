@@ -8,7 +8,9 @@ from . import AbstractModel
 async def internal_fetch(obj: AbstractModel, request: dict) -> AbstractModel:
     """Fetch an updated concrete object from the API.
 
-    # NOTE: Concrete objects are added to cache on creation.
+    .. note::
+        Concrete objects are added to cache on creation.
+
     :param obj: :ref:`AbstractModel`
         An abstract model.
     :param request: dict
@@ -25,7 +27,8 @@ async def internal_fetch_all(obj: AbstractModel, request: dict) -> List[Abstract
     """
     Fetch all known instances of the concrete object from the API.
 
-    # NOTE: Concrete objects are added to cache on creation.
+    .. NOTE:: Concrete objects are added to cache on creation.
+
     :param obj: :ref:`AbstractModel`
         An abstract model.
     :param request: dict
@@ -46,14 +49,14 @@ async def internal_delete(obj: AbstractModel, request: dict) -> CallBack:
     """
     Delete the known instance of the concrete object from the API.
 
-    # NOTE: This is a permanent deletion from the database. Concrete objects are removed from cache on deletion.
+    .. Warning::
+        This is a permanent deletion from the database. Concrete objects are removed from cache on deletion.
 
-    :param obj: :ref:`AbstractModel
+    :param obj: :ref:`AbstractModel`
         An abstract model.
     :param request: dict
-        The request to pass into a Callback.
-    :return: :ref:`CallBack`
-        Returns a :ref:`CallBack` object.
+        The request to pass into a :ref:`CallBack`.
+    :returns: :ref:`CallBack`
     """
     callback = CallBack(request=request)
     await outer.client.add_and_wait(callback)

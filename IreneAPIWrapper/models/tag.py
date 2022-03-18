@@ -94,7 +94,7 @@ class Tag(AbstractModel):
     async def fetch(tag_id: int):
         """Fetch an updated Tag object from the API.
 
-        # NOTE: Tag objects are added to cache on creation.
+        .. NOTE::: Tag objects are added to cache on creation.
 
         :param tag_id: int
             The tag's ID to fetch.
@@ -108,7 +108,7 @@ class Tag(AbstractModel):
     async def fetch_all():
         """Fetch all tags.
 
-        # NOTE: Tag objects are added to cache on creation.
+        .. NOTE::: Tag objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Tag, request={
             'route': 'tag/',

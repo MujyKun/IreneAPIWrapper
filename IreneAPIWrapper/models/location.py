@@ -104,7 +104,7 @@ class Location(AbstractModel):
     async def fetch(location_id: int):
         """Fetch an updated Location object from the API.
 
-        # NOTE: Location objects are added to cache on creation.
+        .. NOTE::: Location objects are added to cache on creation.
 
         :param location_id: int
             The location's ID to fetch.
@@ -119,7 +119,7 @@ class Location(AbstractModel):
     async def fetch_all():
         """Fetch all locations.
 
-        # NOTE: Location objects are added to cache on creation.
+        .. NOTE::: Location objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Location, request={
             'route': 'location/',

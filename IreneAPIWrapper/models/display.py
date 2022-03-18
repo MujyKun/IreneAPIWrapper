@@ -99,7 +99,7 @@ class Display(AbstractModel):
     async def fetch(display_id: int):
         """Fetch an updated Display object from the API.
 
-        # NOTE: Display objects are added to cache on creation.
+        .. NOTE::: Display objects are added to cache on creation.
 
         :param display_id: int
             The display's ID to fetch.
@@ -116,7 +116,7 @@ class Display(AbstractModel):
     async def fetch_all():
         """Fetch all displays.
 
-        # NOTE: Display objects are added to cache on creation.
+        .. NOTE::: Display objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Display, request={
             'route': 'display/',

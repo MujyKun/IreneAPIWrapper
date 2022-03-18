@@ -39,7 +39,7 @@ class Channel(AbstractModel):
         """
         Delete a Channel object from the database and remove it from cache.
 
-        WARNING: This will cascade all objects dependent on the object.
+        .. Warning:: This will cascade all objects dependent on the object.
 
         :return: None
         """
@@ -95,7 +95,7 @@ class Channel(AbstractModel):
         """
         Fetch an updated channel object from the API.
 
-        # NOTE: channel objects are added to cache on creation.
+        .. NOTE::: channel objects are added to cache on creation.
 
         :param channel_id: int
             The channel ID to fetch.
@@ -112,7 +112,7 @@ class Channel(AbstractModel):
     async def fetch_all():
         """Fetch all Channels.
 
-        # NOTE: Channel objects are added to cache on creation.
+        .. NOTE:: Channel objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Channel, request={
             'route': 'channel',

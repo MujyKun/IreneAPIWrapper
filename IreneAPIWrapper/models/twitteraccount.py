@@ -18,7 +18,7 @@ class TwitterAccount(Subscription):
     account_name: str
         The account's username.
     followed: Optional[List[:ref:`Channel`]]
-        List of :ref:`Channel`s that are following the Twitter Account.
+        List of :ref:`Channel` objects that are following the Twitter Account.
 
     Attributes
     ----------

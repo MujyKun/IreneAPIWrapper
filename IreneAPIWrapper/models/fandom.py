@@ -101,7 +101,7 @@ class Fandom(AbstractModel):
     async def fetch(group_id: int):
         """Fetch an updated Fandom object from the API.
 
-        # NOTE: Fandom objects are added to cache on creation.
+        .. NOTE::: Fandom objects are added to cache on creation.
 
         :param group_id: int
             The group's ID to fetch a fandom for.
@@ -117,7 +117,7 @@ class Fandom(AbstractModel):
     async def fetch_all():
         """Fetch all fandoms.
 
-        # NOTE: Fandom objects are added to cache on creation.
+        .. NOTE::: Fandom objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Fandom, request={
             'route': 'fandom/',

@@ -77,7 +77,7 @@ class Person(AbstractModel):
     aliases: List[:ref:`PersonAlias`]
         The aliases associated with the person.
     affiliations: List[:ref:`Affiliation`]
-        The :ref:`Affiliation`s between the person and the :ref:`Group`s they are in.
+        A list of :ref:`Affiliation` objects between the :ref:`Person` and the :ref:`Group` objects they are in.
     """
     def __init__(self, person_id, date, name, former_name, display, social, location, blood_type, gender,
                  description, height, call_count, tags, aliases):
@@ -238,7 +238,7 @@ class Person(AbstractModel):
     async def fetch(person_id: int):
         """Fetch an updated Person object from the API.
 
-        # NOTE: Person objects are added to cache on creation.
+        .. NOTE::: Person objects are added to cache on creation.
 
         :param person_id: int
             The person's ID to fetch.
@@ -254,7 +254,7 @@ class Person(AbstractModel):
     async def fetch_all():
         """Fetch all persons.
 
-        # NOTE: Person objects are added to cache on creation.
+        .. NOTE::: Person objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Person, request={
             'route': 'person/',

@@ -110,7 +110,7 @@ class Company(AbstractModel):
     async def fetch(company_id: int):
         """Fetch an updated Company object from the API.
 
-        # NOTE: Company objects are added to cache on creation.
+        .. NOTE::: Company objects are added to cache on creation.
 
         :param company_id: int
             The company's ID to fetch.
@@ -127,7 +127,7 @@ class Company(AbstractModel):
     async def fetch_all():
         """Fetch all companies.
 
-        # NOTE: Company objects are added to cache on creation.
+        .. NOTE::: Company objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=Company, request={
             'route': 'company/',

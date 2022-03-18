@@ -13,7 +13,7 @@ class BloodType(AbstractModel):
     While it may be possible to delete/remove blood types from the API, it will not be possible in this wrapper
     to avoid unnecessary changes.
 
-    Possible Blood Types (if not already known):
+    .. Note:: Possible Blood Types:
         O-
         O+
         A-
@@ -68,7 +68,7 @@ class BloodType(AbstractModel):
     async def fetch(blood_id: int):
         """Fetch an updated BloodType object from the API.
 
-        # NOTE: BloodType objects are added to cache on creation.
+        .. NOTE:: BloodType objects are added to cache on creation.
 
         :param blood_id: int
             The blood's ID to fetch.
@@ -85,7 +85,7 @@ class BloodType(AbstractModel):
     async def fetch_all():
         """Fetch all blood types.
 
-        # NOTE: BloodType objects are added to cache on creation.
+        .. NOTE:: BloodType objects are added to cache on creation.
         """
         return await internal_fetch_all(obj=BloodType, request={
             'route': 'bloodtype/',
