@@ -10,16 +10,72 @@ class IreneAPIClient:
     r"""
     Asynchronous IreneAPI Client connected by a websocket.
 
+    .. Warning::
+        It is suggested to only create ONE client per application. The wrapper externally
+        references the latest client created. If it is several clients that are routing to the same API,
+        then it is okay as the same requests will be sent; otherwise, it can lead to conflicts between databases.
+
+    Attributes
+    ----------
+    token: str
+    user_id: Union[int, str]
+    api_url: str
+        Defaults to localhost. Websocket URL is expected to be ws://{api_url}:{port}/ws.
+    port: int
+        The api port.
+    load_all_tags: bool
+        Whether to preload all cache for tags.
+    load_all_person_aliases: bool
+        Whether to preload all cache for person_aliases.
+    load_all_group_aliases: bool
+        Whether to preload all cache for group_aliases.
+    load_all_persons: bool
+        Whether to preload all cache for persons.
+    load_all_groups: bool
+        Whether to preload all cache for groups.
+    load_all_twitter_accounts: bool
+        Whether to preload all cache for twitter_accounts.
+    load_all_users: bool
+        Whether to preload all cache for users.
+    load_all_guilds: bool
+        Whether to preload all cache for guilds.
+    load_all_affiliations: bool
+        Whether to preload all cache for affiliations.
+    load_all_bloodtypes: bool
+        Whether to preload all cache for bloodtypes.
+    load_all_media: bool
+        Whether to preload all cache for media.
+    load_all_displays: bool
+        Whether to preload all cache for displays.
+    load_all_companies: bool
+        Whether to preload all cache for companies.
+    load_all_dates: bool
+        Whether to preload all cache for dates.
+    load_all_locations: bool
+        Whether to preload all cache for locations.
+    load_all_positions: bool
+        Whether to preload all cache for positions.
+    load_all_socials: bool
+        Whether to preload all cache for socials.
+    load_all_fandoms: bool
+        Whether to preload all cache for fandoms.
+    test: bool
+        Whether to go into test/dev mode. Does not currently have a significant difference.
+
     Parameters
     ----------
     token: str
         The API token provided.
     user_id: str
         The id of the user that has access to that token.
+    connected: bool
+        If there is a stable websocket connection to the API.
+    in_testing: bool
+        Whether the Client is in testing mode.
 
     """
 
-    def __init__(self, token: str, user_id: Union[int, str],
+    def __init__(self, token: str, user_id: Union[int, str], api_url="localhost", port=5454,
                  load_all_tags=True,
                  load_all_person_aliases=True,
                  load_all_group_aliases=True,
@@ -38,6 +94,7 @@ class IreneAPIClient:
                  load_all_positions=True,
                  load_all_socials=True,
                  load_all_fandoms=True,
+                 load_all_channels=False,
                  test=False):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
@@ -52,8 +109,8 @@ class IreneAPIClient:
             'user_id': user_id
         }
 
-        self._base_url = "localhost"
-        self._base_port = 5454
+        self._base_url = api_url or "localhost"
+        self._base_port = port or 5454
         self._ws_url = f"ws://{self._base_url}:{self._base_port}/ws"
         self._queue = asyncio.Queue()
         # asyncio.run_coroutine_threadsafe(self.connect, loop)
@@ -81,7 +138,8 @@ class IreneAPIClient:
             Group: load_all_groups,
             TwitterAccount: load_all_twitter_accounts,
             User: load_all_users,
-            Guild: load_all_guilds
+            Guild: load_all_guilds,
+            Channel: load_all_channels
         }
 
         self.in_testing = test

@@ -168,8 +168,8 @@ class Affiliation(AbstractModel):
         return await internal_fetch(obj=Affiliation, request={
             'route': 'affiliation/$affiliation_id',
             'affiliation_id': affiliation_id,
-            'method': 'GET'}
-                                    )
+            'method': 'GET'
+        })
 
     @staticmethod
     async def fetch_all():
@@ -179,8 +179,8 @@ class Affiliation(AbstractModel):
         """
         return await internal_fetch_all(obj=Affiliation, request={
             'route': 'affiliation',
-            'method': 'GET'}
-                                        )
+            'method': 'GET'
+        })
 
 
 _affiliations: Dict[int, Affiliation] = dict()

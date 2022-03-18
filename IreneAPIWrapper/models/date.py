@@ -68,10 +68,27 @@ class Date(AbstractModel):
         _dates.pop(self.id)
 
     @staticmethod
+    async def insert(start_date, end_date=None) -> None:
+        """
+        Insert a new date into the database.
+
+        :param start_date: The start date.
+        :param end_date: The end date if there is one.
+        :returns: None
+        """
+        await internal_insert(request={
+            'route': 'date',
+            'start_date': start_date,
+            'end_date': end_date,
+            'method': 'POST'
+        })
+
+    @staticmethod
     async def get(date_id: int, fetch=True):
         """Get a Date object.
 
         If the Date object does not exist in cache, it will fetch the date from the API.
+
         :param date_id: int
             The ID of the date to get/fetch.
         :param fetch: bool
@@ -95,16 +112,11 @@ class Date(AbstractModel):
         :returns: Optional[:ref:`Date`]
             The date object requested.
         """
-
-        callback = CallBack(request={
+        return await internal_fetch(Date, request={
             'route': 'date/$date_id',
             'date_id': date_id,
-            'method': 'GET'}
-        )
-
-        await outer.client.add_and_wait(callback)
-
-        return Date(**callback.response["results"])
+            'method': 'GET'
+        })
 
     @staticmethod
     async def fetch_all():
@@ -112,17 +124,10 @@ class Date(AbstractModel):
 
         .. NOTE::: Date objects are added to cache on creation.
         """
-        callback = CallBack(request={
+        return await internal_fetch_all(obj=Date, request={
             'route': 'date/',
-            'method': 'GET'}
-        )
-
-        await outer.client.add_and_wait(callback)
-
-        if not callback.response["results"]:
-            return []
-
-        return [Date(**info) for info in callback.response["results"].values()]
+            'method': 'GET'
+        })
 
 
 _dates: Dict[int, Date] = dict()
