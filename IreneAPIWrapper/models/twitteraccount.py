@@ -1,25 +1,42 @@
 from typing import Optional, List, Dict
 
-from . import Subscription, Channel, Timeline, CallBack
+from . import Subscription, Channel, Timeline, CallBack, Tweet
 from IreneAPIWrapper.sections import outer
 BASE_URL = "https://twitter.com"
 
 
 class TwitterAccount(Subscription):
+    """
+    Represents a Twitter Account.
+
+    A TwitterAccount object inherits from :ref:`Subscription`.
+
+    Parameters
+    ----------
+    account_id: int
+        The Twitter Account's ID.
+    account_name: str
+        The account's username.
+    followed: Optional[List[:ref:`Channel`]]
+        List of :ref:`Channel`s that are following the Twitter Account.
+
+    Attributes
+    ----------
+    id: int
+        Account ID.
+    name: str
+        The account's name.
+    latest_tweet: Optional[:ref:`Tweet`]
+        The latest tweet on the Twitter Account.
+    """
     def __init__(self, account_id: int, account_name: str, followed: Optional[List[Channel]] = None):
-        """
-        Represents a Twitter Account.
-        :param account_name: username of the Twitter Channel (The channel username)
-        :param followed: List of discord channels that are following the Twitter channel.
-        """
         super().__init__(account_id, account_name, followed)
 
-        # If the latest content is None, we will just override it and not consider the first fetch as a new tweet.
-        self.latest_tweet = None
+        # If the latest tweet does not exist, the first fetch will never be considered a new tweet.
+        self.latest_tweet: Optional[Tweet] = None
 
     async def fetch_timeline(self) -> Timeline:
         """Fetch the latest tweets for this account from Twitter"""
-        # TODO: make api request
         callback = CallBack(request={
             'route': 'twitter/timeline/$twitter_id',
             'twitter_id': self.id,
@@ -35,7 +52,7 @@ class TwitterAccount(Subscription):
         Fetch all subscription information for all accounts.
 
         This returns the exact API Callback. This may only be useful internally.
-        :return:
+        :returns: :ref:`CallBack`
         """
         callback = CallBack(request={
             'route': 'twitter/subscriptions',
@@ -50,7 +67,8 @@ class TwitterAccount(Subscription):
         """
         Fetch a dict of all Twitter accounts and subscriptions in the database.
 
-        :return: (Dict[int, TwitterAccount]) A dictionary of TwitterAccount objects with the ID as the key.
+        :return: Dict[int, :ref:`TwitterAccount`]
+            A dictionary of TwitterAccount objects with the ID as the key.
         """
 
         callback = CallBack(request={
@@ -89,7 +107,8 @@ class TwitterAccount(Subscription):
         """
         Have a channel unsubscribe from the account if it is not already.
 
-        :param channel: (Channel) The channel to unsubscribe from the account.
+        :param channel: :ref:`Channel`
+            The channel to unsubscribe from the account.
         """
         if channel not in self:
             return
@@ -103,8 +122,6 @@ class TwitterAccount(Subscription):
 
         await outer.client.add_and_wait(callback)
         self._remove_from_cache(channel)
-
-        ...
 
     async def subscribe(self, channel: Channel, role_id=None):
         """

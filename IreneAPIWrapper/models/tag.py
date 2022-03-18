@@ -1,29 +1,89 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all
+from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, internal_insert, internal_delete
 
 
 class Tag(AbstractModel):
+    r"""Represents a tag that describes an entity.
+
+    A Tag object inherits from :ref:`AbstractModel`.
+
+    Parameters
+    ----------
+    tag_id: int
+        The Tag's id.
+    name: str
+        The tag's name.
+
+    Attributes
+    ----------
+    id: int
+        The Tag id.
+    name: str
+        The tag name.
+    """
     def __init__(self, tag_id, name, *args, **kwargs):
-        super(Tag, self).__init__()
-        self.id = tag_id
+        super(Tag, self).__init__(tag_id)
         self.name = name
         _tags[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
+        """
+        Create a Tag object.
+
+        :returns: :ref:`Tag`
+        """
         tag_id = kwargs.get('tagid')
         name = kwargs.get('name')
         return Tag(tag_id, name)
 
+    async def delete(self) -> None:
+        """
+        Delete the Tag object from the database and remove it from cache.
+
+        :returns: None
+        """
+        await internal_delete(self, request={
+            'route': 'tag/$tag_id',
+            'tag_id': self.id,
+            'method': 'DELETE'
+        })
+        await self._remove_from_cache()
+
+    @staticmethod
+    async def insert(tag_name) -> None:
+        """
+        Insert a new Tag into the database.
+
+        :param tag_name:
+        :returns: None
+        """
+        await internal_insert(request={
+            'route': 'tag',
+            'name': tag_name,
+            'method': 'POST'
+        })
+
+    async def _remove_from_cache(self) -> None:
+        """
+        Remove the Tag object from cache.
+
+        :returns: None
+        """
+        _tags.pop(self.id)
+
     @staticmethod
     async def get(tag_id: int, fetch=True):
-        """Get a Tag object.
+        """
+        Get a Tag object.
 
         If the Tag object does not exist in cache, it will fetch the tag from the API.
-        :param tag_id: (int) The ID of the tag to get/fetch.
-        :param fetch: (bool) Whether to fetch from the API if not found in cache.
+        :param tag_id: int
+            The ID of the tag to get/fetch.
+        :param fetch: bool
+            Whether to fetch from the API if not found in cache.
         """
         existing = _tags.get(tag_id)
         if not existing and fetch:
@@ -36,7 +96,8 @@ class Tag(AbstractModel):
 
         # NOTE: Tag objects are added to cache on creation.
 
-        :param tag_id: (int) The tag's ID to fetch.
+        :param tag_id: int
+            The tag's ID to fetch.
         """
         return await internal_fetch(obj=Tag, request={
             'route': 'tag/$tag_id',
