@@ -17,12 +17,12 @@ Due to very annoying issues, we will just reroute Sphinx to install the local di
 to spend any more time on.
 
 In order to do this, we will have another requirements file, but inside the docs folder that will install
-the UCube package.
-
+the IreneAPIWrapper package.
+"""
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../IreneAPIWrapper'))
-"""
+sys.path.insert(0, os.path.abspath('../'))
+
 
 # -- Project information -----------------------------------------------------
 
