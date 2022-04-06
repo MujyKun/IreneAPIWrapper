@@ -36,6 +36,9 @@ class Name(AbstractModel):
         self.last: str = last
         _names[self.id] = self
 
+    def __str__(self):
+        return f"{self.first} {self.last}"
+
     @staticmethod
     async def create(*args, **kwargs):
         """
