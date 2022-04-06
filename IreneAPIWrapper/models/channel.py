@@ -91,6 +91,16 @@ class Channel(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Channel objects in cache.
+
+        :returns: dict_values[:ref:`Channel`]
+            All Channel objects from cache.
+        """
+        return _channels.values()
+
+    @staticmethod
     async def fetch(channel_id):
         """
         Fetch an updated channel object from the API.

@@ -243,6 +243,16 @@ class User(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all User objects in cache.
+
+        :returns: dict_values[:ref:`User`]
+            All User objects from cache.
+        """
+        return _users.values()
+
+    @staticmethod
     async def fetch(user_id: int):
         """Fetch an updated User object from the API.
 

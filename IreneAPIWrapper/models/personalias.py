@@ -131,6 +131,16 @@ class PersonAlias(Alias):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all PersonAlias objects in cache.
+
+        :returns: dict_values[:ref:`PersonAlias`]
+            All PersonAlias objects from cache.
+        """
+        return _personaliases.values()
+
+    @staticmethod
     async def fetch(person_alias_id: int):
         """Fetch an updated PersonAlias object from the API.
 

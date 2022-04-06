@@ -142,6 +142,16 @@ class Media(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Media objects in cache.
+
+        :returns: dict_values[:ref:`Media`]
+            All Media objects from cache.
+        """
+        return _media.values()
+
+    @staticmethod
     async def fetch(object_id: int, affiliation=False, person=False, group=False):
         """Fetch an updated Media object from the API.
 

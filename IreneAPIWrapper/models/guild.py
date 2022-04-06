@@ -343,6 +343,16 @@ class Guild(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Guild objects in cache.
+
+        :returns: dict_values[:ref:`Guild`]
+            All Guild objects from cache.
+        """
+        return _guilds.values()
+
+    @staticmethod
     async def fetch(guild_id: int):
         """Fetch an updated Guild object from the API.
 

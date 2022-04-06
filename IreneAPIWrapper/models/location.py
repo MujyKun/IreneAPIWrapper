@@ -101,6 +101,16 @@ class Location(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Location objects in cache.
+
+        :returns: dict_values[:ref:`Location`]
+            All Location objects from cache.
+        """
+        return _locations.values()
+
+    @staticmethod
     async def fetch(location_id: int):
         """Fetch an updated Location object from the API.
 

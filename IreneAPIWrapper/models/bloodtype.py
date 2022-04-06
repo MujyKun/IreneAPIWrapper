@@ -65,6 +65,16 @@ class BloodType(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all BloodType objects in cache.
+
+        :returns: dict_values[:ref:`BloodType`]
+            All BloodType objects from cache.
+        """
+        return _blood_types.values()
+
+    @staticmethod
     async def fetch(blood_id: int):
         """Fetch an updated BloodType object from the API.
 

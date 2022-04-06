@@ -102,6 +102,16 @@ class Date(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Date objects in cache.
+
+        :returns: dict_values[:ref:`Date`]
+            All Date objects from cache.
+        """
+        return _dates.values()
+
+    @staticmethod
     async def fetch(date_id: int):
         """Fetch an updated Date object from the API.
 

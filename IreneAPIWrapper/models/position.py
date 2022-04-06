@@ -94,6 +94,16 @@ class Position(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Position objects in cache.
+
+        :returns: dict_values[:ref:`Position`]
+            All Position objects from cache.
+        """
+        return _positions.values()
+
+    @staticmethod
     async def fetch(position_id: int):
         """Fetch an updated Position object from the API.
 

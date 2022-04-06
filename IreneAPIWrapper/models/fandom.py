@@ -98,6 +98,16 @@ class Fandom(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Fandom objects in cache.
+
+        :returns: dict_values[:ref:`Fandom`]
+            All Fandom objects from cache.
+        """
+        return _fandoms.values()
+
+    @staticmethod
     async def fetch(group_id: int):
         """Fetch an updated Fandom object from the API.
 

@@ -107,6 +107,16 @@ class Company(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Company objects in cache.
+
+        :returns: dict_values[:ref:`Company`]
+            All Company objects from cache.
+        """
+        return _companies.values()
+
+    @staticmethod
     async def fetch(company_id: int):
         """Fetch an updated Company object from the API.
 

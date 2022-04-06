@@ -155,6 +155,16 @@ class Affiliation(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Affiliation objects in cache.
+
+        :returns: dict_values[:ref:`Affiliation`]
+            All Affiliation objects from cache.
+        """
+        return _affiliations.values()
+
+    @staticmethod
     async def fetch(affiliation_id: int):
         """Fetch an updated affiliation object from the API.
 

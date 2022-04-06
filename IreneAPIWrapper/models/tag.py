@@ -91,6 +91,16 @@ class Tag(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Tag objects in cache.
+
+        :returns: dict_values[:ref:`Tag`]
+            All Tag objects from cache.
+        """
+        return _tags.values()
+
+    @staticmethod
     async def fetch(tag_id: int):
         """Fetch an updated Tag object from the API.
 

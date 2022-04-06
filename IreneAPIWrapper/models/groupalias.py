@@ -129,6 +129,16 @@ class GroupAlias(Alias):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all GroupAlias objects in cache.
+
+        :returns: dict_values[:ref:`GroupAlias`]
+            All GroupAlias objects from cache.
+        """
+        return _groupaliases.values()
+
+    @staticmethod
     async def fetch(group_alias_id: int):
         """Fetch an updated GroupAlias object from the API.
 

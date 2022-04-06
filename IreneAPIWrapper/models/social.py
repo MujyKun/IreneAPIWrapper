@@ -167,6 +167,16 @@ class Social(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Social objects in cache.
+
+        :returns: dict_values[:ref:`Social`]
+            All Social objects from cache.
+        """
+        return _socials.values()
+
+    @staticmethod
     async def fetch(social_id: int):
         """Fetch an updated Social object from the API.
 

@@ -106,6 +106,16 @@ class Name(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Name objects in cache.
+
+        :returns: dict_values[:ref:`Name`]
+            All Name objects from cache.
+        """
+        return _names.values()
+
+    @staticmethod
     async def fetch(name_id: int):
         """Fetch an updated Name object from the API.
 

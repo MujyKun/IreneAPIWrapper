@@ -173,6 +173,16 @@ class TwitterAccount(Subscription):
             return await TwitterAccount.fetch(username=username)
 
     @staticmethod
+    async def get_all():
+        """
+        Get all TwitterAccount objects in cache.
+
+        :returns: dict_values[:ref:`TwitterAccount`]
+            All TwitterAccount objects from cache.
+        """
+        return _twitter_accounts.values()
+
+    @staticmethod
     async def fetch(username) -> Optional[Subscription]:
         """
         Fetch a TwitterAccount instance directly from the API.

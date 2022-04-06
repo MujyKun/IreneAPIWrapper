@@ -190,6 +190,16 @@ class Group(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Group objects in cache.
+
+        :returns: dict_values[:ref:`Group`]
+            All Group objects from cache.
+        """
+        return _groups.values()
+
+    @staticmethod
     async def fetch(group_id: int):
         """Fetch an updated Group object from the API.
 

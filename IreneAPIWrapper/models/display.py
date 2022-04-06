@@ -96,6 +96,16 @@ class Display(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_all():
+        """
+        Get all Display objects in cache.
+
+        :returns: dict_values[:ref:`Display`]
+            All Display objects from cache.
+        """
+        return _displays.values()
+
+    @staticmethod
     async def fetch(display_id: int):
         """Fetch an updated Display object from the API.
 
