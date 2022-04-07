@@ -112,9 +112,7 @@ class Group(AbstractModel):
 
         aliases = [] if not alias_ids else [await GroupAlias.get(alias_id) for alias_id in alias_ids]
 
-        group_args = {group_id, name, date, description, company, display, website, social, tags, aliases}
-
-        return Group(*group_args)
+        return Group(group_id, name, date, description, company, display, website, social, tags, aliases)
 
     async def delete(self) -> None:
         """
