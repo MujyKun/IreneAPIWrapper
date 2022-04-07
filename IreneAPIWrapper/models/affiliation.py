@@ -67,9 +67,7 @@ class Affiliation(AbstractModel):
 
         stage_name = kwargs.get("stagename")
 
-        affiliation_args = {affiliation_id, person, group, positions, stage_name}
-
-        aff_obj = Affiliation(*affiliation_args)
+        aff_obj = Affiliation(affiliation_id, person, group, positions, stage_name)
 
         # Add the current Affiliation to the Person and Group objects.
         person.affiliations.append(aff_obj)
