@@ -71,9 +71,7 @@ class Media(AbstractModel):
         is_enabled = kwargs.get("enabled")
         is_nsfw = kwargs.get("nsfw")
 
-        media_args = {media_id, source, faces, affiliation, is_enabled, is_nsfw}
-
-        return Media(*media_args)
+        return Media(media_id, source, faces, affiliation, is_enabled, is_nsfw)
 
     async def delete(self) -> None:
         """
