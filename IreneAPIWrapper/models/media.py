@@ -140,15 +140,23 @@ class Media(AbstractModel):
         return existing
 
     @staticmethod
-    async def get_all():
+    async def get_all(affiliations: List[Affiliation] = None):
         """
         Get all Media objects in cache.
 
         :returns: dict_values[:ref:`Media`]
             All Media objects from cache.
         """
-        return _media.values()
+        if affiliations is None:
+            return _media.values()
+        else:
+            media_objs = []
+            for media in _media.values():
+                for affiliation in affiliations:
+                    if affiliation == media.affiliation:
+                        media_objs.append(media)
 
+            return media_objs
     @staticmethod
     async def fetch(object_id: int, affiliation=False, person=False, group=False):
         """Fetch an updated Media object from the API.
