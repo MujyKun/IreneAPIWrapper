@@ -45,7 +45,10 @@ class Affiliation(AbstractModel):
         self.group: Group = group
         self.positions: Optional[List[Position]] = positions
         self.stage_name: str = stage_name
-        _affiliations[self.id] = self
+
+        if not _affiliations.get(self.id):
+            # we need to make sure not to override the current object in cache.
+            _affiliations[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -73,7 +76,7 @@ class Affiliation(AbstractModel):
         person.affiliations.append(aff_obj)
         group.affiliations.append(aff_obj)
 
-        return aff_obj
+        return _affiliations[affiliation_id]
 
     async def delete(self) -> None:
         """

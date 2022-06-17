@@ -176,6 +176,7 @@ class IreneAPIClient:
         .. NOTE::: If an object is dependent on another object, it will create the other object.
         """
         loop = asyncio.get_event_loop()
+        from . import Media
         for category_class, load_cache in self.__cache_preload.items():
             asyncio.run_coroutine_threadsafe(category_class.fetch_all(), loop)
 

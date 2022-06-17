@@ -37,10 +37,11 @@ class CallBack:
     def __init__(self, callback_type: str = "request", request: dict = None):
         self.type = callback_type  # can be 'request' or 'disconnect'
         self._creation_time = datetime.now()
-        self.id = request.get('callback_id') or self._get_unused_callback_id()
-        callbacks[self.id] = self
         self.done = False
         self.request: Optional[dict] = request  # request data
+        self.id = request.get('callback_id') or self._get_unused_callback_id()
+        self.request['callback_id'] = self.id
+        callbacks[self.id] = self
         self.response: Optional[dict] = None  # data received from API
         self._completion_time = None
         self._expected_result = None  # used for testing.

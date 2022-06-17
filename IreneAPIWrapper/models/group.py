@@ -105,7 +105,7 @@ class Group(AbstractModel):
         tag_ids = kwargs.get("tagids")
         tags = [] if not tag_ids else [await Tag.get(tag_id) for tag_id in tag_ids]
 
-        alias_ids = kwargs.get("aliases")
+        alias_ids = kwargs.get("aliasids")
 
         # avoiding circular import when updating cache on GroupAlias insertions.
         from . import GroupAlias
@@ -113,6 +113,12 @@ class Group(AbstractModel):
         aliases = [] if not alias_ids else [await GroupAlias.get(alias_id) for alias_id in alias_ids]
 
         return Group(group_id, name, date, description, company, display, website, social, tags, aliases)
+
+    def __str__(self):
+        return self.name
+
+    async def get_aliases_as_strings(self) -> List:
+        return [alias.name for alias in self.aliases]
 
     async def delete(self) -> None:
         """
