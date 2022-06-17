@@ -144,6 +144,9 @@ class Person(AbstractModel):
         return Person(person_id, date, name, former_name, display, social, location, blood_type, gender,
                       description, height, call_count, tags, aliases)
 
+    def __str__(self):
+        return str(self.name)
+
     async def get_aliases_as_strings(self) -> List:
         return [alias.name for alias in self.aliases]
 

@@ -114,6 +114,9 @@ class Group(AbstractModel):
 
         return Group(group_id, name, date, description, company, display, website, social, tags, aliases)
 
+    def __str__(self):
+        return self.name
+
     async def get_aliases_as_strings(self) -> List:
         return [alias.name for alias in self.aliases]
 
