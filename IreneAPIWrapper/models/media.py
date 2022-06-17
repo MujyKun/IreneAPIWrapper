@@ -48,7 +48,8 @@ class Media(AbstractModel):
         self.is_enabled: bool = is_enabled
         self.is_nsfw: bool = is_nsfw
 
-        _media[self.id] = self
+        if not _media.get(self.id):
+            _media[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -71,7 +72,8 @@ class Media(AbstractModel):
         is_enabled = kwargs.get("enabled")
         is_nsfw = kwargs.get("nsfw")
 
-        return Media(media_id, source, faces, affiliation, is_enabled, is_nsfw)
+        Media(media_id, source, faces, affiliation, is_enabled, is_nsfw)
+        return _media[media_id]
 
     async def delete(self) -> None:
         """

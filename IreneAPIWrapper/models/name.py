@@ -34,7 +34,8 @@ class Name(AbstractModel):
         self.id = name_id
         self.first: str = first
         self.last: str = last
-        _names[self.id] = self
+        if not _names.get(self.id):
+            _names[self.id] = self
 
     def __str__(self):
         return f"{self.first} {self.last}"
@@ -50,7 +51,8 @@ class Name(AbstractModel):
         first = kwargs.get("firstname")
         last = kwargs.get("lastname")
 
-        return Name(name_id, first, last)
+        Name(name_id, first, last)
+        return _names[name_id]
 
     async def delete(self) -> None:
         """

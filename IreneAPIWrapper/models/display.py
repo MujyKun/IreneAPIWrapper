@@ -33,7 +33,8 @@ class Display(AbstractModel):
         super(Display, self).__init__(display_id)
         self.avatar: MediaSource = avatar
         self.banner: MediaSource = banner
-        _displays[self.id] = self
+        if not _displays.get(self.id):
+            _displays[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -45,7 +46,8 @@ class Display(AbstractModel):
         display_id = kwargs.get("displayid")
         avatar = MediaSource(kwargs.get("avatar"))
         banner = MediaSource(kwargs.get("banner"))
-        return Display(display_id, avatar, banner)
+        Display(display_id, avatar, banner)
+        return _displays[display_id]
 
     async def delete(self) -> None:
         """Delete the Display object from the database and remove it from cache."""

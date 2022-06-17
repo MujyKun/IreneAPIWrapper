@@ -96,7 +96,9 @@ class Person(AbstractModel):
         self.tags: List[Tag] = tags
         self.aliases: List[PersonAlias] = aliases
         self.affiliations: List[Affiliation] = []
-        _persons[self.id] = self
+
+        if not _persons.get(self.id):
+            _persons[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -141,8 +143,9 @@ class Person(AbstractModel):
         from . import PersonAlias
         aliases = [] if not alias_ids else [await PersonAlias.get(alias_id) for alias_id in alias_ids]
 
-        return Person(person_id, date, name, former_name, display, social, location, blood_type, gender,
-                      description, height, call_count, tags, aliases)
+        Person(person_id, date, name, former_name, display, social, location, blood_type, gender,
+               description, height, call_count, tags, aliases)
+        return _persons[person_id]
 
     def __str__(self):
         return str(self.name)

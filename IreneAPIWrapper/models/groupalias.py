@@ -37,7 +37,8 @@ class GroupAlias(Alias):
     def __init__(self, alias_id, alias_name, group_id, guild_id):
         super(GroupAlias, self).__init__(alias_id=alias_id, alias_name=alias_name, obj_id=group_id, guild_id=guild_id)
         self.group_id = group_id
-        _groupaliases[self.id] = self
+        if not _groupaliases.get(self.id):
+            _groupaliases[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -50,7 +51,8 @@ class GroupAlias(Alias):
         name = kwargs.get("alias")
         group_id = kwargs.get("groupid")
         guild_id = kwargs.get("guildid")
-        return GroupAlias(alias_id, name, group_id, guild_id)
+        GroupAlias(alias_id, name, group_id, guild_id)
+        return _groupaliases[alias_id]
 
     async def delete(self) -> None:
         """

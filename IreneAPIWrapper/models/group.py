@@ -74,7 +74,8 @@ class Group(AbstractModel):
         self.tags: List[Tag] = tags
         self.aliases: List[GroupAlias] = aliases
         self.affiliations: List[Affiliation] = []
-        _groups[self.id] = self
+        if not _groups.get(self.id):
+            _groups[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -112,7 +113,8 @@ class Group(AbstractModel):
 
         aliases = [] if not alias_ids else [await GroupAlias.get(alias_id) for alias_id in alias_ids]
 
-        return Group(group_id, name, date, description, company, display, website, social, tags, aliases)
+        Group(group_id, name, date, description, company, display, website, social, tags, aliases)
+        return _groups[group_id]
 
     def __str__(self):
         return self.name

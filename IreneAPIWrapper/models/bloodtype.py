@@ -33,14 +33,17 @@ class BloodType(AbstractModel):
     def __init__(self, blood_id, name):
         super(BloodType, self).__init__(blood_id)
         self.name = name
-        _blood_types[self.id] = self
+
+        if not _blood_types.get(self.id):
+            _blood_types[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
         blood_id = kwargs.get("bloodid")
         name = kwargs.get("name")
 
-        return BloodType(blood_id, name)
+        BloodType(blood_id, name)
+        return _blood_types[blood_id]
 
     async def _remove_from_cache(self):
         """Remove the blood type from cache."""

@@ -27,7 +27,8 @@ class User(AbstractModel):
         self.daily_level: int = daily_level
         self.beg_level: int = beg_level
         self.profile_level: int = profile_level
-        _users[self.id] = self
+        if not _users.get(self.id):
+            _users[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -56,9 +57,10 @@ class User(AbstractModel):
         daily_level = kwargs.get("dailylevel") or 0
         beg_level = kwargs.get("beglevel") or 0
         profile_level = kwargs.get("profilelevel") or 0
-        return User(user_id, is_patron, is_super_patron, is_banned, is_mod, is_data_mod, is_translator,
+        User(user_id, is_patron, is_super_patron, is_banned, is_mod, is_data_mod, is_translator,
                     is_proofreader, balance, xp, api_access, gg_filter_active, language, lastfm, timezone,
                     rob_level, daily_level, beg_level, profile_level)
+        return _users[user_id]
 
     async def set_patron(self, active=True):
         """

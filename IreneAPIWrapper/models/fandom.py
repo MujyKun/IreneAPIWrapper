@@ -27,7 +27,8 @@ class Fandom(AbstractModel):
     def __init__(self, group_id: int, fandom_name: str, *args, **kwargs):
         super(Fandom, self).__init__(group_id)
         self.name = fandom_name
-        _fandoms[self.id] = self
+        if not _fandoms.get(self.id):
+            _fandoms[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -39,7 +40,8 @@ class Fandom(AbstractModel):
         group_id = kwargs.get("groupid")
         fandom_name = kwargs.get("name")
 
-        return Fandom(int(group_id), fandom_name)
+        Fandom(int(group_id), fandom_name)
+        return _fandoms[int(group_id)]
 
     async def delete(self) -> None:
         """

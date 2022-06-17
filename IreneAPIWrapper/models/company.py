@@ -38,7 +38,8 @@ class Company(AbstractModel):
         self.name = name
         self.description = description
         self.date: Date = date
-        _companies[self.id] = self
+        if not _companies.get(self.id):
+            _companies[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -54,7 +55,8 @@ class Company(AbstractModel):
         date_id = kwargs.get("dateid")
         date = await Date.get(date_id)
 
-        return Company(company_id, name, description, date)
+        Company(company_id, name, description, date)
+        return _companies[company_id]
 
     async def delete(self):
         """Delete the Company object from the database and remove it from cache."""

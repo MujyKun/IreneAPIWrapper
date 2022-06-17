@@ -156,7 +156,8 @@ class Guild(AbstractModel):
         self.shard_id = shard_id
         self.create_date = create_date
         self.has_bot = has_bot
-        _guilds[self.id] = self
+        if not _guilds.get(self.id):
+            _guilds[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -191,29 +192,30 @@ class Guild(AbstractModel):
         create_date = kwargs.get("createdate")
         has_bot: bool = kwargs.get("hasbot")
 
-        return Guild(guild_id,
-                     name,
-                     emoji_count,
-                     region,
-                     afk_timeout,
-                     icon,
-                     owner_id,
-                     owner,
-                     banner,
-                     description,
-                     mfa_level,
-                     splash,
-                     nitro_level,
-                     boosts,
-                     text_channel_count,
-                     voice_channel_count,
-                     category_count,
-                     emoji_limit,
-                     member_count,
-                     role_count,
-                     shard_id,
-                     create_date,
-                     has_bot)
+        Guild(guild_id,
+                 name,
+                 emoji_count,
+                 region,
+                 afk_timeout,
+                 icon,
+                 owner_id,
+                 owner,
+                 banner,
+                 description,
+                 mfa_level,
+                 splash,
+                 nitro_level,
+                 boosts,
+                 text_channel_count,
+                 voice_channel_count,
+                 category_count,
+                 emoji_limit,
+                 member_count,
+                 role_count,
+                 shard_id,
+                 create_date,
+                 has_bot)
+        return _guilds[guild_id]
 
     async def delete(self) -> None:
         """

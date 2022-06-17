@@ -33,7 +33,8 @@ class Location(AbstractModel):
         super(Location, self).__init__(location_id)
         self.country = country
         self.city = city
-        _locations[self.id] = self
+        if not _locations.get(self.id):
+            _locations[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -46,7 +47,8 @@ class Location(AbstractModel):
         country = kwargs.get("country")
         city = kwargs.get("city")
 
-        return Location(location_id, country, city)
+        Location(location_id, country, city)
+        return _locations[location_id]
 
     async def delete(self) -> None:
         """

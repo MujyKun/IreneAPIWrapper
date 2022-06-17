@@ -37,7 +37,8 @@ class PersonAlias(Alias):
     def __init__(self, alias_id, alias_name, person_id, guild_id):
         super(PersonAlias, self).__init__(alias_id=alias_id, alias_name=alias_name, obj_id=person_id, guild_id=guild_id)
         self.person_id = person_id
-        _personaliases[self.id] = self
+        if not _personaliases.get(self.id):
+            _personaliases[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -50,7 +51,8 @@ class PersonAlias(Alias):
         name = kwargs.get("alias")
         person_id = kwargs.get("personid")
         guild_id = kwargs.get("guildid")
-        return PersonAlias(alias_id, name, person_id, guild_id)
+        PersonAlias(alias_id, name, person_id, guild_id)
+        return _personaliases[alias_id]
 
     async def delete(self) -> None:
         """

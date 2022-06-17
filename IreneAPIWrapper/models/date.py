@@ -34,7 +34,9 @@ class Date(AbstractModel):
         super(Date, self).__init__(date_id)
         self.start: str = start_date
         self.end: str = end_date
-        _dates[self.id] = self
+
+        if not _dates.get(self.id):
+            _dates[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -46,8 +48,8 @@ class Date(AbstractModel):
         date_id = kwargs.get("dateid")
         start_date = kwargs.get("startdate")
         end_date = kwargs.get("enddate")
-
-        return Date(date_id, start_date, end_date)
+        Date(date_id, start_date, end_date)
+        return _dates[date_id]
 
     async def delete(self) -> None:
         """Delete the Date object from the database and remove it from cache.

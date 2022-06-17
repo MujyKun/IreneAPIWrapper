@@ -27,7 +27,8 @@ class Position(AbstractModel):
     def __init__(self, position_id, name):
         super(Position, self).__init__(position_id)
         self.name = name
-        _positions[self.id] = self
+        if not _positions.get(self.id):
+            _positions[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -39,7 +40,8 @@ class Position(AbstractModel):
         position_id = kwargs.get("positionid")
         name = kwargs.get("name")
 
-        return Position(position_id, name)
+        Position(position_id, name)
+        return _positions[position_id]
 
     async def delete(self) -> None:
         """

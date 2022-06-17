@@ -69,11 +69,11 @@ class Social(AbstractModel):
         self.facebook = facebook
         self.tiktok = tiktok
 
-        _socials[self.id] = self
+        if not _socials.get(self.id):
+            _socials[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
-        # TODO: Create
         social_id = kwargs.get("socialid")
         twitter = kwargs.get("twitter")
         youtube = kwargs.get("youtube")
@@ -85,7 +85,8 @@ class Social(AbstractModel):
         facebook = kwargs.get("facebook")
         tiktok = kwargs.get("tiktok")
 
-        return Social(social_id, twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok)
+        Social(social_id, twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok)
+        return _socials[social_id]
 
     async def delete(self) -> None:
         """

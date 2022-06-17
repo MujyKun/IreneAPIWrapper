@@ -26,7 +26,9 @@ class Tag(AbstractModel):
     def __init__(self, tag_id, name, *args, **kwargs):
         super(Tag, self).__init__(tag_id)
         self.name = name
-        _tags[self.id] = self
+
+        if not _tags.get(self.id):
+            _tags[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -37,7 +39,8 @@ class Tag(AbstractModel):
         """
         tag_id = kwargs.get('tagid')
         name = kwargs.get('name')
-        return Tag(tag_id, name)
+        Tag(tag_id, name)
+        return _tags[tag_id]
 
     async def delete(self) -> None:
         """
