@@ -27,7 +27,6 @@ class Example:
         group.affiliations
 
 
-
         print("HERE")
 
         """
