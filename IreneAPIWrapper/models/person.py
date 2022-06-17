@@ -144,6 +144,9 @@ class Person(AbstractModel):
         return Person(person_id, date, name, former_name, display, social, location, blood_type, gender,
                       description, height, call_count, tags, aliases)
 
+    async def get_aliases_as_strings(self) -> List:
+        return [alias.name for alias in self.aliases]
+
     async def delete(self) -> None:
         """
         Delete the Person object from the database and remove it from cache.

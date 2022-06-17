@@ -114,6 +114,9 @@ class Group(AbstractModel):
 
         return Group(group_id, name, date, description, company, display, website, social, tags, aliases)
 
+    async def get_aliases_as_strings(self) -> List:
+        return [alias.name for alias in self.aliases]
+
     async def delete(self) -> None:
         """
         Delete the Group object from the database and remove it from cache.
