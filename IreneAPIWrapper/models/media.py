@@ -88,6 +88,28 @@ class Media(AbstractModel):
         Media(media_id, source, faces, affiliation, is_enabled, is_nsfw, failed, correct)
         return _media[media_id]
 
+    async def upsert_guesses(self, correct: bool):
+        """
+        Increment the guesses appropriately and update to the database after the total amount is divisible by 5.
+
+        :param correct: bool
+            Whether the user guessed correctly.
+        """
+        if correct:
+            self.correct_guesses += 1
+        else:
+            self.failed_guesses += 1
+
+        if (self.correct_guesses + self.failed_guesses) % 5 == 0:
+            callback = CallBack(request={
+                'route': 'media/$media_id',
+                'media_id': self.id,
+                'failed_guesses': self.failed_guesses,
+                'correct_guesses': self.correct_guesses,
+                'method': 'POST'
+            })
+            await outer.client.add_and_wait(callback)
+
     async def delete(self) -> None:
         """
         Delete the Media object from the database and remove it from cache.
