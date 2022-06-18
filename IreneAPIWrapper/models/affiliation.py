@@ -70,11 +70,17 @@ class Affiliation(AbstractModel):
 
         stage_name = kwargs.get("stagename")
 
-        aff_obj = Affiliation(affiliation_id, person, group, positions, stage_name)
+        Affiliation(affiliation_id, person, group, positions, stage_name)
 
         # Add the current Affiliation to the Person and Group objects.
-        person.affiliations.append(aff_obj)
-        group.affiliations.append(aff_obj)
+        obj_in_cache = _affiliations[affiliation_id]
+        if obj_in_cache in person.affiliations:
+            person.affiliations.remove(obj_in_cache)
+        if obj_in_cache in group.affiliations:
+            group.affiliations.remove(obj_in_cache)
+
+        person.affiliations.append(obj_in_cache)
+        group.affiliations.append(obj_in_cache)
 
         return _affiliations[affiliation_id]
 
