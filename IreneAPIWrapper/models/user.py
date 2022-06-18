@@ -93,6 +93,16 @@ class User(AbstractModel):
         await outer.client.add_and_wait(callback)
         self.api_access = access
 
+    async def toggle_gg_filter(self):
+        self.gg_filter_active = not self.gg_filter_active
+        callback = CallBack(request={
+            'route': 'user/toggleggfilter/$user_id',
+            'user_id': self.id,
+            'active': self.gg_filter_active,
+            'method': 'POST'
+        })
+        await outer.client.add_and_wait(callback)
+
     async def delete_token(self):
         """
         Delete the user's current API token if they have one.
