@@ -9,9 +9,10 @@ class InvalidToken(Exception):
 
 class APIError(Exception):
     """An Exception Raised When the API returned an error."""
-    def __init__(self, callback: CallBack):
+    def __init__(self, callback: CallBack, error_msg=None):
         self.callback = callback
-        super(APIError, self).__init__(f"IreneAPI has returned back an error for Callback ID: {self.callback.id}.")
+        super(APIError, self).__init__(f"IreneAPI has returned back an error for Callback ID: {self.callback.id}.\n "
+                                       f"Error Message: {error_msg}")
 
 
 class Empty(Exception):

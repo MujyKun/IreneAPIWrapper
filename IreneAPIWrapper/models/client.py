@@ -161,11 +161,11 @@ class IreneAPIClient:
         await self.add_to_queue(callback)
         await callback.wait_for_completion()
         if callback.response.get("error"):
-            raise APIError(callback)
+            raise APIError(callback, error_msg=callback.response.get("error"))
 
         try:
             error = callback.response["results"]["error"]  # forcing a KeyError (if raised, is a success)
-            raise APIError(callback)
+            raise APIError(callback, error_msg=error)
         except KeyError:
             pass    
 
