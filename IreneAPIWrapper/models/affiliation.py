@@ -72,13 +72,15 @@ class Affiliation(AbstractModel):
 
         Affiliation(affiliation_id, person, group, positions, stage_name)
 
-        # Add the current Affiliation to the Person and Group objects.
+        # This is a hacky method. The affiliation lists are checked for objects with the same ID and will remove them.
+        # Then we add the new cached object.
         obj_in_cache = _affiliations[affiliation_id]
         if obj_in_cache in person.affiliations:
             person.affiliations.remove(obj_in_cache)
         if obj_in_cache in group.affiliations:
             group.affiliations.remove(obj_in_cache)
 
+        # Add the current Affiliation to the Person and Group objects.
         person.affiliations.append(obj_in_cache)
         group.affiliations.append(obj_in_cache)
 

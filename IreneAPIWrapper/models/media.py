@@ -40,16 +40,26 @@ class Media(AbstractModel):
     is_nsfw: bool
         If the media may contain explicit content.
     """
-    def __init__(self, media_id, source, faces, affiliation, is_enabled, is_nsfw):
+    def __init__(self, media_id, source, faces, affiliation, is_enabled, is_nsfw, failed=0, correct=0):
         super(Media, self).__init__(media_id)
         self.source: MediaSource = source
         self.faces: int = faces
         self.affiliation: Affiliation = affiliation
         self.is_enabled: bool = is_enabled
         self.is_nsfw: bool = is_nsfw
+        self.failed_guesses = failed
+        self.correct_guesses = correct
 
         if not _media.get(self.id):
             _media[self.id] = self
+
+    @property
+    def difficulty(self):
+        """Get the difficulty (ratio) of the media."""
+        if not self.failed_guesses and not self.correct_guesses:
+            return 0
+
+        return self.correct_guesses / (self.correct_guesses + self.failed_guesses)
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -69,10 +79,13 @@ class Media(AbstractModel):
         affiliation_id = kwargs.get("affiliationid")
         affiliation: Affiliation = await Affiliation.get(affiliation_id)
 
+        failed = kwargs.get("failed") or 0
+        correct = kwargs.get("correct") or 0
+
         is_enabled = kwargs.get("enabled")
         is_nsfw = kwargs.get("nsfw")
 
-        Media(media_id, source, faces, affiliation, is_enabled, is_nsfw)
+        Media(media_id, source, faces, affiliation, is_enabled, is_nsfw, failed, correct)
         return _media[media_id]
 
     async def delete(self) -> None:
