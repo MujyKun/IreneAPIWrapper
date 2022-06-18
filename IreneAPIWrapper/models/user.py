@@ -1,4 +1,4 @@
-from typing import Union, List, Optional, Dict
+from typing import Union, List, Optional, Dict, Tuple
 
 from IreneAPIWrapper.sections import outer
 from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, internal_insert, internal_delete
@@ -7,7 +7,7 @@ from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_al
 class User(AbstractModel):
     def __init__(self, user_id, is_patron, is_super_patron, is_banned, is_mod, is_data_mod, is_translator,
                  is_proofreader, balance, xp, api_access, gg_filter_active, language, lastfm, timezone,
-                 rob_level, daily_level, beg_level, profile_level):
+                 rob_level, daily_level, beg_level, profile_level, gg_filter_person_ids, gg_filter_group_ids):
         super(User, self).__init__(user_id)
         self.is_patron: bool = is_patron
         self.is_super_patron: bool = is_super_patron
@@ -20,6 +20,10 @@ class User(AbstractModel):
         self.xp: int = xp
         self.api_access: Optional[Access] = api_access
         self.gg_filter_active: bool = gg_filter_active
+
+        self.gg_filter_person_ids: List[int] = gg_filter_person_ids
+        self.gg_filter_group_ids: List[int] = gg_filter_group_ids
+
         self.language: str = language
         self.lastfm: str = lastfm
         self.timezone: str = timezone
@@ -27,6 +31,7 @@ class User(AbstractModel):
         self.daily_level: int = daily_level
         self.beg_level: int = beg_level
         self.profile_level: int = profile_level
+
         if not _users.get(self.id):
             _users[self.id] = self
 
@@ -49,7 +54,11 @@ class User(AbstractModel):
         xp = kwargs.get("xp") or 0
         access_id = kwargs.get("access")
         api_access: Optional[Access] = None if access_id is None else Access(access_id)
+
         gg_filter_active = False or kwargs.get("ggfilteractive")
+        gg_filter_person_ids = kwargs.get("ggfilterpersons") or []
+        gg_filter_group_ids = kwargs.get("ggfiltergroups") or []
+
         language = "en-US" or kwargs.get("language")
         lastfm = None or kwargs.get("lastfmusername")
         timezone = None or kwargs.get("timezone")
@@ -59,7 +68,7 @@ class User(AbstractModel):
         profile_level = kwargs.get("profilelevel") or 0
         User(user_id, is_patron, is_super_patron, is_banned, is_mod, is_data_mod, is_translator,
                     is_proofreader, balance, xp, api_access, gg_filter_active, language, lastfm, timezone,
-                    rob_level, daily_level, beg_level, profile_level)
+                    rob_level, daily_level, beg_level, profile_level, gg_filter_person_ids, gg_filter_group_ids)
         return _users[user_id]
 
     async def set_patron(self, active=True):
@@ -99,6 +108,34 @@ class User(AbstractModel):
             'route': 'user/toggleggfilter/$user_id',
             'user_id': self.id,
             'active': self.gg_filter_active,
+            'method': 'POST'
+        })
+        await outer.client.add_and_wait(callback)
+
+    async def upsert_filter_persons(self, person_ids: Tuple[int]):
+        """Upsert persons to the gg filter.
+
+        :param person_ids: Tuple[int]
+            A tuple of person ids that the user should have.
+        """
+        callback = CallBack(request={
+            'route': 'user/ggfilterpersons/$user_id',
+            'user_id': self.id,
+            'person_ids': person_ids,
+            'method': 'POST'
+        })
+        await outer.client.add_and_wait(callback)
+
+    async def upsert_filter_groups(self, group_ids: Tuple[int]):
+        """Upsert groups to the gg filter.
+
+        :param group_ids: Tuple[int]
+            A tuple of group ids that the user should have.
+        """
+        callback = CallBack(request={
+            'route': 'user/ggfiltergroups/$user_id',
+            'user_id': self.id,
+            'group_ids': group_ids,
             'method': 'POST'
         })
         await outer.client.add_and_wait(callback)
