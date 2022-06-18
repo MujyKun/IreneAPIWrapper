@@ -56,8 +56,8 @@ class Media(AbstractModel):
     @property
     def difficulty(self):
         """Get the difficulty (ratio) of the media."""
-        if not self.failed_guesses and not self.correct_guesses:
-            return 0
+        if self.failed_guesses + self.correct_guesses < 100:
+            return None
 
         return self.correct_guesses / (self.correct_guesses + self.failed_guesses)
 

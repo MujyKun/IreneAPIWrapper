@@ -12,3 +12,9 @@ class APIError(Exception):
     def __init__(self, callback: CallBack):
         self.callback = callback
         super(APIError, self).__init__(f"IreneAPI has returned back an error for Callback ID: {self.callback.id}.")
+
+
+class Empty(Exception):
+    """An exception caused when an iterable is empty."""
+    def __init__(self):
+        super(Empty, self).__init__()
