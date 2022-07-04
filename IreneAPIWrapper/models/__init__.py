@@ -26,3 +26,4 @@ from .channel import Channel
 from .subscription import Subscription
 from .twitteraccount import TwitterAccount
 from .client import IreneAPIClient
+from .guessinggame import GuessingGame
