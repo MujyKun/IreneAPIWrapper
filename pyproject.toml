@@ -14,9 +14,9 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-asyncio = "3.4.3"
-aiohttp = "3.8.1"
-black = "^21.12b0"
+asyncio = "^3.4.3"
+aiohttp = "^3.8.1"
+black = "^22.6.0"
 
 [tool.poetry.dev-dependencies]
 
