@@ -70,20 +70,28 @@ class Date(AbstractModel):
         _dates.pop(self.id)
 
     @staticmethod
-    async def insert(start_date, end_date=None) -> None:
+    async def insert(start_date, end_date=None) -> int:
         """
         Insert a new date into the database.
 
-        :param start_date: The start date.
-        :param end_date: The end date if there is one.
-        :returns: None
+        :param start_date:
+            The start date.
+        :param end_date:
+            The end date if there is one.
+        :returns: int
+            The Date id
         """
-        await internal_insert(request={
+        callback = await internal_insert(request={
             'route': 'date',
             'start_date': start_date,
             'end_date': end_date,
             'method': 'POST'
         })
+        results = callback.response.get("results")
+        if not results:
+            return False
+
+        return callback.response["t_date_id"]
 
     @staticmethod
     async def get(date_id: int, fetch=True):
