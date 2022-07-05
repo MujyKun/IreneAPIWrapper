@@ -128,7 +128,7 @@ class GuessingGame(AbstractModel):
         if not results:
             return False
 
-        gg_id = callback.response["t_game_id"]
+        gg_id = results["addgg"]
         gg = await GuessingGame.fetch(gg_id)  # have the model created and added to cache.
         return gg.id
 
