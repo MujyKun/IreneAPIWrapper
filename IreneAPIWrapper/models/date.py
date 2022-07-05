@@ -93,7 +93,7 @@ class Date(AbstractModel):
         if not results:
             return False
 
-        return callback.response["adddate"]
+        return results["adddate"]
 
     @staticmethod
     async def get(date_id: int, fetch=True):
