@@ -75,9 +75,11 @@ class Date(AbstractModel):
         Insert a new date into the database.
 
         :param start_date: Union[str, Datetime]
-            Datetime or string object in '%d/%m/%y %H:%M:%S' format. Is the start date.
+            Datetime or string object in '%Y-%m-%d %H:%M:%S.%f' format (equivalent to datetime.now()).
+            Is the start date.
         :param end_date: Union[str, Datetime]
-            Datetime or string object in '%d/%m/%y %H:%M:%S' format. Is the end date.
+            Datetime or string object in '%Y-%m-%d %H:%M:%S.%f' format (equivalent to datetime.now()).
+            Is the end date.
         :returns: int
             The Date id
         """
@@ -91,7 +93,7 @@ class Date(AbstractModel):
         if not results:
             return False
 
-        return callback.response["t_date_id"]
+        return callback.response["adddate"]
 
     @staticmethod
     async def get(date_id: int, fetch=True):
@@ -106,6 +108,8 @@ class Date(AbstractModel):
         :returns: Optional[:ref:`Date`]
             The date object requested.
         """
+        if not date_id:
+            return None
         existing = _dates.get(date_id)
         if not existing and fetch:
             return await Date.fetch(date_id)
