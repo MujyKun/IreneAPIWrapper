@@ -74,17 +74,17 @@ class Date(AbstractModel):
         """
         Insert a new date into the database.
 
-        :param start_date:
-            The start date.
-        :param end_date:
-            The end date if there is one.
+        :param start_date: Union[str, Datetime]
+            Datetime or string object in '%d/%m/%y %H:%M:%S' format. Is the start date.
+        :param end_date: Union[str, Datetime]
+            Datetime or string object in '%d/%m/%y %H:%M:%S' format. Is the end date.
         :returns: int
             The Date id
         """
         callback = await internal_insert(request={
             'route': 'date',
-            'start_date': start_date,
-            'end_date': end_date,
+            'start_date': str(start_date),
+            'end_date': str(end_date),
             'method': 'POST'
         })
         results = callback.response.get("results")
