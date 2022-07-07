@@ -18,8 +18,7 @@ async def internal_fetch(obj: AbstractModel, request: dict) -> AbstractModel:
     :return: :ref:`AbstractModel`
         Returns an abstract model.
     """
-    callback = CallBack(request=request)
-    await outer.client.add_and_wait(callback)
+    callback = await basic_call(request)
     return await obj.create(**callback.response.get("results"))
 
 
@@ -58,9 +57,7 @@ async def internal_delete(obj: AbstractModel, request: dict) -> CallBack:
         The request to pass into a :ref:`CallBack`.
     :returns: :ref:`CallBack`
     """
-    callback = CallBack(request=request)
-    await outer.client.add_and_wait(callback)
-    return callback
+    return await basic_call(request)
 
 
 async def internal_insert(request: dict) -> CallBack:
@@ -72,6 +69,10 @@ async def internal_insert(request: dict) -> CallBack:
     :return: :ref:`CallBack`
         Returns a :ref:`CallBack` object.
     """
+    return await basic_call(request)
+
+
+async def basic_call(request: dict):
     callback = CallBack(request=request)
     await outer.client.add_and_wait(callback)
     return callback

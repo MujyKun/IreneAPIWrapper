@@ -2,7 +2,7 @@ from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
 from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all,\
-    internal_insert, internal_delete
+    internal_insert, internal_delete, basic_call
 
 
 class Date(AbstractModel):
@@ -62,6 +62,22 @@ class Date(AbstractModel):
             'method': 'DELETE'
         })
 
+    async def update_end_date(self, end_date) -> None:
+        """
+        Update the end date.
+
+        :param end_date: Union[str, Datetime]
+            Datetime or string object in '%Y-%m-%d %H:%M:%S.%f' format (equivalent to datetime.now()).
+            Is the end date.
+        :return: None
+        """
+        await basic_call(request={
+            'route': 'date/$date_id',
+            'date_id': self.id,
+            'end_date': str(end_date),
+            'method': 'PUT'
+        })
+
     async def _remove_from_cache(self) -> None:
         """Remove the Date object from cache.
 
@@ -86,7 +102,7 @@ class Date(AbstractModel):
         callback = await internal_insert(request={
             'route': 'date',
             'start_date': str(start_date),
-            'end_date': str(end_date),
+            'end_date': str(end_date) if end_date else end_date,
             'method': 'POST'
         })
         results = callback.response.get("results")
