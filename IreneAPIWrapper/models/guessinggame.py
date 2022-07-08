@@ -88,7 +88,7 @@ class GuessingGame(AbstractModel):
         media_ids = kwargs.get("mediaids")
         status_ids = kwargs.get("statusids")
         mode_id = kwargs.get("modeid")
-        difficulty_id = kwargs.get("difficulty_id")
+        difficulty_id = kwargs.get("difficultyid")
         difficulty = get_difficulty(difficulty_id)
         is_nsfw = kwargs.get("isnsfw")
 

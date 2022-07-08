@@ -15,9 +15,9 @@ class Difficulty:
         The difficulty name.
 
     """
-    def __init__(self, access_id: int, name: str):
-        self.id = access_id
-        self.name = name
+    def __init__(self, diff_id: int, name: str):
+        self.id = diff_id
+        self.name = name.lower()
 
     def __len__(self):
         return self.id
