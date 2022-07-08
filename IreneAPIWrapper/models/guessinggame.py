@@ -13,6 +13,8 @@ from . import (
     Group,
     internal_delete,
     internal_insert,
+    Difficulty,
+    get_difficulty
 )
 
 
@@ -31,9 +33,10 @@ class GuessingGame(AbstractModel):
         The status IDs.
     mode_id: int
         The mode of the game.
-    difficulty: str, is_nsfw: bool
+    difficulty: :ref:`Difficulty`
         The difficulty of the game.
-
+    is_nsfw: bool
+        Whether the content may be NSFW.
 
     Attributes
     ----------
@@ -45,8 +48,10 @@ class GuessingGame(AbstractModel):
         The status IDs.
     mode_id: int
         The mode of the game.
-    difficulty: str, is_nsfw: bool
+    difficulty: :ref:`Difficulty`
         The difficulty of the game.
+    is_nsfw: bool
+        Whether the content may be NSFW.
     """
 
     def __init__(
@@ -56,7 +61,7 @@ class GuessingGame(AbstractModel):
         media_ids: List[int],
         status_ids: List[int],
         mode_id: int,
-        difficulty: str,
+        difficulty: Difficulty,
         is_nsfw: bool,
     ):
         super(GuessingGame, self).__init__(game_id)
@@ -83,7 +88,8 @@ class GuessingGame(AbstractModel):
         media_ids = kwargs.get("mediaids")
         status_ids = kwargs.get("statusids")
         mode_id = kwargs.get("modeid")
-        difficulty = kwargs.get("difficulty")
+        difficulty_id = kwargs.get("difficulty_id")
+        difficulty = get_difficulty(difficulty_id)
         is_nsfw = kwargs.get("isnsfw")
 
         GuessingGame(
@@ -122,7 +128,7 @@ class GuessingGame(AbstractModel):
         media_ids: List[int],
         status_ids: List[int],
         mode_id: int,
-        difficulty: str,
+        difficulty_id: int,
         is_nsfw: bool,
     ) -> int:
         """
@@ -136,7 +142,7 @@ class GuessingGame(AbstractModel):
             A list of status ids
         :param mode_id: int
             The guessing game's mode.
-        :param difficulty: str
+        :param difficulty_id: int
             The difficulty of the guessing game.
         :param is_nsfw: bool
             Whether the game includes nsfw content.
@@ -150,7 +156,7 @@ class GuessingGame(AbstractModel):
                 "media_ids": media_ids,
                 "status_ids": status_ids,
                 "mode_id": mode_id,
-                "difficulty": difficulty,
+                "difficulty_id": difficulty_id,
                 "is_nsfw": is_nsfw,
                 "method": "POST",
             }

@@ -1,6 +1,7 @@
 from .tweet import Tweet
 from .timeline import Timeline
 from .access import Access, GOD, OWNER, DEVELOPER, SUPER_PATRON, FRIEND, USER
+from .difficulty import get_difficulty, Difficulty, EASY, MEDIUM, HARD
 from .callback import CallBack, callbacks
 from .base import (
     internal_fetch_all,
