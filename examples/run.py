@@ -18,14 +18,19 @@ class Example:
         await self.test()
 
     async def test(self):
-        from IreneAPIWrapper.models import TwitterAccount, Channel, Person, Group, GroupAlias
+        from IreneAPIWrapper.models import (
+            TwitterAccount,
+            Channel,
+            Person,
+            Group,
+            GroupAlias,
+        )
 
         # persons = await Person.get(1)
         await asyncio.sleep(10)
         groups: List[Group] = await Group.get_all()
         group: Group = await Group.get(1)
         group.affiliations
-
 
         print("HERE")
 
@@ -38,7 +43,7 @@ class Example:
         while True:
             await asyncio.sleep(60)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(Example().run())
-

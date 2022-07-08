@@ -1,8 +1,16 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all,\
-    internal_insert, internal_delete, basic_call
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    internal_insert,
+    internal_delete,
+    basic_call,
+)
 
 
 class Date(AbstractModel):
@@ -30,6 +38,7 @@ class Date(AbstractModel):
         The end date.
 
     """
+
     def __init__(self, date_id: int, start_date: str, end_date: str, *args, **kwargs):
         super(Date, self).__init__(date_id)
         self.start: str = start_date
@@ -56,11 +65,10 @@ class Date(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'date/$date_id',
-            'date_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={"route": "date/$date_id", "date_id": self.id, "method": "DELETE"},
+        )
 
     async def update_end_date(self, end_date) -> None:
         """
@@ -71,12 +79,14 @@ class Date(AbstractModel):
             Is the end date.
         :return: None
         """
-        await basic_call(request={
-            'route': 'date/$date_id',
-            'date_id': self.id,
-            'end_date': str(end_date),
-            'method': 'PUT'
-        })
+        await basic_call(
+            request={
+                "route": "date/$date_id",
+                "date_id": self.id,
+                "end_date": str(end_date),
+                "method": "PUT",
+            }
+        )
 
     async def _remove_from_cache(self) -> None:
         """Remove the Date object from cache.
@@ -99,12 +109,14 @@ class Date(AbstractModel):
         :returns: int
             The Date id
         """
-        callback = await internal_insert(request={
-            'route': 'date',
-            'start_date': str(start_date),
-            'end_date': str(end_date) if end_date else end_date,
-            'method': 'POST'
-        })
+        callback = await internal_insert(
+            request={
+                "route": "date",
+                "start_date": str(start_date),
+                "end_date": str(end_date) if end_date else end_date,
+                "method": "POST",
+            }
+        )
         results = callback.response.get("results")
         if not results:
             return False
@@ -152,11 +164,10 @@ class Date(AbstractModel):
         :returns: Optional[:ref:`Date`]
             The date object requested.
         """
-        return await internal_fetch(Date, request={
-            'route': 'date/$date_id',
-            'date_id': date_id,
-            'method': 'GET'
-        })
+        return await internal_fetch(
+            Date,
+            request={"route": "date/$date_id", "date_id": date_id, "method": "GET"},
+        )
 
     @staticmethod
     async def fetch_all():
@@ -164,10 +175,9 @@ class Date(AbstractModel):
 
         .. NOTE::: Date objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Date, request={
-            'route': 'date/',
-            'method': 'GET'
-        })
+        return await internal_fetch_all(
+            obj=Date, request={"route": "date/", "method": "GET"}
+        )
 
 
 _dates: Dict[int, Date] = dict()

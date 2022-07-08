@@ -9,7 +9,7 @@ class Tweet:
     content: str
         The Tweet's contents
     """
+
     def __init__(self, *args, **kwargs):
         self.id = None
         self.content = None
-

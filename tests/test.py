@@ -40,7 +40,9 @@ def get_test_callback_id(expectation: bool = None) -> int:
     callback_id = 0
 
     while True:
-        callback_id += m_true if expectation else m_false if expectation is False else m_none
+        callback_id += (
+            m_true if expectation else m_false if expectation is False else m_none
+        )
 
         if callback_id in _existing_keys:
             continue
@@ -60,49 +62,114 @@ def get_test_callback_id(expectation: bool = None) -> int:
 test_user_id = 000000000000000000
 
 
-test_requests = {'requests': [
-    # call back ids are multiples of a=5, b=9, or c=4 depending on each scenario.
-    # callback_id should not be a multiple of several.
-    # check = Check if a case exists.
-    # add = add a user for a specific reason or to somewhere specific
-    # remove = undo the add.
-
-
-    # manage a user (check,add,check)
-    {'route': 'user/', 'user_id': test_user_id, 'method': 'GET', 'callback_id': get_test_callback_id(None)},
-    {'route': 'user/', 'user_id': test_user_id, 'method': 'POST', 'callback_id': get_test_callback_id(True)},
-    {'route': 'user/', 'user_id': test_user_id, 'method': 'GET', 'callback_id': get_test_callback_id(True)},
-
-    # manage that user as a patron (check,add,check,delete,check)
-    {'route': 'user/patron_status', 'user_id': test_user_id, 'method': 'GET',
-     'callback_id': get_test_callback_id(False)},
-    {'route': 'user/patron_status', 'user_id': test_user_id, 'method': 'POST',
-     'callback_id': get_test_callback_id(True)},
-    {'route': 'user/patron_status', 'user_id': test_user_id, 'method': 'GET',
-     'callback_id': get_test_callback_id(True)},
-    {'route': 'user/patron_status', 'user_id': test_user_id, 'method': 'DELETE',
-     'callback_id': get_test_callback_id(True)},
-    {'route': 'user/patron_status', 'user_id': test_user_id, 'method': 'GET',
-     'callback_id': get_test_callback_id(False)},
-
-    # manage the user's ban status.
-    {'route': 'user/ban_status', 'user_id': test_user_id, 'method': 'GET', 'callback_id': get_test_callback_id(False)},
-    {'route': 'user/ban_status', 'user_id': test_user_id, 'method': 'POST', 'callback_id': get_test_callback_id(True)},
-    {'route': 'user/ban_status', 'user_id': test_user_id, 'method': 'GET', 'callback_id': get_test_callback_id(True)},
-    {'route': 'user/ban_status', 'user_id': test_user_id, 'method': 'DELETE',
-     'callback_id': get_test_callback_id(True)},
-    {'route': 'user/ban_status', 'user_id': test_user_id, 'method': 'GET', 'callback_id': get_test_callback_id(False)},
-
-    # delete the user and make sure they are deleted.
-    {'route': 'user/', 'user_id': test_user_id, 'method': 'DELETE', 'callback_id': get_test_callback_id(True)},
-    {'route': 'user/', 'user_id': test_user_id, 'method': 'GET', 'callback_id': get_test_callback_id(None)},
-
-]}
+test_requests = {
+    "requests": [
+        # call back ids are multiples of a=5, b=9, or c=4 depending on each scenario.
+        # callback_id should not be a multiple of several.
+        # check = Check if a case exists.
+        # add = add a user for a specific reason or to somewhere specific
+        # remove = undo the add.
+        # manage a user (check,add,check)
+        {
+            "route": "user/",
+            "user_id": test_user_id,
+            "method": "GET",
+            "callback_id": get_test_callback_id(None),
+        },
+        {
+            "route": "user/",
+            "user_id": test_user_id,
+            "method": "POST",
+            "callback_id": get_test_callback_id(True),
+        },
+        {
+            "route": "user/",
+            "user_id": test_user_id,
+            "method": "GET",
+            "callback_id": get_test_callback_id(True),
+        },
+        # manage that user as a patron (check,add,check,delete,check)
+        {
+            "route": "user/patron_status",
+            "user_id": test_user_id,
+            "method": "GET",
+            "callback_id": get_test_callback_id(False),
+        },
+        {
+            "route": "user/patron_status",
+            "user_id": test_user_id,
+            "method": "POST",
+            "callback_id": get_test_callback_id(True),
+        },
+        {
+            "route": "user/patron_status",
+            "user_id": test_user_id,
+            "method": "GET",
+            "callback_id": get_test_callback_id(True),
+        },
+        {
+            "route": "user/patron_status",
+            "user_id": test_user_id,
+            "method": "DELETE",
+            "callback_id": get_test_callback_id(True),
+        },
+        {
+            "route": "user/patron_status",
+            "user_id": test_user_id,
+            "method": "GET",
+            "callback_id": get_test_callback_id(False),
+        },
+        # manage the user's ban status.
+        {
+            "route": "user/ban_status",
+            "user_id": test_user_id,
+            "method": "GET",
+            "callback_id": get_test_callback_id(False),
+        },
+        {
+            "route": "user/ban_status",
+            "user_id": test_user_id,
+            "method": "POST",
+            "callback_id": get_test_callback_id(True),
+        },
+        {
+            "route": "user/ban_status",
+            "user_id": test_user_id,
+            "method": "GET",
+            "callback_id": get_test_callback_id(True),
+        },
+        {
+            "route": "user/ban_status",
+            "user_id": test_user_id,
+            "method": "DELETE",
+            "callback_id": get_test_callback_id(True),
+        },
+        {
+            "route": "user/ban_status",
+            "user_id": test_user_id,
+            "method": "GET",
+            "callback_id": get_test_callback_id(False),
+        },
+        # delete the user and make sure they are deleted.
+        {
+            "route": "user/",
+            "user_id": test_user_id,
+            "method": "DELETE",
+            "callback_id": get_test_callback_id(True),
+        },
+        {
+            "route": "user/",
+            "user_id": test_user_id,
+            "method": "GET",
+            "callback_id": get_test_callback_id(None),
+        },
+    ]
+}
 
 
 async def add_tests(client):
     # add all callbacks to the queue
-    for request in test_requests['requests']:
+    for request in test_requests["requests"]:
         callback = CallBack(request=request)
         _callbacks[callback.id] = callback
         await client.add_to_queue(callback)
@@ -133,15 +200,15 @@ class Tests(TestCase):
         """Check that the callbacks do not have any error from the API."""
         for callback in _callbacks.values():
             with self.subTest():
-                self.assertIsNone(callback.response.get('error'))
+                self.assertIsNone(callback.response.get("error"))
 
     async def check_for_validity(self):
         """Check that the callbacks have an expected response"""
         for callback in _callbacks.values():
             with self.subTest():
                 # breakpoint()
-                result = callback.response.get('results')
-                success = None if result is None else result.get('success')
+                result = callback.response.get("results")
+                success = None if result is None else result.get("success")
                 if callback.id % m_none == 0:
                     self.assertIsNone(result)
                 elif callback.id % m_false == 0:
@@ -157,5 +224,5 @@ class Tests(TestCase):
                     self.assertEqual(True, False)  # a test was not created properly.
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

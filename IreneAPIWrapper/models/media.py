@@ -1,8 +1,17 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Affiliation, \
-    internal_insert, internal_delete
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    Affiliation,
+    internal_insert,
+    internal_delete,
+)
 
 
 class Media(AbstractModel):
@@ -40,7 +49,18 @@ class Media(AbstractModel):
     is_nsfw: bool
         If the media may contain explicit content.
     """
-    def __init__(self, media_id, source, faces, affiliation, is_enabled, is_nsfw, failed=0, correct=0):
+
+    def __init__(
+        self,
+        media_id,
+        source,
+        faces,
+        affiliation,
+        is_enabled,
+        is_nsfw,
+        failed=0,
+        correct=0,
+    ):
         super(Media, self).__init__(media_id)
         self.source: MediaSource = source
         self.faces: int = faces
@@ -85,7 +105,9 @@ class Media(AbstractModel):
         is_enabled = kwargs.get("enabled")
         is_nsfw = kwargs.get("nsfw")
 
-        Media(media_id, source, faces, affiliation, is_enabled, is_nsfw, failed, correct)
+        Media(
+            media_id, source, faces, affiliation, is_enabled, is_nsfw, failed, correct
+        )
         return _media[media_id]
 
     async def upsert_guesses(self, correct: bool):
@@ -101,13 +123,15 @@ class Media(AbstractModel):
             self.failed_guesses += 1
 
         if (self.correct_guesses + self.failed_guesses) % 5 == 0:
-            callback = CallBack(request={
-                'route': 'media/$media_id',
-                'media_id': self.id,
-                'failed_guesses': self.failed_guesses,
-                'correct_guesses': self.correct_guesses,
-                'method': 'POST'
-            })
+            callback = CallBack(
+                request={
+                    "route": "media/$media_id",
+                    "media_id": self.id,
+                    "failed_guesses": self.failed_guesses,
+                    "correct_guesses": self.correct_guesses,
+                    "method": "POST",
+                }
+            )
             await outer.client.add_and_wait(callback)
 
     async def delete(self) -> None:
@@ -116,11 +140,14 @@ class Media(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'media/$media_id',
-            'media_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "media/$media_id",
+                "media_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -132,7 +159,9 @@ class Media(AbstractModel):
         _media.pop(self.id)
 
     @staticmethod
-    async def insert(link, face_count, file_type, affiliation_id, enabled, is_nsfw) -> None:
+    async def insert(
+        link, face_count, file_type, affiliation_id, enabled, is_nsfw
+    ) -> None:
         """
         Insert a new media into the database.
 
@@ -150,16 +179,18 @@ class Media(AbstractModel):
             Whether the media may be NSFW.
         :returns: None
         """
-        await internal_insert(request={
-            'route': 'media',
-            'link': link,
-            'faces': face_count,
-            'file_type': file_type,
-            'affiliation_id': affiliation_id,
-            'enabled': enabled,
-            'is_nsfw': is_nsfw,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={
+                "route": "media",
+                "link": link,
+                "faces": face_count,
+                "file_type": file_type,
+                "affiliation_id": affiliation_id,
+                "enabled": enabled,
+                "is_nsfw": is_nsfw,
+                "method": "POST",
+            }
+        )
 
     @staticmethod
     async def get(media_id: int, fetch=True):
@@ -194,6 +225,7 @@ class Media(AbstractModel):
                         media_objs.append(media)
 
             return media_objs
+
     @staticmethod
     async def fetch(object_id: int, affiliation=False, person=False, group=False):
         """Fetch an updated Media object from the API.
@@ -211,24 +243,28 @@ class Media(AbstractModel):
         """
         if affiliation:
             request = {
-                'route': 'affiliation/$affiliation_id/media',
-                'affiliation_id': object_id,
-                'method': 'GET'}
+                "route": "affiliation/$affiliation_id/media",
+                "affiliation_id": object_id,
+                "method": "GET",
+            }
         elif person:
             request = {
-                'route': 'person/$person_id/media',
-                'person_id': object_id,
-                'method': 'GET'}
+                "route": "person/$person_id/media",
+                "person_id": object_id,
+                "method": "GET",
+            }
         elif group:
             request = {
-                'route': 'group/$group_id/media',
-                'group_id': object_id,
-                'method': 'GET'}
+                "route": "group/$group_id/media",
+                "group_id": object_id,
+                "method": "GET",
+            }
         else:  # Default - Media ID
             request = {
-                'route': 'media/$media_id',
-                'media_id': object_id,
-                'method': 'GET'}
+                "route": "media/$media_id",
+                "media_id": object_id,
+                "method": "GET",
+            }
 
         return await internal_fetch(obj=Media, request=request)
 
@@ -238,9 +274,8 @@ class Media(AbstractModel):
 
         .. NOTE::: Media objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Media, request={
-            'route': 'media/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Media, request={"route": "media/", "method": "GET"}
         )
 
 

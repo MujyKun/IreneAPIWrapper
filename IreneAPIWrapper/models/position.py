@@ -1,8 +1,16 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, \
-    internal_insert, internal_delete
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    internal_insert,
+    internal_delete,
+)
 
 
 class Position(AbstractModel):
@@ -24,6 +32,7 @@ class Position(AbstractModel):
     name: str
         The position's name.
     """
+
     def __init__(self, position_id, name):
         super(Position, self).__init__(position_id)
         self.name = name
@@ -49,11 +58,14 @@ class Position(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'position/$position_id',
-            'position_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "position/$position_id",
+                "position_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -73,11 +85,9 @@ class Position(AbstractModel):
             The position name.
         :returns: None
         """
-        await internal_insert(request={
-            'route': 'position',
-            'position_name': name,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={"route": "position", "position_name": name, "method": "POST"}
+        )
 
     @staticmethod
     async def get(position_id: int, fetch=True):
@@ -115,10 +125,13 @@ class Position(AbstractModel):
             The position's ID to fetch.
         :returns: :ref:`Position`
         """
-        return await internal_fetch(obj=Position, request={
-            'route': 'position/$position_id',
-            'position_id': position_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=Position,
+            request={
+                "route": "position/$position_id",
+                "position_id": position_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -127,9 +140,8 @@ class Position(AbstractModel):
 
         .. NOTE::: Position objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Position, request={
-            'route': 'position/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Position, request={"route": "position/", "method": "GET"}
         )
 
 

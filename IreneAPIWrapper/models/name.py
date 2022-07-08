@@ -1,8 +1,15 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, \
-    internal_insert, internal_delete
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    internal_insert,
+    internal_delete,
+)
 
 
 class Name(AbstractModel):
@@ -29,6 +36,7 @@ class Name(AbstractModel):
         Last part of the name.
 
     """
+
     def __init__(self, name_id, first, last):
         super(Name, self).__init__(name_id)
         self.id = name_id
@@ -60,11 +68,10 @@ class Name(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'name/$name_id',
-            'name_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={"route": "name/$name_id", "name_id": self.id, "method": "DELETE"},
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -87,12 +94,14 @@ class Name(AbstractModel):
 
         :returns: None
         """
-        await internal_insert(request={
-            'route': 'name',
-            'first_name': first,
-            'last_name': last,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={
+                "route": "name",
+                "first_name": first,
+                "last_name": last,
+                "method": "POST",
+            }
+        )
 
     @staticmethod
     async def get(name_id: int, fetch=True):
@@ -130,10 +139,9 @@ class Name(AbstractModel):
             The name's ID to fetch.
         :returns: :ref:`Name`
         """
-        return await internal_fetch(obj=Name, request={
-            'route': 'name/$name_id',
-            'name_id': name_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=Name,
+            request={"route": "name/$name_id", "name_id": name_id, "method": "GET"},
         )
 
     @staticmethod
@@ -142,9 +150,8 @@ class Name(AbstractModel):
 
         .. NOTE::: Name objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Name, request={
-            'route': 'name/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Name, request={"route": "name/", "method": "GET"}
         )
 
 

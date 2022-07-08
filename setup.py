@@ -4,11 +4,16 @@ import re
 with open("README.md", "r") as f:
     long_description = f.read()
 
-with open('IreneAPIWrapper/__init__.py') as f:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1) or ''
+with open("IreneAPIWrapper/__init__.py") as f:
+    version = (
+        re.search(
+            r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE
+        ).group(1)
+        or ""
+    )
 
 if not version:
-    raise RuntimeError('No Version Found.')
+    raise RuntimeError("No Version Found.")
 
 
 def parse_requirements(filename):
@@ -18,14 +23,14 @@ def parse_requirements(filename):
 
 
 setup(
-    name='IreneAPIWrapper',
+    name="IreneAPIWrapper",
     version=version,
     packages=find_packages(),
     install_requires=parse_requirements("requirements.txt"),
-    url='https://github.com/MujyKun/IreneAPIWrapper',
-    license='MIT License',
-    author='MujyKun',
-    author_email='mujy@irenebot.com',
+    url="https://github.com/MujyKun/IreneAPIWrapper",
+    license="MIT License",
+    author="MujyKun",
+    author_email="mujy@irenebot.com",
     description="A wrapper for Irene's API and connects with a websocket connection.",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -34,6 +39,5 @@ setup(
     ],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    python_requires='>=3.7',
-
+    python_requires=">=3.7",
 )

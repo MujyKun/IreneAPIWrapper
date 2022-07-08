@@ -1,8 +1,16 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, \
-    internal_insert, internal_delete
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    internal_insert,
+    internal_delete,
+)
 
 
 class Fandom(AbstractModel):
@@ -24,6 +32,7 @@ class Fandom(AbstractModel):
     name: str
         The name of the fandom.
     """
+
     def __init__(self, group_id: int, fandom_name: str, *args, **kwargs):
         super(Fandom, self).__init__(group_id)
         self.name = fandom_name
@@ -49,12 +58,15 @@ class Fandom(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'fandom/$group_id',
-            'group_id': self.id,
-            'fandom_name': self.name,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "fandom/$group_id",
+                "group_id": self.id,
+                "fandom_name": self.name,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -76,12 +88,14 @@ class Fandom(AbstractModel):
             The fandom name of the :ref:`Group`
         :returns: None
         """
-        await internal_insert(request={
-            'route': 'fandom/$group_id',
-            'group_id': group_id,
-            'fandom_name': fandom_name,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={
+                "route": "fandom/$group_id",
+                "group_id": group_id,
+                "fandom_name": fandom_name,
+                "method": "POST",
+            }
+        )
 
     @staticmethod
     async def get(group_id: int, fetch=True):
@@ -119,10 +133,13 @@ class Fandom(AbstractModel):
             The group's ID to fetch a fandom for.
         :returns: :ref:`Fandom`
         """
-        return await internal_fetch(obj=Fandom, request={
-            'route': 'fandom/$group_id',
-            'group_id': group_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=Fandom,
+            request={
+                "route": "fandom/$group_id",
+                "group_id": group_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -131,9 +148,8 @@ class Fandom(AbstractModel):
 
         .. NOTE::: Fandom objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Fandom, request={
-            'route': 'fandom/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Fandom, request={"route": "fandom/", "method": "GET"}
         )
 
 

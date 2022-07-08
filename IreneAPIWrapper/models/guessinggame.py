@@ -1,8 +1,19 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Position, Person, \
-    Group, internal_delete, internal_insert
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    Position,
+    Person,
+    Group,
+    internal_delete,
+    internal_insert,
+)
 
 
 class GuessingGame(AbstractModel):
@@ -38,8 +49,16 @@ class GuessingGame(AbstractModel):
         The difficulty of the game.
     """
 
-    def __init__(self, game_id: int, date_id: int, media_ids: List[int], status_ids: List[int], mode_id: int,
-                 difficulty: str, is_nsfw: bool):
+    def __init__(
+        self,
+        game_id: int,
+        date_id: int,
+        media_ids: List[int],
+        status_ids: List[int],
+        mode_id: int,
+        difficulty: str,
+        is_nsfw: bool,
+    ):
         super(GuessingGame, self).__init__(game_id)
         self.date_id = date_id
         self.media_ids = media_ids
@@ -67,7 +86,9 @@ class GuessingGame(AbstractModel):
         difficulty = kwargs.get("difficulty")
         is_nsfw = kwargs.get("isnsfw")
 
-        GuessingGame(game_id, date_id, media_ids, status_ids, mode_id, difficulty, is_nsfw)
+        GuessingGame(
+            game_id, date_id, media_ids, status_ids, mode_id, difficulty, is_nsfw
+        )
 
         return _ggs[game_id]
 
@@ -77,11 +98,14 @@ class GuessingGame(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'guessinggame/$gg_id',
-            'game_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "guessinggame/$gg_id",
+                "game_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -93,8 +117,14 @@ class GuessingGame(AbstractModel):
         _ggs.pop(self.id)
 
     @staticmethod
-    async def insert(date_id: int, media_ids: List[int], status_ids: List[int], mode_id: int, difficulty: str,
-                     is_nsfw: bool) -> int:
+    async def insert(
+        date_id: int,
+        media_ids: List[int],
+        status_ids: List[int],
+        mode_id: int,
+        difficulty: str,
+        is_nsfw: bool,
+    ) -> int:
         """
         Insert a new GuessingGame into the database.
 
@@ -113,23 +143,27 @@ class GuessingGame(AbstractModel):
         :return: int
             The guessing game ID.
         """
-        callback = await internal_insert(request={
-            'route': 'guessinggame',
-            'date_id': date_id,
-            'media_ids': media_ids,
-            'status_ids': status_ids,
-            'mode_id': mode_id,
-            'difficulty': difficulty,
-            'is_nsfw': is_nsfw,
-            'method': 'POST'
-        })
+        callback = await internal_insert(
+            request={
+                "route": "guessinggame",
+                "date_id": date_id,
+                "media_ids": media_ids,
+                "status_ids": status_ids,
+                "mode_id": mode_id,
+                "difficulty": difficulty,
+                "is_nsfw": is_nsfw,
+                "method": "POST",
+            }
+        )
 
         results = callback.response.get("results")
         if not results:
             return False
 
         gg_id = results["addgg"]
-        gg = await GuessingGame.fetch(gg_id)  # have the model created and added to cache.
+        gg = await GuessingGame.fetch(
+            gg_id
+        )  # have the model created and added to cache.
         return gg.id
 
     @staticmethod
@@ -170,11 +204,14 @@ class GuessingGame(AbstractModel):
         :returns: Optional[:ref:`GuessingGame`]
             The GuessingGame object requested.
         """
-        return await internal_fetch(obj=GuessingGame, request={
-            'route': 'guessinggame/$gg_id',
-            'game_id': game_id,
-            'method': 'GET'
-        })
+        return await internal_fetch(
+            obj=GuessingGame,
+            request={
+                "route": "guessinggame/$gg_id",
+                "game_id": game_id,
+                "method": "GET",
+            },
+        )
 
     @staticmethod
     async def fetch_all():
@@ -182,10 +219,9 @@ class GuessingGame(AbstractModel):
 
         .. NOTE:: GuessingGame objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=GuessingGame, request={
-            'route': 'guessinggame',
-            'method': 'GET'
-        })
+        return await internal_fetch_all(
+            obj=GuessingGame, request={"route": "guessinggame", "method": "GET"}
+        )
 
 
 _ggs: Dict[int, GuessingGame] = dict()

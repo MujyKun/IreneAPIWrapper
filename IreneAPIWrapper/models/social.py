@@ -1,8 +1,16 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, \
-    internal_insert, internal_delete
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    internal_insert,
+    internal_delete,
+)
 
 
 class Social(AbstractModel):
@@ -57,7 +65,20 @@ class Social(AbstractModel):
         The tiktok code
 
     """
-    def __init__(self, social_id, twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok):
+
+    def __init__(
+        self,
+        social_id,
+        twitter,
+        youtube,
+        melon,
+        instagram,
+        vlive,
+        spotify,
+        fancafe,
+        facebook,
+        tiktok,
+    ):
         super(Social, self).__init__(social_id)
         self.twitter = twitter
         self.youtube = youtube
@@ -85,7 +106,18 @@ class Social(AbstractModel):
         facebook = kwargs.get("facebook")
         tiktok = kwargs.get("tiktok")
 
-        Social(social_id, twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok)
+        Social(
+            social_id,
+            twitter,
+            youtube,
+            melon,
+            instagram,
+            vlive,
+            spotify,
+            fancafe,
+            facebook,
+            tiktok,
+        )
         return _socials[social_id]
 
     async def delete(self) -> None:
@@ -94,11 +126,14 @@ class Social(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'social/$social_id',
-            'social_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "social/$social_id",
+                "social_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -110,7 +145,9 @@ class Social(AbstractModel):
         _socials.pop(self.id)
 
     @staticmethod
-    async def insert(twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok) -> None:
+    async def insert(
+        twitter, youtube, melon, instagram, vlive, spotify, fancafe, facebook, tiktok
+    ) -> None:
         r"""
         Insert a new social into the database.
 
@@ -137,19 +174,21 @@ class Social(AbstractModel):
 
         :returns: None
         """
-        await internal_insert(request={
-            'route': 'social',
-            "twitter": twitter,
-            "youtube": youtube,
-            "melon": melon,
-            "instagram": instagram,
-            "vlive": vlive,
-            "spotify": spotify,
-            "fancafe": fancafe,
-            "facebook": facebook,
-            "tiktok": tiktok,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={
+                "route": "social",
+                "twitter": twitter,
+                "youtube": youtube,
+                "melon": melon,
+                "instagram": instagram,
+                "vlive": vlive,
+                "spotify": spotify,
+                "fancafe": fancafe,
+                "facebook": facebook,
+                "tiktok": tiktok,
+                "method": "POST",
+            }
+        )
 
     @staticmethod
     async def get(social_id: int, fetch=True):
@@ -187,10 +226,13 @@ class Social(AbstractModel):
             The social's ID to fetch.
         :returns: :ref:`Social`
         """
-        return await internal_fetch(obj=Social, request={
-            'route': 'social/$social_id',
-            'social_id': social_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=Social,
+            request={
+                "route": "social/$social_id",
+                "social_id": social_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -199,9 +241,8 @@ class Social(AbstractModel):
 
         .. NOTE::: Social objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Social, request={
-            'route': 'social/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Social, request={"route": "social/", "method": "GET"}
         )
 
 

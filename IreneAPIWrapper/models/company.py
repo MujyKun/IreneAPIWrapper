@@ -1,8 +1,17 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource,\
-    Date, internal_delete, internal_insert
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    Date,
+    internal_delete,
+    internal_insert,
+)
 
 
 class Company(AbstractModel):
@@ -33,6 +42,7 @@ class Company(AbstractModel):
         The Date object that involves the creation and retirement of the company.
 
     """
+
     def __init__(self, company_id, name, description, date, *args, **kwargs):
         super(Company, self).__init__(company_id)
         self.name = name
@@ -60,11 +70,14 @@ class Company(AbstractModel):
 
     async def delete(self):
         """Delete the Company object from the database and remove it from cache."""
-        await internal_delete(self, request={
-            'route': 'company/$company_id',
-            'company_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "company/$company_id",
+                "company_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self):
@@ -84,12 +97,14 @@ class Company(AbstractModel):
             The :ref:`Date` object for the creation and retirement of the company.
         :return: None
         """
-        await internal_insert(request={
-            'route': 'company',
-            'name': company_name,
-            'description': description,
-            'date_id': date.id
-        })
+        await internal_insert(
+            request={
+                "route": "company",
+                "name": company_name,
+                "description": description,
+                "date_id": date.id,
+            }
+        )
 
     @staticmethod
     async def get(company_id: int, fetch=True):
@@ -129,10 +144,13 @@ class Company(AbstractModel):
         :returns: Optional[:ref:`Company`]
             The company object requested.
         """
-        return await internal_fetch(obj=Company, request={
-            'route': 'company/$company_id',
-            'company_id': company_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=Company,
+            request={
+                "route": "company/$company_id",
+                "company_id": company_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -141,9 +159,8 @@ class Company(AbstractModel):
 
         .. NOTE::: Company objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Company, request={
-            'route': 'company/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Company, request={"route": "company/", "method": "GET"}
         )
 
 

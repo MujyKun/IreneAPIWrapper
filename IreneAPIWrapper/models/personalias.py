@@ -1,8 +1,17 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Alias, \
-    internal_delete, internal_insert
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    Alias,
+    internal_delete,
+    internal_insert,
+)
 
 
 class PersonAlias(Alias):
@@ -34,8 +43,14 @@ class PersonAlias(Alias):
     guild_id: Optional[int]
          A guild ID that owns the alias if there is one.
     """
+
     def __init__(self, alias_id, alias_name, person_id, guild_id):
-        super(PersonAlias, self).__init__(alias_id=alias_id, alias_name=alias_name, obj_id=person_id, guild_id=guild_id)
+        super(PersonAlias, self).__init__(
+            alias_id=alias_id,
+            alias_name=alias_name,
+            obj_id=person_id,
+            guild_id=guild_id,
+        )
         self.person_id = person_id
         if not _personaliases.get(self.id):
             _personaliases[self.id] = self
@@ -60,11 +75,14 @@ class PersonAlias(Alias):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'personalias/$alias_id',
-            'alias_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "personalias/$alias_id",
+                "alias_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -90,10 +108,10 @@ class PersonAlias(Alias):
             Whether the PersonAlias was added to the existing objects as well as inserted into the DB.
         """
         request = {
-            'route': 'personalias',
-            'alias': alias,
-            'person_id': person_id,
-            'method': 'POST'
+            "route": "personalias",
+            "alias": alias,
+            "person_id": person_id,
+            "method": "POST",
         }
         if guild_id:
             request["guild_id"] = guild_id
@@ -153,10 +171,13 @@ class PersonAlias(Alias):
         :returns: :ref:`PersonAlias`
 
         """
-        return await internal_fetch(obj=PersonAlias, request={
-            'route': 'personalias/$alias_id',
-            'alias_id': person_alias_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=PersonAlias,
+            request={
+                "route": "personalias/$alias_id",
+                "alias_id": person_alias_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -165,9 +186,8 @@ class PersonAlias(Alias):
 
         .. NOTE::: PersonAlias objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=PersonAlias, request={
-            'route': 'personalias/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=PersonAlias, request={"route": "personalias/", "method": "GET"}
         )
 
 

@@ -1,8 +1,19 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Position, Person, \
-    Group, internal_delete, internal_insert
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    Position,
+    Person,
+    Group,
+    internal_delete,
+    internal_insert,
+)
 
 
 class Affiliation(AbstractModel):
@@ -38,8 +49,14 @@ class Affiliation(AbstractModel):
 
     """
 
-    def __init__(self, affiliation_id: int, person: Person, group: Group, positions: Optional[List[Position]],
-                 stage_name: str):
+    def __init__(
+        self,
+        affiliation_id: int,
+        person: Person,
+        group: Group,
+        positions: Optional[List[Position]],
+        stage_name: str,
+    ):
         super(Affiliation, self).__init__(affiliation_id)
         self.person: Person = person
         self.group: Group = group
@@ -66,7 +83,11 @@ class Affiliation(AbstractModel):
         group = await Group.get(group_id)
 
         position_ids = kwargs.get("positionids")
-        positions = [] if not position_ids else [await Position.get(position_id) for position_id in position_ids]
+        positions = (
+            []
+            if not position_ids
+            else [await Position.get(position_id) for position_id in position_ids]
+        )
 
         stage_name = kwargs.get("stagename")
 
@@ -92,11 +113,14 @@ class Affiliation(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'affiliation/$affiliation_id',
-            'affiliation_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "affiliation/$affiliation_id",
+                "affiliation_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -108,7 +132,9 @@ class Affiliation(AbstractModel):
         _affiliations.pop(self.id)
 
     @staticmethod
-    async def insert(person_id: int, group_id: int, position_ids: List[int], stage_name: str) -> bool:
+    async def insert(
+        person_id: int, group_id: int, position_ids: List[int], stage_name: str
+    ) -> bool:
         """
         Insert a new affiliation into the database.
 
@@ -123,14 +149,16 @@ class Affiliation(AbstractModel):
         :return: bool
             Whether the affiliation was added to the existing objects as well as inserted into the DB.
         """
-        callback = await internal_insert(request={
-            'route': 'affiliation',
-            'person_id': person_id,
-            'group_id': group_id,
-            'position_ids': position_ids,
-            'stage_name': stage_name,
-            'method': 'POST'
-        })
+        callback = await internal_insert(
+            request={
+                "route": "affiliation",
+                "person_id": person_id,
+                "group_id": group_id,
+                "position_ids": position_ids,
+                "stage_name": stage_name,
+                "method": "POST",
+            }
+        )
         results = callback.response.get("results")
         if not results:
             return False
@@ -184,11 +212,14 @@ class Affiliation(AbstractModel):
         :returns: Optional[:ref:`Affiliation`]
             The affiliation object requested.
         """
-        return await internal_fetch(obj=Affiliation, request={
-            'route': 'affiliation/$affiliation_id',
-            'affiliation_id': affiliation_id,
-            'method': 'GET'
-        })
+        return await internal_fetch(
+            obj=Affiliation,
+            request={
+                "route": "affiliation/$affiliation_id",
+                "affiliation_id": affiliation_id,
+                "method": "GET",
+            },
+        )
 
     @staticmethod
     async def fetch_all():
@@ -196,10 +227,9 @@ class Affiliation(AbstractModel):
 
         .. NOTE:: affiliation objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Affiliation, request={
-            'route': 'affiliation',
-            'method': 'GET'
-        })
+        return await internal_fetch_all(
+            obj=Affiliation, request={"route": "affiliation", "method": "GET"}
+        )
 
 
 _affiliations: Dict[int, Affiliation] = dict()

@@ -75,39 +75,41 @@ class IreneAPIClient:
 
     """
 
-    def __init__(self, token: str, user_id: Union[int, str], api_url="localhost", port=5454,
-                 load_all_tags=True,
-                 load_all_person_aliases=True,
-                 load_all_group_aliases=True,
-                 load_all_persons=True,
-                 load_all_groups=True,
-                 load_all_twitter_accounts=True,
-                 load_all_users=False,
-                 load_all_guilds=False,
-                 load_all_affiliations=True,
-                 load_all_bloodtypes=True,
-                 load_all_media=True,
-                 load_all_displays=True,
-                 load_all_companies=True,
-                 load_all_dates=True,
-                 load_all_locations=True,
-                 load_all_positions=True,
-                 load_all_socials=True,
-                 load_all_fandoms=True,
-                 load_all_channels=False,
-                 test=False):
+    def __init__(
+        self,
+        token: str,
+        user_id: Union[int, str],
+        api_url="localhost",
+        port=5454,
+        load_all_tags=True,
+        load_all_person_aliases=True,
+        load_all_group_aliases=True,
+        load_all_persons=True,
+        load_all_groups=True,
+        load_all_twitter_accounts=True,
+        load_all_users=False,
+        load_all_guilds=False,
+        load_all_affiliations=True,
+        load_all_bloodtypes=True,
+        load_all_media=True,
+        load_all_displays=True,
+        load_all_companies=True,
+        load_all_dates=True,
+        load_all_locations=True,
+        load_all_positions=True,
+        load_all_socials=True,
+        load_all_fandoms=True,
+        load_all_channels=False,
+        test=False,
+    ):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
 
         self.connected = False
 
-        self._headers = {
-            'Authorization': f'Bearer {token}'
-        }
+        self._headers = {"Authorization": f"Bearer {token}"}
 
-        self._query_params = {
-            'user_id': user_id
-        }
+        self._query_params = {"user_id": user_id}
 
         self._base_url = api_url or "localhost"
         self._base_port = port or 5454
@@ -115,10 +117,29 @@ class IreneAPIClient:
         self._queue = asyncio.Queue()
         # asyncio.run_coroutine_threadsafe(self.connect, loop)
 
-        self._disconnect = dict({'disconnect': True})
+        self._disconnect = dict({"disconnect": True})
 
-        from . import Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, \
-            Position, Social, Person, TwitterAccount, User, Channel, Group, Fandom, Guild
+        from . import (
+            Tag,
+            PersonAlias,
+            GroupAlias,
+            Affiliation,
+            BloodType,
+            Media,
+            Display,
+            Company,
+            Date,
+            Location,
+            Position,
+            Social,
+            Person,
+            TwitterAccount,
+            User,
+            Channel,
+            Group,
+            Fandom,
+            Guild,
+        )
 
         self.__cache_preload = {
             Tag: load_all_tags,
@@ -139,7 +160,7 @@ class IreneAPIClient:
             TwitterAccount: load_all_twitter_accounts,
             User: load_all_users,
             Guild: load_all_guilds,
-            Channel: load_all_channels
+            Channel: load_all_channels,
         }
 
         self.in_testing = test
@@ -164,10 +185,12 @@ class IreneAPIClient:
             raise APIError(callback, error_msg=callback.response.get("error"))
 
         try:
-            error = callback.response["results"]["error"]  # forcing a KeyError (if raised, is a success)
+            error = callback.response["results"][
+                "error"
+            ]  # forcing a KeyError (if raised, is a success)
             raise APIError(callback, error_msg=error)
         except KeyError:
-            pass    
+            pass
 
     async def __load_up_cache(self):
         """
@@ -187,7 +210,9 @@ class IreneAPIClient:
             self._ws_client = aiohttp.ClientSession()
 
         try:
-            async with self._ws_client.ws_connect(self._ws_url, headers=self._headers, params=self._query_params) as ws:
+            async with self._ws_client.ws_connect(
+                self._ws_url, headers=self._headers, params=self._query_params
+            ) as ws:
                 self.connected = True
                 await self.__load_up_cache()
 
@@ -203,7 +228,7 @@ class IreneAPIClient:
                     # wait for a request.
                     callback: CallBack = await self._queue.get()
 
-                    if callback.type == 'disconnect':
+                    if callback.type == "disconnect":
                         await self._ws_client.close()
                         break  # close out of the session.
 
@@ -215,7 +240,7 @@ class IreneAPIClient:
                     # authenticity before completing a request.
                     data_response = (await ws.receive()).json()
 
-                    response_callback_id = int(data_response.get('callback_id') or 0)
+                    response_callback_id = int(data_response.get("callback_id") or 0)
                     if response_callback_id and (response_callback_id != callback.id):
                         # we replace the current callback with the response
                         callback = callbacks.get(response_callback_id)
@@ -243,5 +268,5 @@ class IreneAPIClient:
         if not self._ws_client or self._ws_client.closed:
             return
         else:
-            callback = CallBack(callback_type='disconnect', request=self._disconnect)
+            callback = CallBack(callback_type="disconnect", request=self._disconnect)
             await self.add_to_queue(callback)

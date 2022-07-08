@@ -1,8 +1,22 @@
 from typing import Union, List, Optional, Dict, TYPE_CHECKING
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, Date, AbstractModel, internal_fetch, internal_fetch_all, Name, Display, Social, \
-    Location, BloodType, Tag, internal_delete, internal_insert
+from . import (
+    CallBack,
+    Access,
+    Date,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    Name,
+    Display,
+    Social,
+    Location,
+    BloodType,
+    Tag,
+    internal_delete,
+    internal_insert,
+)
 
 if TYPE_CHECKING:
     from . import Affiliation, PersonAlias
@@ -79,8 +93,24 @@ class Person(AbstractModel):
     affiliations: List[:ref:`Affiliation`]
         A list of :ref:`Affiliation` objects between the :ref:`Person` and the :ref:`Group` objects they are in.
     """
-    def __init__(self, person_id, date, name, former_name, display, social, location, blood_type, gender,
-                 description, height, call_count, tags, aliases):
+
+    def __init__(
+        self,
+        person_id,
+        date,
+        name,
+        former_name,
+        display,
+        social,
+        location,
+        blood_type,
+        gender,
+        description,
+        height,
+        call_count,
+        tags,
+        aliases,
+    ):
         super(Person, self).__init__(person_id)
         self.date: Date = date
         self.name: Name = name
@@ -141,10 +171,29 @@ class Person(AbstractModel):
 
         # avoiding circular import when updating cache on PersonAlias insertions.
         from . import PersonAlias
-        aliases = [] if not alias_ids else [await PersonAlias.get(alias_id) for alias_id in alias_ids]
 
-        Person(person_id, date, name, former_name, display, social, location, blood_type, gender,
-               description, height, call_count, tags, aliases)
+        aliases = (
+            []
+            if not alias_ids
+            else [await PersonAlias.get(alias_id) for alias_id in alias_ids]
+        )
+
+        Person(
+            person_id,
+            date,
+            name,
+            former_name,
+            display,
+            social,
+            location,
+            blood_type,
+            gender,
+            description,
+            height,
+            call_count,
+            tags,
+            aliases,
+        )
         return _persons[person_id]
 
     def __str__(self):
@@ -159,11 +208,14 @@ class Person(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'person/$person_id',
-            'person_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "person/$person_id",
+                "person_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -175,8 +227,20 @@ class Person(AbstractModel):
         _persons.pop(self.id)
 
     @staticmethod
-    async def insert(date_id, name_id, former_name_id, gender, description, height, display_id,
-                     social_id, location_id, tag_ids, blood_id, call_count) -> None:
+    async def insert(
+        date_id,
+        name_id,
+        former_name_id,
+        gender,
+        description,
+        height,
+        display_id,
+        social_id,
+        location_id,
+        tag_ids,
+        blood_id,
+        call_count,
+    ) -> None:
         r"""
         Insert a new person into the database.
 
@@ -210,22 +274,24 @@ class Person(AbstractModel):
 
         :returns: None
         """
-        await internal_insert(request={
-            'route': 'person',
-            "date_id": date_id,
-            "name_id": name_id,
-            "former_name_id": former_name_id,
-            "gender": gender,
-            "description": description,
-            "height": height,
-            "display_id": display_id,
-            "social_id": social_id,
-            "location_id": location_id,
-            "tag_ids": tag_ids,
-            "blood_id": blood_id,
-            "call_count": call_count,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={
+                "route": "person",
+                "date_id": date_id,
+                "name_id": name_id,
+                "former_name_id": former_name_id,
+                "gender": gender,
+                "description": description,
+                "height": height,
+                "display_id": display_id,
+                "social_id": social_id,
+                "location_id": location_id,
+                "tag_ids": tag_ids,
+                "blood_id": blood_id,
+                "call_count": call_count,
+                "method": "POST",
+            }
+        )
 
     @staticmethod
     async def get(person_id: int, fetch=True):
@@ -263,11 +329,14 @@ class Person(AbstractModel):
             The person's ID to fetch.
         :returns: :ref:`Person`
         """
-        return await internal_fetch(obj=Person, request={
-            'route': 'person/$person_id',
-            'person_id': person_id,
-            'method': 'GET'}
-            )
+        return await internal_fetch(
+            obj=Person,
+            request={
+                "route": "person/$person_id",
+                "person_id": person_id,
+                "method": "GET",
+            },
+        )
 
     @staticmethod
     async def fetch_all():
@@ -275,10 +344,9 @@ class Person(AbstractModel):
 
         .. NOTE::: Person objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Person, request={
-            'route': 'person/',
-            'method': 'GET'
-        })
+        return await internal_fetch_all(
+            obj=Person, request={"route": "person/", "method": "GET"}
+        )
 
 
 _persons: Dict[int, Person] = dict()

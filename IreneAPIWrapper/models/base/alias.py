@@ -33,9 +33,9 @@ class Alias(AbstractModel):
     guild_id: Optional[int]
          A guild ID that owns the alias if there is one.
     """
+
     def __init__(self, alias_id, alias_name, obj_id, guild_id):
         super(Alias, self).__init__(alias_id)
         self.name: str = alias_name
         self._obj_id: int = obj_id
         self.guild_id: Optional[int] = guild_id
-

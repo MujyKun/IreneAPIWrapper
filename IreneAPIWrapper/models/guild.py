@@ -1,8 +1,17 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, User, \
-    internal_insert, internal_delete
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    User,
+    internal_insert,
+    internal_delete,
+)
 
 
 class Guild(AbstractModel):
@@ -110,29 +119,32 @@ class Guild(AbstractModel):
         Whether the bot exists in the guild.
     """
 
-    def __init__(self, guild_id,
-                 name,
-                 emoji_count,
-                 region,
-                 afk_timeout,
-                 icon,
-                 owner_id,
-                 owner,
-                 banner,
-                 description,
-                 mfa_level,
-                 splash,
-                 nitro_level,
-                 boosts,
-                 text_channel_count,
-                 voice_channel_count,
-                 category_count,
-                 emoji_limit,
-                 member_count,
-                 role_count,
-                 shard_id,
-                 create_date,
-                 has_bot):
+    def __init__(
+        self,
+        guild_id,
+        name,
+        emoji_count,
+        region,
+        afk_timeout,
+        icon,
+        owner_id,
+        owner,
+        banner,
+        description,
+        mfa_level,
+        splash,
+        nitro_level,
+        boosts,
+        text_channel_count,
+        voice_channel_count,
+        category_count,
+        emoji_limit,
+        member_count,
+        role_count,
+        shard_id,
+        create_date,
+        has_bot,
+    ):
         super(Guild, self).__init__(guild_id)
         self.name = name
         self.emoji_count = emoji_count
@@ -192,29 +204,31 @@ class Guild(AbstractModel):
         create_date = kwargs.get("createdate")
         has_bot: bool = kwargs.get("hasbot")
 
-        Guild(guild_id,
-                 name,
-                 emoji_count,
-                 region,
-                 afk_timeout,
-                 icon,
-                 owner_id,
-                 owner,
-                 banner,
-                 description,
-                 mfa_level,
-                 splash,
-                 nitro_level,
-                 boosts,
-                 text_channel_count,
-                 voice_channel_count,
-                 category_count,
-                 emoji_limit,
-                 member_count,
-                 role_count,
-                 shard_id,
-                 create_date,
-                 has_bot)
+        Guild(
+            guild_id,
+            name,
+            emoji_count,
+            region,
+            afk_timeout,
+            icon,
+            owner_id,
+            owner,
+            banner,
+            description,
+            mfa_level,
+            splash,
+            nitro_level,
+            boosts,
+            text_channel_count,
+            voice_channel_count,
+            category_count,
+            emoji_limit,
+            member_count,
+            role_count,
+            shard_id,
+            create_date,
+            has_bot,
+        )
         return _guilds[guild_id]
 
     async def delete(self) -> None:
@@ -223,11 +237,14 @@ class Guild(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'guild/$guild_id',
-            'guild_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "guild/$guild_id",
+                "guild_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -239,14 +256,30 @@ class Guild(AbstractModel):
         _guilds.pop(self.id)
 
     @staticmethod
-    async def insert(guild_id, name=None, emoji_count=None, region=None,
-                     afk_timeout=None, icon=None, owner_id=None,
-                     banner=None, description=None, mfa_level=None,
-                     splash=None, nitro_level=None, boosts=None,
-                     text_channel_count=None, voice_channel_count=None, category_count=None,
-                     emoji_limit=None, member_count=None, role_count=None,
-                     shard_id=None, create_date=None, has_bot=True,
-                     ):
+    async def insert(
+        guild_id,
+        name=None,
+        emoji_count=None,
+        region=None,
+        afk_timeout=None,
+        icon=None,
+        owner_id=None,
+        banner=None,
+        description=None,
+        mfa_level=None,
+        splash=None,
+        nitro_level=None,
+        boosts=None,
+        text_channel_count=None,
+        voice_channel_count=None,
+        category_count=None,
+        emoji_limit=None,
+        member_count=None,
+        role_count=None,
+        shard_id=None,
+        create_date=None,
+        has_bot=True,
+    ):
         r"""
         Insert a new Guild into the database.
 
@@ -301,32 +334,34 @@ class Guild(AbstractModel):
 
         :returns: None
         """
-        await internal_insert(request={
-            'route': 'guild',
-            "guild_id": guild_id,
-            "name": name,
-            "emoji_count": emoji_count,
-            "region": region,
-            "afk_timeout": afk_timeout,
-            "icon": icon,
-            "owner_id": owner_id,
-            "banner": banner,
-            "description": description,
-            "mfa_level": mfa_level,
-            "splash": splash,
-            "nitro_level": nitro_level,
-            "boosts": boosts,
-            "text_channel_count": text_channel_count,
-            "voice_channel_count": voice_channel_count,
-            "category_count": category_count,
-            "emoji_limit": emoji_limit,
-            "member_count": member_count,
-            "role_count": role_count,
-            "shard_id": shard_id,
-            "create_date": create_date,
-            "has_bot": has_bot,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={
+                "route": "guild",
+                "guild_id": guild_id,
+                "name": name,
+                "emoji_count": emoji_count,
+                "region": region,
+                "afk_timeout": afk_timeout,
+                "icon": icon,
+                "owner_id": owner_id,
+                "banner": banner,
+                "description": description,
+                "mfa_level": mfa_level,
+                "splash": splash,
+                "nitro_level": nitro_level,
+                "boosts": boosts,
+                "text_channel_count": text_channel_count,
+                "voice_channel_count": voice_channel_count,
+                "category_count": category_count,
+                "emoji_limit": emoji_limit,
+                "member_count": member_count,
+                "role_count": role_count,
+                "shard_id": shard_id,
+                "create_date": create_date,
+                "has_bot": has_bot,
+                "method": "POST",
+            }
+        )
 
     @staticmethod
     async def get(guild_id: int, fetch=True):
@@ -364,11 +399,10 @@ class Guild(AbstractModel):
             The guild's ID to fetch.
         :returns: :ref:`Guild`
         """
-        return await internal_fetch(obj=Guild, request={
-            'route': 'guild/$guild_id',
-            'guild_id': guild_id,
-            'method': 'GET'}
-                                    )
+        return await internal_fetch(
+            obj=Guild,
+            request={"route": "guild/$guild_id", "guild_id": guild_id, "method": "GET"},
+        )
 
     @staticmethod
     async def fetch_all():
@@ -377,10 +411,9 @@ class Guild(AbstractModel):
 
         :returns: List[:ref:`Guild`]
         """
-        return await internal_fetch(obj=Guild, request={
-            'route': 'guild/',
-            'method': 'GET'}
-                                    )
+        return await internal_fetch(
+            obj=Guild, request={"route": "guild/", "method": "GET"}
+        )
 
 
 _guilds: Dict[int, Guild] = dict()

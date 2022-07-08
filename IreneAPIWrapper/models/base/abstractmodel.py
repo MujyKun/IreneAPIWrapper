@@ -57,4 +57,3 @@ class AbstractModel:
     async def fetch_all():
         """Fetch all objects from the API."""
         ...
-

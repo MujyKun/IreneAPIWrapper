@@ -1,8 +1,16 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, \
-    internal_insert, internal_delete
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    internal_insert,
+    internal_delete,
+)
 
 
 class Location(AbstractModel):
@@ -29,6 +37,7 @@ class Location(AbstractModel):
         The city's name.
 
     """
+
     def __init__(self, location_id, country, city):
         super(Location, self).__init__(location_id)
         self.country = country
@@ -56,11 +65,14 @@ class Location(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'location/$location_id',
-            'location_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "location/$location_id",
+                "location_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -80,12 +92,14 @@ class Location(AbstractModel):
         :param city: The city's name.
         :returns: None
         """
-        await internal_insert(request={
-            'route': 'location',
-            'country': country,
-            'city': city,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={
+                "route": "location",
+                "country": country,
+                "city": city,
+                "method": "POST",
+            }
+        )
 
     @staticmethod
     async def get(location_id: int, fetch=True):
@@ -121,10 +135,13 @@ class Location(AbstractModel):
         :param location_id: int
             The location's ID to fetch.
         """
-        return await internal_fetch(obj=Location, request={
-            'route': 'location/$location_id',
-            'location_id': location_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=Location,
+            request={
+                "route": "location/$location_id",
+                "location_id": location_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -133,9 +150,8 @@ class Location(AbstractModel):
 
         .. NOTE::: Location objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Location, request={
-            'route': 'location/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Location, request={"route": "location/", "method": "GET"}
         )
 
 

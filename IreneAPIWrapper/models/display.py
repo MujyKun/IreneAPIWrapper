@@ -1,8 +1,16 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, \
-    internal_insert, internal_delete
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    internal_insert,
+    internal_delete,
+)
 
 
 class Display(AbstractModel):
@@ -29,7 +37,10 @@ class Display(AbstractModel):
         The group that the Person is affiliated with.
 
     """
-    def __init__(self, display_id, avatar: MediaSource, banner: MediaSource, *args, **kwargs):
+
+    def __init__(
+        self, display_id, avatar: MediaSource, banner: MediaSource, *args, **kwargs
+    ):
         super(Display, self).__init__(display_id)
         self.avatar: MediaSource = avatar
         self.banner: MediaSource = banner
@@ -51,11 +62,14 @@ class Display(AbstractModel):
 
     async def delete(self) -> None:
         """Delete the Display object from the database and remove it from cache."""
-        await internal_delete(self, request={
-            'route': 'display/$display_id',
-            'display_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "display/$display_id",
+                "display_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -73,12 +87,14 @@ class Display(AbstractModel):
             The banner for the entity.
         :return: None
         """
-        await internal_insert(request={
-            'route': 'display',
-            'avatar': avatar,
-            'banner': banner,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={
+                "route": "display",
+                "avatar": avatar,
+                "banner": banner,
+                "method": "POST",
+            }
+        )
 
     @staticmethod
     async def get(display_id: int, fetch=True):
@@ -118,10 +134,13 @@ class Display(AbstractModel):
         :returns: Optional[:ref:`Display`]
             The display object requested.
         """
-        return await internal_fetch(obj=Display, request={
-            'route': 'display/$display_id',
-            'display_id': display_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=Display,
+            request={
+                "route": "display/$display_id",
+                "display_id": display_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -130,9 +149,8 @@ class Display(AbstractModel):
 
         .. NOTE::: Display objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Display, request={
-            'route': 'display/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Display, request={"route": "display/", "method": "GET"}
         )
 
 

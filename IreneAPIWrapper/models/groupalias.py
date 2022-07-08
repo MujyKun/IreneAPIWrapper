@@ -1,8 +1,17 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Alias, \
-    internal_delete, internal_insert
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    Alias,
+    internal_delete,
+    internal_insert,
+)
 
 
 class GroupAlias(Alias):
@@ -34,8 +43,11 @@ class GroupAlias(Alias):
     guild_id: Optional[int]
          A guild ID that owns the alias if there is one.
     """
+
     def __init__(self, alias_id, alias_name, group_id, guild_id):
-        super(GroupAlias, self).__init__(alias_id=alias_id, alias_name=alias_name, obj_id=group_id, guild_id=guild_id)
+        super(GroupAlias, self).__init__(
+            alias_id=alias_id, alias_name=alias_name, obj_id=group_id, guild_id=guild_id
+        )
         self.group_id = group_id
         if not _groupaliases.get(self.id):
             _groupaliases[self.id] = self
@@ -60,11 +72,14 @@ class GroupAlias(Alias):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'groupalias/$alias_id',
-            'alias_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "groupalias/$alias_id",
+                "alias_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -90,10 +105,10 @@ class GroupAlias(Alias):
             Whether the GroupAlias was added to the existing objects as well as inserted into the DB.
         """
         request = {
-            'route': 'groupalias',
-            'alias': alias,
-            'group_id': group_id,
-            'method': 'POST'
+            "route": "groupalias",
+            "alias": alias,
+            "group_id": group_id,
+            "method": "POST",
         }
         if guild_id:
             request["guild_id"] = guild_id
@@ -150,10 +165,13 @@ class GroupAlias(Alias):
             The group alias's ID to fetch.
         :returns: :ref:`GroupAlias`
         """
-        return await internal_fetch(obj=GroupAlias, request={
-            'route': 'groupalias/$alias_id',
-            'alias_id': group_alias_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=GroupAlias,
+            request={
+                "route": "groupalias/$alias_id",
+                "alias_id": group_alias_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -162,9 +180,8 @@ class GroupAlias(Alias):
 
         .. NOTE::: GroupAlias objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=GroupAlias, request={
-            'route': 'groupalias/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=GroupAlias, request={"route": "groupalias/", "method": "GET"}
         )
 
 

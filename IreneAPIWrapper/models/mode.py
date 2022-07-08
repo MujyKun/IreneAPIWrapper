@@ -12,6 +12,7 @@ class Mode:
         The name of the mode.
 
     """
+
     def __init__(self, access_id: int, name: str):
         self.id = access_id
         self.name = name

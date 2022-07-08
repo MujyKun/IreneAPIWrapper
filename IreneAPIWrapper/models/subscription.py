@@ -37,7 +37,13 @@ class Subscription:
         May have been in the early stages of the API where REST routes were planned to be used instead of a Websocket.
 
     """
-    def __init__(self, account_id: int, account_name: str, followed: Optional[List[Channel]] = None):
+
+    def __init__(
+        self,
+        account_id: int,
+        account_name: str,
+        followed: Optional[List[Channel]] = None,
+    ):
 
         self.id: int = account_id
         self.name: str = account_name.lower()
@@ -81,4 +87,3 @@ class Subscription:
 
         if self._mention_roles.get(channel):
             self._mention_roles.pop(channel)
-

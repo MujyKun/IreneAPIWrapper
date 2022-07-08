@@ -1,7 +1,14 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+)
 
 
 class BloodType(AbstractModel):
@@ -30,6 +37,7 @@ class BloodType(AbstractModel):
     name: str
         The name of the blood type.
     """
+
     def __init__(self, blood_id, name):
         super(BloodType, self).__init__(blood_id)
         self.name = name
@@ -88,10 +96,13 @@ class BloodType(AbstractModel):
         :returns: Optional[:ref:`BloodType`]
             The blood type object requested.
         """
-        return await internal_fetch(obj=BloodType, request={
-            'route': 'bloodtype/$blood_id',
-            'blood_id': blood_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=BloodType,
+            request={
+                "route": "bloodtype/$blood_id",
+                "blood_id": blood_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -100,9 +111,8 @@ class BloodType(AbstractModel):
 
         .. NOTE:: BloodType objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=BloodType, request={
-            'route': 'bloodtype/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=BloodType, request={"route": "bloodtype/", "method": "GET"}
         )
 
 

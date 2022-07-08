@@ -1,8 +1,21 @@
 from typing import Union, List, Optional, Dict, TYPE_CHECKING
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Date, Company, \
-    Display, Social, Tag, internal_delete, internal_insert
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    Date,
+    Company,
+    Display,
+    Social,
+    Tag,
+    internal_delete,
+    internal_insert,
+)
 
 if TYPE_CHECKING:
     from . import Affiliation, GroupAlias
@@ -62,7 +75,20 @@ class Group(AbstractModel):
         All affiliations that are associated with the Group.
 
     """
-    def __init__(self, group_id, name, date, description, company, display, website, social, tags, aliases):
+
+    def __init__(
+        self,
+        group_id,
+        name,
+        date,
+        description,
+        company,
+        display,
+        website,
+        social,
+        tags,
+        aliases,
+    ):
         super(Group, self).__init__(group_id)
         self.name: str = name
         self.date: Date = date
@@ -111,9 +137,24 @@ class Group(AbstractModel):
         # avoiding circular import when updating cache on GroupAlias insertions.
         from . import GroupAlias
 
-        aliases = [] if not alias_ids else [await GroupAlias.get(alias_id) for alias_id in alias_ids]
+        aliases = (
+            []
+            if not alias_ids
+            else [await GroupAlias.get(alias_id) for alias_id in alias_ids]
+        )
 
-        Group(group_id, name, date, description, company, display, website, social, tags, aliases)
+        Group(
+            group_id,
+            name,
+            date,
+            description,
+            company,
+            display,
+            website,
+            social,
+            tags,
+            aliases,
+        )
         return _groups[group_id]
 
     def __str__(self):
@@ -128,11 +169,14 @@ class Group(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'group/$group_id',
-            'group_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "group/$group_id",
+                "group_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -144,7 +188,16 @@ class Group(AbstractModel):
         _groups.pop(self.id)
 
     @staticmethod
-    async def insert(group_name: str, date_id: int = None, description: str = None, company_id: int = None, display_id: int = None, website: str = None, social_id: int = None, tag_ids: List[int] = None) -> None:
+    async def insert(
+        group_name: str,
+        date_id: int = None,
+        description: str = None,
+        company_id: int = None,
+        display_id: int = None,
+        website: str = None,
+        social_id: int = None,
+        tag_ids: List[int] = None,
+    ) -> None:
         """
         Insert a new group into the database.
 
@@ -166,18 +219,20 @@ class Group(AbstractModel):
             A list of :ref:`Tag` IDs.
         :return: None
         """
-        await internal_insert(request={
-            'route': 'group',
-            'group_name': group_name,
-            'date_id': date_id,
-            'description': description,
-            'company_id': company_id,
-            'display_id': display_id,
-            'website': website,
-            'social_id': social_id,
-            'tag_ids': tag_ids,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={
+                "route": "group",
+                "group_name": group_name,
+                "date_id": date_id,
+                "description": description,
+                "company_id": company_id,
+                "display_id": display_id,
+                "website": website,
+                "social_id": social_id,
+                "tag_ids": tag_ids,
+                "method": "POST",
+            }
+        )
 
     @staticmethod
     async def get(group_id: int, fetch=True):
@@ -215,10 +270,9 @@ class Group(AbstractModel):
             The group's ID to fetch.
         :returns: :ref:`Group`
         """
-        return await internal_fetch(obj=Group, request={
-            'route': 'group/$group_id',
-            'group_id': group_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=Group,
+            request={"route": "group/$group_id", "group_id": group_id, "method": "GET"},
         )
 
     @staticmethod
@@ -227,9 +281,8 @@ class Group(AbstractModel):
 
         .. NOTE::: Group objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Group, request={
-            'route': 'group/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Group, request={"route": "group/", "method": "GET"}
         )
 
 

@@ -1,7 +1,15 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, internal_insert, internal_delete
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    internal_insert,
+    internal_delete,
+)
 
 
 class Tag(AbstractModel):
@@ -23,6 +31,7 @@ class Tag(AbstractModel):
     name: str
         The tag name.
     """
+
     def __init__(self, tag_id, name, *args, **kwargs):
         super(Tag, self).__init__(tag_id)
         self.name = name
@@ -37,8 +46,8 @@ class Tag(AbstractModel):
 
         :returns: :ref:`Tag`
         """
-        tag_id = kwargs.get('tagid')
-        name = kwargs.get('name')
+        tag_id = kwargs.get("tagid")
+        name = kwargs.get("name")
         Tag(tag_id, name)
         return _tags[tag_id]
 
@@ -48,11 +57,10 @@ class Tag(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'tag/$tag_id',
-            'tag_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={"route": "tag/$tag_id", "tag_id": self.id, "method": "DELETE"},
+        )
         await self._remove_from_cache()
 
     @staticmethod
@@ -63,11 +71,9 @@ class Tag(AbstractModel):
         :param tag_name:
         :returns: None
         """
-        await internal_insert(request={
-            'route': 'tag',
-            'name': tag_name,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={"route": "tag", "name": tag_name, "method": "POST"}
+        )
 
     async def _remove_from_cache(self) -> None:
         """
@@ -112,10 +118,9 @@ class Tag(AbstractModel):
         :param tag_id: int
             The tag's ID to fetch.
         """
-        return await internal_fetch(obj=Tag, request={
-            'route': 'tag/$tag_id',
-            'tag_id': tag_id,
-            'method': 'GET'})
+        return await internal_fetch(
+            obj=Tag, request={"route": "tag/$tag_id", "tag_id": tag_id, "method": "GET"}
+        )
 
     @staticmethod
     async def fetch_all():
@@ -123,9 +128,9 @@ class Tag(AbstractModel):
 
         .. NOTE::: Tag objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Tag, request={
-            'route': 'tag/',
-            'method': 'GET'})
+        return await internal_fetch_all(
+            obj=Tag, request={"route": "tag/", "method": "GET"}
+        )
 
 
 _tags: Dict[int, Tag] = dict()

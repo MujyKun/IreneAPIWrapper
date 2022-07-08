@@ -1,8 +1,19 @@
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, MediaSource, Position, Person, \
-    Group, internal_delete, internal_insert
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    MediaSource,
+    Position,
+    Person,
+    Group,
+    internal_delete,
+    internal_insert,
+)
 
 
 class Channel(AbstractModel):
@@ -20,6 +31,7 @@ class Channel(AbstractModel):
     id: int
         The channel id.
     """
+
     def __init__(self, channel_id):
         super(Channel, self).__init__(channel_id)
         _channels[self.id] = self
@@ -43,11 +55,14 @@ class Channel(AbstractModel):
 
         :return: None
         """
-        await internal_delete(self, request={
-            'route': 'channel/$channel_id',
-            'channel_id': self.id,
-            'method': 'DELETE'
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "channel/$channel_id",
+                "channel_id": self.id,
+                "method": "DELETE",
+            },
+        )
 
     async def _remove_from_cache(self) -> None:
         """
@@ -65,11 +80,9 @@ class Channel(AbstractModel):
         :param channel_id: The channel ID to insert.
         :return: None
         """
-        await internal_insert(request={
-            'route': 'channel',
-            'channel_id': channel_id,
-            'method': 'POST'
-        })
+        await internal_insert(
+            request={"route": "channel", "channel_id": channel_id, "method": "POST"}
+        )
 
     @staticmethod
     async def get(channel_id: int, fetch=True):
@@ -112,10 +125,13 @@ class Channel(AbstractModel):
         :returns: Optional[:ref:`Channel`]
             The channel object requested.
         """
-        return await internal_fetch(obj=Channel, request={
-            'route': 'channel/$channel_id',
-            'affiliation_id': channel_id,
-            'method': 'GET'}
+        return await internal_fetch(
+            obj=Channel,
+            request={
+                "route": "channel/$channel_id",
+                "affiliation_id": channel_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod
@@ -124,9 +140,8 @@ class Channel(AbstractModel):
 
         .. NOTE:: Channel objects are added to cache on creation.
         """
-        return await internal_fetch_all(obj=Channel, request={
-            'route': 'channel',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            obj=Channel, request={"route": "channel", "method": "GET"}
         )
 
 

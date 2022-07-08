@@ -12,6 +12,7 @@ class Timeline:
     tweets: List[:ref:`Tweet`]
         A list of tweets.
     """
+
     def __init__(self, *args, **kwargs):
         """
         Represents a Twitter account's timeline and contains a list of tweets.

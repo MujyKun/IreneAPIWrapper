@@ -34,13 +34,14 @@ class CallBack:
     _expected_result: Optional[dict]
         Used for testing expected responses from the API.
     """
+
     def __init__(self, callback_type: str = "request", request: dict = None):
         self.type = callback_type  # can be 'request' or 'disconnect'
         self._creation_time = datetime.now()
         self.done = False
         self.request: Optional[dict] = request  # request data
-        self.id = request.get('callback_id') or self._get_unused_callback_id()
-        self.request['callback_id'] = self.id
+        self.id = request.get("callback_id") or self._get_unused_callback_id()
+        self.request["callback_id"] = self.id
         callbacks[self.id] = self
         self.response: Optional[dict] = None  # data received from API
         self._completion_time = None
@@ -81,7 +82,9 @@ class CallBack:
     def _get_unused_callback_id() -> int:
         """Get an unused callback id/name."""
         while True:
-            callback_id = int(f"{randint(0, 50000)}{datetime.utcnow().strftime('%Y%m%d%H%M%S')}")
+            callback_id = int(
+                f"{randint(0, 50000)}{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
+            )
             existing_callback = callbacks.get(callback_id)
             if existing_callback:
                 continue

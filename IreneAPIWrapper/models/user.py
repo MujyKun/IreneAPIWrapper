@@ -1,14 +1,43 @@
 from typing import Union, List, Optional, Dict, Tuple
 
 from IreneAPIWrapper.sections import outer
-from . import CallBack, Access, AbstractModel, internal_fetch, internal_fetch_all, internal_insert, internal_delete, \
-    basic_call
+from . import (
+    CallBack,
+    Access,
+    AbstractModel,
+    internal_fetch,
+    internal_fetch_all,
+    internal_insert,
+    internal_delete,
+    basic_call,
+)
 
 
 class User(AbstractModel):
-    def __init__(self, user_id, is_patron, is_super_patron, is_banned, is_mod, is_data_mod, is_translator,
-                 is_proofreader, balance, xp, api_access, gg_filter_active, language, lastfm, timezone,
-                 rob_level, daily_level, beg_level, profile_level, gg_filter_person_ids, gg_filter_group_ids):
+    def __init__(
+        self,
+        user_id,
+        is_patron,
+        is_super_patron,
+        is_banned,
+        is_mod,
+        is_data_mod,
+        is_translator,
+        is_proofreader,
+        balance,
+        xp,
+        api_access,
+        gg_filter_active,
+        language,
+        lastfm,
+        timezone,
+        rob_level,
+        daily_level,
+        beg_level,
+        profile_level,
+        gg_filter_person_ids,
+        gg_filter_group_ids,
+    ):
         super(User, self).__init__(user_id)
         self.is_patron: bool = is_patron
         self.is_super_patron: bool = is_super_patron
@@ -67,9 +96,29 @@ class User(AbstractModel):
         daily_level = kwargs.get("dailylevel") or 0
         beg_level = kwargs.get("beglevel") or 0
         profile_level = kwargs.get("profilelevel") or 0
-        User(user_id, is_patron, is_super_patron, is_banned, is_mod, is_data_mod, is_translator,
-                    is_proofreader, balance, xp, api_access, gg_filter_active, language, lastfm, timezone,
-                    rob_level, daily_level, beg_level, profile_level, gg_filter_person_ids, gg_filter_group_ids)
+        User(
+            user_id,
+            is_patron,
+            is_super_patron,
+            is_banned,
+            is_mod,
+            is_data_mod,
+            is_translator,
+            is_proofreader,
+            balance,
+            xp,
+            api_access,
+            gg_filter_active,
+            language,
+            lastfm,
+            timezone,
+            rob_level,
+            daily_level,
+            beg_level,
+            profile_level,
+            gg_filter_person_ids,
+            gg_filter_group_ids,
+        )
         return _users[user_id]
 
     async def set_patron(self, active=True):
@@ -78,11 +127,13 @@ class User(AbstractModel):
 
         :param active: Whether the status should be active.
         """
-        await basic_call(request={
-            'route': 'user/patron_status/$user_id',
-            'user_id': self.id,
-            'method': 'POST' if active else 'DELETE',
-        })
+        await basic_call(
+            request={
+                "route": "user/patron_status/$user_id",
+                "user_id": self.id,
+                "method": "POST" if active else "DELETE",
+            }
+        )
         self.is_patron = active
 
     async def add_token(self, unhashed_token, access: Access):
@@ -92,23 +143,27 @@ class User(AbstractModel):
         :param unhashed_token:
         :param access: (Access) An Access object that is predefined in models/access
         """
-        await basic_call(request={
-            'route': 'user/token/$user_id',
-            'user_id': self.id,
-            'unhashed_token': unhashed_token,
-            'access_id': access.id,
-            'method': 'POST',
-        })
+        await basic_call(
+            request={
+                "route": "user/token/$user_id",
+                "user_id": self.id,
+                "unhashed_token": unhashed_token,
+                "access_id": access.id,
+                "method": "POST",
+            }
+        )
         self.api_access = access
 
     async def toggle_gg_filter(self):
         self.gg_filter_active = not self.gg_filter_active
-        await basic_call(request={
-            'route': 'user/toggleggfilter/$user_id',
-            'user_id': self.id,
-            'active': self.gg_filter_active,
-            'method': 'POST'
-        })
+        await basic_call(
+            request={
+                "route": "user/toggleggfilter/$user_id",
+                "user_id": self.id,
+                "active": self.gg_filter_active,
+                "method": "POST",
+            }
+        )
 
     async def upsert_filter_persons(self, person_ids: Tuple[int]):
         """Upsert persons to the gg filter.
@@ -116,12 +171,14 @@ class User(AbstractModel):
         :param person_ids: Tuple[int]
             A tuple of person ids that the user should have.
         """
-        await basic_call(request={
-            'route': 'user/ggfilterpersons/$user_id',
-            'user_id': self.id,
-            'person_ids': person_ids,
-            'method': 'POST'
-        })
+        await basic_call(
+            request={
+                "route": "user/ggfilterpersons/$user_id",
+                "user_id": self.id,
+                "person_ids": person_ids,
+                "method": "POST",
+            }
+        )
 
     async def upsert_filter_groups(self, group_ids: Tuple[int]):
         """Upsert groups to the gg filter.
@@ -129,22 +186,26 @@ class User(AbstractModel):
         :param group_ids: Tuple[int]
             A tuple of group ids that the user should have.
         """
-        await basic_call(request={
-            'route': 'user/ggfiltergroups/$user_id',
-            'user_id': self.id,
-            'group_ids': group_ids,
-            'method': 'POST'
-        })
+        await basic_call(
+            request={
+                "route": "user/ggfiltergroups/$user_id",
+                "user_id": self.id,
+                "group_ids": group_ids,
+                "method": "POST",
+            }
+        )
 
     async def delete_token(self):
         """
         Delete the user's current API token if they have one.
         """
-        await basic_call(request={
-            'route': 'user/token/$user_id',
-            'user_id': self.id,
-            'method': 'DELETE',
-        })
+        await basic_call(
+            request={
+                "route": "user/token/$user_id",
+                "user_id": self.id,
+                "method": "DELETE",
+            }
+        )
         self.api_access = None
 
     async def set_super_patron(self, active=True):
@@ -153,11 +214,13 @@ class User(AbstractModel):
 
         :param active: Whether the status should be active.
         """
-        await basic_call(request={
-            'route': 'user/superpatron_status/$user_id',
-            'user_id': self.id,
-            'method': 'POST' if active else 'DELETE',
-        })
+        await basic_call(
+            request={
+                "route": "user/superpatron_status/$user_id",
+                "user_id": self.id,
+                "method": "POST" if active else "DELETE",
+            }
+        )
         self.is_super_patron = active
         self.is_patron = active  # remove their patron status from cache as well
 
@@ -167,11 +230,13 @@ class User(AbstractModel):
 
         :param active: Whether the status should be active.
         """
-        await basic_call(request={
-            'route': 'user/mod_status/$user_id',
-            'user_id': self.id,
-            'method': 'POST' if active else 'DELETE',
-        })
+        await basic_call(
+            request={
+                "route": "user/mod_status/$user_id",
+                "user_id": self.id,
+                "method": "POST" if active else "DELETE",
+            }
+        )
 
         self.is_mod = active
 
@@ -181,11 +246,13 @@ class User(AbstractModel):
 
         :param active: Whether the status should be active.
         """
-        await basic_call(request={
-            'route': 'user/data_mod_status/$user_id',
-            'user_id': self.id,
-            'method': 'POST' if active else 'DELETE',
-        })
+        await basic_call(
+            request={
+                "route": "user/data_mod_status/$user_id",
+                "user_id": self.id,
+                "method": "POST" if active else "DELETE",
+            }
+        )
         self.is_data_mod = active
 
     async def set_proofreader(self, active=True):
@@ -194,11 +261,13 @@ class User(AbstractModel):
 
         :param active: Whether the status should be active.
         """
-        await basic_call(request={
-            'route': 'user/proofreader_status/$user_id',
-            'user_id': self.id,
-            'method': 'POST' if active else 'DELETE',
-        })
+        await basic_call(
+            request={
+                "route": "user/proofreader_status/$user_id",
+                "user_id": self.id,
+                "method": "POST" if active else "DELETE",
+            }
+        )
         self.is_proofreader = active
 
     async def set_translator(self, active=True):
@@ -207,11 +276,13 @@ class User(AbstractModel):
 
         :param active: Whether the status should be active.
         """
-        await basic_call(request={
-            'route': 'user/translator_status/$user_id',
-            'user_id': self.id,
-            'method': 'POST' if active else 'DELETE',
-        })
+        await basic_call(
+            request={
+                "route": "user/translator_status/$user_id",
+                "user_id": self.id,
+                "method": "POST" if active else "DELETE",
+            }
+        )
         self.is_translator = active
 
     async def set_ban(self, active=True):
@@ -220,11 +291,13 @@ class User(AbstractModel):
 
         :param active: (bool) Whether the ban should be active.
         """
-        await basic_call(request={
-            'route': 'user/ban_status/$user_id',
-            'user_id': self.id,
-            'method': 'POST' if active else 'DELETE',
-        })
+        await basic_call(
+            request={
+                "route": "user/ban_status/$user_id",
+                "user_id": self.id,
+                "method": "POST" if active else "DELETE",
+            }
+        )
         self.is_banned = active
 
     @staticmethod
@@ -236,11 +309,13 @@ class User(AbstractModel):
 
         :returns: None
         """
-        await basic_call(request={
-            'route': 'user/$user_id',
-            'user_id': user_id,
-            'method': 'POST',
-        })
+        await basic_call(
+            request={
+                "route": "user/$user_id",
+                "user_id": user_id,
+                "method": "POST",
+            }
+        )
 
     async def delete(self) -> None:
         """
@@ -248,11 +323,14 @@ class User(AbstractModel):
 
         :returns: None
         """
-        await internal_delete(self, request={
-            'route': 'user/$user_id',
-            'user_id': self.id,
-            'method': 'DELETE',
-        })
+        await internal_delete(
+            self,
+            request={
+                "route": "user/$user_id",
+                "user_id": self.id,
+                "method": "DELETE",
+            },
+        )
         await self._remove_from_cache()
 
     async def _remove_from_cache(self) -> None:
@@ -300,10 +378,10 @@ class User(AbstractModel):
             The user's ID to fetch.
         :returns: :ref:`User`
         """
-        return await internal_fetch(obj=User, request={
-            'route': 'user/$user_id',
-            'user_id': user_id,
-            'method': 'GET'})
+        return await internal_fetch(
+            obj=User,
+            request={"route": "user/$user_id", "user_id": user_id, "method": "GET"},
+        )
 
     @staticmethod
     async def fetch_all():
@@ -311,9 +389,8 @@ class User(AbstractModel):
 
         .. NOTE:: User objects are added to cache on creation.
         """
-        return await internal_fetch_all(User, request={
-            'route': 'user/',
-            'method': 'GET'}
+        return await internal_fetch_all(
+            User, request={"route": "user/", "method": "GET"}
         )
 
 

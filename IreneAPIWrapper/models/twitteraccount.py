@@ -2,6 +2,7 @@ from typing import Optional, List, Dict
 
 from . import Subscription, Channel, Timeline, CallBack, Tweet
 from IreneAPIWrapper.sections import outer
+
 BASE_URL = "https://twitter.com"
 
 
@@ -29,7 +30,13 @@ class TwitterAccount(Subscription):
     latest_tweet: Optional[:ref:`Tweet`]
         The latest tweet on the Twitter Account.
     """
-    def __init__(self, account_id: int, account_name: str, followed: Optional[List[Channel]] = None):
+
+    def __init__(
+        self,
+        account_id: int,
+        account_name: str,
+        followed: Optional[List[Channel]] = None,
+    ):
         super().__init__(account_id, account_name, followed)
 
         # If the latest tweet does not exist, the first fetch will never be considered a new tweet.
@@ -37,10 +44,12 @@ class TwitterAccount(Subscription):
 
     async def fetch_timeline(self) -> Timeline:
         """Fetch the latest tweets for this account from Twitter"""
-        callback = CallBack(request={
-            'route': 'twitter/timeline/$twitter_id',
-            'twitter_id': self.id,
-            'method': 'GET'}
+        callback = CallBack(
+            request={
+                "route": "twitter/timeline/$twitter_id",
+                "twitter_id": self.id,
+                "method": "GET",
+            }
         )
 
         await outer.client.add_and_wait(callback)
@@ -54,10 +63,7 @@ class TwitterAccount(Subscription):
         This returns the exact API Callback. This may only be useful internally.
         :returns: :ref:`CallBack`
         """
-        callback = CallBack(request={
-            'route': 'twitter/subscriptions',
-            'method': 'GET'}
-        )
+        callback = CallBack(request={"route": "twitter/subscriptions", "method": "GET"})
 
         await outer.client.add_and_wait(callback)
         return callback
@@ -71,21 +77,22 @@ class TwitterAccount(Subscription):
             A dictionary of TwitterAccount objects with the ID as the key.
         """
 
-        callback = CallBack(request={
-            'route': 'twitter/accounts',
-            'method': 'GET'}
-        )
+        callback = CallBack(request={"route": "twitter/accounts", "method": "GET"})
 
         await outer.client.add_and_wait(callback)
 
         for key, acc_info in (callback.response["results"]).items():
-            _twitter_accounts[acc_info["accountid"]] = TwitterAccount(acc_info["accountid"], acc_info["username"])
+            _twitter_accounts[acc_info["accountid"]] = TwitterAccount(
+                acc_info["accountid"], acc_info["username"]
+            )
 
         subs_callback = await TwitterAccount._fetch_all_subscriptions()
 
         for key, sub_info in (subs_callback.response["results"]).items():
             channel = await Channel.get(sub_info["channelid"])
-            _twitter_accounts[sub_info["accountid"]]._add_to_cache(channel, sub_info["roleid"])
+            _twitter_accounts[sub_info["accountid"]]._add_to_cache(
+                channel, sub_info["roleid"]
+            )
 
         return _twitter_accounts
 
@@ -96,10 +103,12 @@ class TwitterAccount(Subscription):
         This will also remove all subscriptions permanently. Use with caution.
         """
         _twitter_accounts.pop(self.id)
-        callback = CallBack(request={
-            'route': 'twitter/$twitter_info',
-            'account_id': self.id,
-            'method': 'DELETE'}
+        callback = CallBack(
+            request={
+                "route": "twitter/$twitter_info",
+                "account_id": self.id,
+                "method": "DELETE",
+            }
         )
         await outer.client.add_and_wait(callback)
 
@@ -113,11 +122,13 @@ class TwitterAccount(Subscription):
         if channel not in self:
             return
 
-        callback = CallBack(request={
-            'route': 'twitter/$twitter_id/$channel_id',
-            'account_id': self.id,
-            'channel_id': channel.id,
-            'method': 'DELETE'}
+        callback = CallBack(
+            request={
+                "route": "twitter/$twitter_id/$channel_id",
+                "account_id": self.id,
+                "channel_id": channel.id,
+                "method": "DELETE",
+            }
         )
 
         await outer.client.add_and_wait(callback)
@@ -134,13 +145,14 @@ class TwitterAccount(Subscription):
             return
 
         request = {
-            'route': 'twitter/$twitter_id/$channel_id',
-            'account_id': self.id,
-            'channel_id': channel.id,
-            'method': 'POST'}
+            "route": "twitter/$twitter_id/$channel_id",
+            "account_id": self.id,
+            "channel_id": channel.id,
+            "method": "POST",
+        }
 
         if role_id:
-            request['role_id'] = role_id
+            request["role_id"] = role_id
 
         callback = CallBack(request=request)
 
@@ -148,7 +160,9 @@ class TwitterAccount(Subscription):
         self._add_to_cache(channel, role_id=role_id)
 
     @staticmethod
-    async def get(username: str = None, account_id: int = None) -> Optional[Subscription]:
+    async def get(
+        username: str = None, account_id: int = None
+    ) -> Optional[Subscription]:
         """
         Get a TwitterAccount instance from cache or fetch it from the api.
 
@@ -191,10 +205,12 @@ class TwitterAccount(Subscription):
         :return: (Subscription)
             The Subscription object.
         """
-        callback = CallBack(request={
-            'route': 'twitter/$twitter_info',
-            'username': username,
-            'method': 'POST'}
+        callback = CallBack(
+            request={
+                "route": "twitter/$twitter_info",
+                "username": username,
+                "method": "POST",
+            }
         )
 
         await outer.client.add_and_wait(callback)
