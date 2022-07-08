@@ -36,4 +36,5 @@ from .subscription import Subscription
 from .twitteraccount import TwitterAccount
 from .client import IreneAPIClient
 from .guessinggame import GuessingGame
+from .userstatus import UserStatus
 from .mode import Mode, NORMAL, GROUP
