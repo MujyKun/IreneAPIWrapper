@@ -1,3 +1,6 @@
+from typing import Union
+
+
 class Difficulty:
     r"""
     Represents the Difficulty levels.
@@ -33,5 +36,17 @@ _diff = {1: EASY,
          3: HARD}
 
 
-def get_difficulty(difficulty_id):
-    return _diff[difficulty_id]
+def get_difficulty(difficulty: Union[int, str]):
+    """
+    Get the difficulty object associated with the difficulty.
+
+    :param difficulty: Union[int, str]
+        The difficulty ID or name.
+    :return: Optional[:ref:`Difficulty`]
+    """
+    if isinstance(difficulty, int):
+        return _diff[difficulty]
+
+    for obj in _diff.values():
+        if obj.name.lower() == difficulty.lower():
+            return obj
