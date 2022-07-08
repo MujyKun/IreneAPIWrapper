@@ -54,8 +54,8 @@ class UserStatus(AbstractModel):
 
         :returns: :ref:`UserStatus`
         """
-        status_id = kwargs.get("status_id")
-        user_id = kwargs.get("user_id")
+        status_id = kwargs.get("statusid")
+        user_id = kwargs.get("userid")
         score = kwargs.get("score")
         UserStatus(status_id, user_id, score)
 
@@ -128,7 +128,6 @@ class UserStatus(AbstractModel):
         results = callback.response.get("results")
         if not results:
             return False
-
         return results["adduserstatus"]
 
     @staticmethod
