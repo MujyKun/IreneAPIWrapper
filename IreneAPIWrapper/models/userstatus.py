@@ -91,7 +91,7 @@ class UserStatus(AbstractModel):
             score = self.score
         await basic_call(
             request={
-                "route": "date/$date_id",
+                "route": "user_status/$status_id",
                 "status_id": self.id,
                 "score": score,
                 "method": "PUT",
@@ -119,7 +119,7 @@ class UserStatus(AbstractModel):
         """
         callback = await internal_insert(
             request={
-                "route": "date",
+                "route": "user_status",
                 "user_id": user_id,
                 "score": score,
                 "method": "POST",
