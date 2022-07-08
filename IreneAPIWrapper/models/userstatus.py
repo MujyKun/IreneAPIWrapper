@@ -71,7 +71,15 @@ class UserStatus(AbstractModel):
             request={"route": "status/$status_id", "status_id": self.id, "method": "DELETE"},
         )
 
-    async def update_score(self, score: int) -> None:
+    async def increment(self, by=1):
+        self.score += by
+        await self.update_score()
+
+    async def decrement(self, by=1):
+        self.score -= by
+        await self.update_score()
+
+    async def update_score(self, score: int = None) -> None:
         """
         Update the score.
 
@@ -79,6 +87,8 @@ class UserStatus(AbstractModel):
             The player score.
         :return: None
         """
+        if not score:
+            score = self.score
         await basic_call(
             request={
                 "route": "date/$date_id",
