@@ -68,7 +68,7 @@ class UserStatus(AbstractModel):
         """
         await internal_delete(
             self,
-            request={"route": "status/$status_id", "status_id": self.id, "method": "DELETE"},
+            request={"route": "user_status/$status_id", "status_id": self.id, "method": "DELETE"},
         )
 
     async def increment(self, by=1):
@@ -129,7 +129,7 @@ class UserStatus(AbstractModel):
         if not results:
             return False
 
-        return results["addstatus"]
+        return results["adduserstatus"]
 
     @staticmethod
     async def get(status_id: int, fetch=True):
@@ -174,7 +174,7 @@ class UserStatus(AbstractModel):
         """
         return await internal_fetch(
             UserStatus,
-            request={"route": "status/$status_id", "status_id": status_id, "method": "GET"},
+            request={"route": "user_status/$status_id", "status_id": status_id, "method": "GET"},
         )
 
     @staticmethod
@@ -184,7 +184,7 @@ class UserStatus(AbstractModel):
         .. NOTE::: UserStatus objects are added to cache on creation.
         """
         return await internal_fetch_all(
-            obj=UserStatus, request={"route": "status/", "method": "GET"}
+            obj=UserStatus, request={"route": "user_status/", "method": "GET"}
         )
 
 

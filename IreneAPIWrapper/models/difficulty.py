@@ -36,7 +36,7 @@ _diff = {1: EASY,
          3: HARD}
 
 
-def get_difficulty(difficulty: Union[int, str]):
+def get_difficulty(difficulty: Union[int, str]) -> Difficulty:
     """
     Get the difficulty object associated with the difficulty.
 
