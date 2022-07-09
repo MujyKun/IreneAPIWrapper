@@ -105,11 +105,13 @@ class GuessingGame(AbstractModel):
 
         :return: None
         """
+        self.media_ids = media_ids
+        self.status_ids = status_ids
         await basic_call(request={
             "route": "guessinggame/$gg_id",
             "game_id": self.id,
-            "media_ids": media_ids,
-            "status_ids": status_ids,
+            "media_ids": self.media_ids,
+            "status_ids": self.status_ids,
             "method": "PUT"
         })
 

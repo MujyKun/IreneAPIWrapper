@@ -79,6 +79,20 @@ class UnscrambleGame(AbstractModel):
 
         return _uss[game_id]
 
+    async def update_status(self, status_ids: List[int]) -> None:
+        """
+        Update the status ids for the game in the database.
+
+        :return: None
+        """
+        self.status_ids = status_ids
+        await basic_call(request={
+            "route": "unscramblegame/$us_id",
+            "game_id": self.id,
+            "status_ids": self.status_ids,
+            "method": "PUT"
+        })
+
     async def delete(self) -> None:
         """
         Delete the UnscrambleGame object from the database and remove it from cache.
