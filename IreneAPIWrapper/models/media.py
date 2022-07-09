@@ -11,6 +11,7 @@ from . import (
     Affiliation,
     internal_insert,
     internal_delete,
+    basic_call
 )
 
 
@@ -123,16 +124,13 @@ class Media(AbstractModel):
             self.failed_guesses += 1
 
         if (self.correct_guesses + self.failed_guesses) % 5 == 0:
-            callback = CallBack(
-                request={
+            await basic_call(request={
                     "route": "media/$media_id",
                     "media_id": self.id,
                     "failed_guesses": self.failed_guesses,
                     "correct_guesses": self.correct_guesses,
                     "method": "POST",
-                }
-            )
-            await outer.client.add_and_wait(callback)
+                })
 
     async def delete(self) -> None:
         """
