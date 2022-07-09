@@ -124,7 +124,6 @@ class Guild(AbstractModel):
         guild_id,
         name,
         emoji_count,
-        region,
         afk_timeout,
         icon,
         owner_id,
@@ -148,7 +147,6 @@ class Guild(AbstractModel):
         super(Guild, self).__init__(guild_id)
         self.name = name
         self.emoji_count = emoji_count
-        self.region = region
         self.afk_timeout = afk_timeout
         self.icon = icon
         self.owner_id = owner_id
