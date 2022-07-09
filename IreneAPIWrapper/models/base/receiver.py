@@ -1,11 +1,11 @@
-from typing import List
+from typing import List, Optional
 
 from .. import CallBack
 from IreneAPIWrapper.sections import outer
 from . import AbstractModel
 
 
-async def internal_fetch(obj: AbstractModel, request: dict) -> AbstractModel:
+async def internal_fetch(obj: AbstractModel, request: dict) -> Optional[AbstractModel]:
     """Fetch an updated concrete object from the API.
 
     .. note::
@@ -19,6 +19,8 @@ async def internal_fetch(obj: AbstractModel, request: dict) -> AbstractModel:
         Returns an abstract model.
     """
     callback = await basic_call(request)
+    if not callback.response.get("results"):
+        return None
     return await obj.create(**callback.response.get("results"))
 
 

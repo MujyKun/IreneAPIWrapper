@@ -185,10 +185,11 @@ class IreneAPIClient:
             raise APIError(callback, error_msg=callback.response.get("error"))
 
         try:
-            error = callback.response["results"][
-                "error"
-            ]  # forcing a KeyError (if raised, is a success)
-            raise APIError(callback, error_msg=error)
+            if callback.response.get('results'):
+                error = callback.response["results"][
+                    "error"
+                ]  # forcing a KeyError (if raised, is a success)
+                raise APIError(callback, error_msg=error)
         except KeyError:
             pass
 
