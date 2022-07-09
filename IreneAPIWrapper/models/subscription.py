@@ -1,9 +1,9 @@
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Union
 from IreneAPIWrapper.sections import outer
-from . import Channel, CallBack
+from . import Channel, CallBack, AbstractModel
 
 
-class Subscription:
+class Subscription(AbstractModel):
     r"""
     Abstract Subscription Class for a service account being followed by a user, guild, or channel.
 
@@ -32,26 +32,19 @@ class Subscription:
         The list of :ref:`Channel` objects followed to the service account.
     _mention_roles: Dict[:ref:`Channel`, int]
         :ref:`Channel` objects associated with role ids to mention on updates.
-    _route: Unknown
-        Unknown what this attribute is used for. Will find out eventually.
-        May have been in the early stages of the API where REST routes were planned to be used instead of a Websocket.
-
     """
 
     def __init__(
         self,
-        account_id: int,
+        account_id: Union[int, str],
         account_name: str,
         followed: Optional[List[Channel]] = None,
+        mention_roles: Optional[Dict[Channel, int]] = None
     ):
-
-        self.id: int = account_id
+        super(Subscription, self).__init__(account_id)
         self.name: str = account_name.lower()
         self._followed: List[Channel] = followed or []
-        self._mention_roles: Dict[Channel, int] = {}  # channel_id: role_id
-
-        # TODO: figure out what self._route was made for.
-        self._route = None
+        self._mention_roles: Dict[Channel, int] = mention_roles or {}  # channel_id: role_id
 
     def __iter__(self):
         return self._followed.__iter__()
@@ -62,9 +55,9 @@ class Subscription:
     def __ne__(self, other):
         return self.id != other.id
 
-    def _add_to_cache(self, channel: Channel, role_id: int = None):
+    def _sub_in_cache(self, channel: Channel, role_id: int = None):
         """
-        Make a channel subscribe in cache.
+        Make a channel subscribe.
 
         :param channel: :ref:`Channel`
             A :ref:`Channel` object to add to cache.
@@ -75,9 +68,9 @@ class Subscription:
         if role_id:
             self._mention_roles[channel] = role_id
 
-    def _remove_from_cache(self, channel: Channel):
+    def _unsub_in_cache(self, channel: Channel):
         """
-        Make a channel unsubscribe from the cache.
+        Make a channel unsubscribe.
 
         :param channel: :ref:`Channel`
             A :ref:`Channel` object to remove from cache.
@@ -87,3 +80,18 @@ class Subscription:
 
         if self._mention_roles.get(channel):
             self._mention_roles.pop(channel)
+
+    async def unsubscribe(self, channel: Channel) -> None:
+        """
+        Unsubscribe from an account.
+        :param channel: :ref:`Channel`
+        :return: None
+        """
+
+    async def subscribe(self, channel: Channel, role_id: Optional[int] = None) -> None:
+        """
+        Subscribe to a channel.
+        :param role_id: The role id to notify.
+        :param channel: :ref:`Channel`
+        :return: None
+        """

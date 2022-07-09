@@ -30,11 +30,17 @@ class Channel(AbstractModel):
     ----------
     id: int
         The channel id.
+    guild_id: Optional[int]
+        The guild ID.
     """
 
-    def __init__(self, channel_id):
+    def __init__(self, channel_id, guild_id=None):
         super(Channel, self).__init__(channel_id)
-        _channels[self.id] = self
+
+        self.guild_id: Optional[int] = guild_id
+
+        if not _channels.get(self.id):
+            _channels[self.id] = self
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -44,8 +50,9 @@ class Channel(AbstractModel):
         :returns: :ref:`Channel`
         """
         channel_id = kwargs.get("channelid")
-        channel_obj = Channel(channel_id)
-        return channel_obj
+        guild_id = kwargs.get("guildid")
+        Channel(channel_id, guild_id)
+        return _channels[channel_id]
 
     async def delete(self) -> None:
         """
