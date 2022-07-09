@@ -136,7 +136,7 @@ class Channel(AbstractModel):
             obj=Channel,
             request={
                 "route": "channel/$channel_id",
-                "affiliation_id": channel_id,
+                "channel_id": channel_id,
                 "method": "GET",
             },
         )
