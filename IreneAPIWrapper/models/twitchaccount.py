@@ -61,7 +61,7 @@ class TwitchAccount(Subscription):
         # if a bundle of accounts is sent in, create them all.
         if not kwargs.get("username"):
             for key in kwargs.keys():
-                await TwitchAccount.create(kwargs[key])
+                await TwitchAccount.create(**kwargs[key])
 
         username = kwargs.get("username")
         channel_id = kwargs.get("channelid")
