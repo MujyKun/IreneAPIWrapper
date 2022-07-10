@@ -15,7 +15,7 @@ class IreneAPIClient:
         references the latest client created. If it is several clients that are routing to the same API,
         then it is okay as the same requests will be sent; otherwise, it can lead to conflicts between databases.
 
-    Attributes
+    Parameters
     ----------
     token: str
     user_id: Union[int, str]
@@ -61,8 +61,10 @@ class IreneAPIClient:
         Whether to preload all cache for fandoms.
     test: bool
         Whether to go into test/dev mode. Does not currently have a significant difference.
+    reconnect: bool
+        Whether to reconnect to the API if a connection is severed.
 
-    Parameters
+    Attributes
     ----------
     token: str
         The API token provided.
@@ -72,7 +74,8 @@ class IreneAPIClient:
         If there is a stable websocket connection to the API.
     in_testing: bool
         Whether the Client is in testing mode.
-
+    reconnect: bool
+        Whether to reconnect to the API if a connection is severed. True by default.
     """
 
     def __init__(
@@ -101,6 +104,7 @@ class IreneAPIClient:
         load_all_fandoms=True,
         load_all_channels=False,
         test=False,
+        reconnect=True
     ):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
@@ -164,6 +168,7 @@ class IreneAPIClient:
         }
 
         self.in_testing = test
+        self.reconnect = reconnect
 
     async def add_to_queue(self, callback: CallBack):
         """
@@ -218,7 +223,6 @@ class IreneAPIClient:
                 await self.__load_up_cache()
 
                 while True:
-
                     # test cases
                     if self.in_testing and self._queue.empty():
                         # pass if the api is using a debugger so the session does not close.
@@ -259,6 +263,10 @@ class IreneAPIClient:
 
         except aiohttp.WSServerHandshakeError:
             raise InvalidToken
+        except ConnectionResetError:
+            if self.reconnect:
+                while True:
+                    await self.connect()
 
         self.connected = False
 
