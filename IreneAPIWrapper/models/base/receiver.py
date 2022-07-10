@@ -24,7 +24,7 @@ async def internal_fetch(obj: AbstractModel, request: dict) -> Optional[Abstract
     return await obj.create(**callback.response.get("results"))
 
 
-async def internal_fetch_all(obj: AbstractModel, request: dict) -> List[AbstractModel]:
+async def internal_fetch_all(obj: AbstractModel, request: dict, bulk: bool = False) -> List[AbstractModel]:
     """
     Fetch all known instances of the concrete object from the API.
 
@@ -34,6 +34,8 @@ async def internal_fetch_all(obj: AbstractModel, request: dict) -> List[Abstract
         An abstract model.
     :param request: dict
         The request to pass into a Callback.
+    :param bulk: bool
+        Whether to generate objects in bulk (Defaults to False).
     :return: List[:ref:`AbstractModel`]
         Returns a list of abstract models.
     """
@@ -43,7 +45,10 @@ async def internal_fetch_all(obj: AbstractModel, request: dict) -> List[Abstract
     if not callback.response.get("results"):
         return []
 
-    return [await obj.create(**info) for info in callback.response["results"].values()]
+    if not bulk:
+        return [await obj.create(**info) for info in callback.response["results"].values()]
+    else:
+        return await obj.create_bulk(**callback.response["results"].values())
 
 
 async def internal_delete(obj: AbstractModel, request: dict) -> CallBack:

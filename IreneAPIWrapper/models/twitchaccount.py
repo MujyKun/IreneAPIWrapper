@@ -81,6 +81,50 @@ class TwitchAccount(Subscription):
         TwitchAccount(username, [channel], dict({channel: role_id}))
         return _accounts[username]
 
+    @staticmethod
+    async def create_bulk(list_of_dicts: List[dict]):
+        """Bulk create TwitchAccount objects.
+
+        :param list_of_dicts: List[dict]
+            A list of dictionaries.
+        :returns: Optional[List[:ref:`TwitchAccount`]]
+        """
+        final_channels = {}
+        final_roles = {}
+        for _dictionary in list_of_dicts:
+            username = _dictionary["username"]
+            guild_id = _dictionary["guild_id"]
+            channel_id = _dictionary["channel_id"]
+            posted = _dictionary["posted"]
+            role_id = _dictionary["role_id"]
+
+            channel = await Channel.get(channel_id)
+            if not channel:
+                await channel.insert(channel_id)
+                channel = await Channel.get(channel_id)
+
+            if not channel.guild_id:
+                channel.guild_id = guild_id
+
+            if not final_channels.get(username):
+                final_channels[username] = [channel]
+            else:
+                final_channels[username].append(channel)
+
+            if role_id:
+                if not final_roles.get(username):
+                    final_roles[username] = dict({Channel: role_id})
+                else:
+                    final_roles[username][Channel] = role_id
+
+        final_twitch_channels = []
+        for _user, _channels in final_channels.items():
+            TwitchAccount(_user, _channels, final_roles[_user])
+            obj = await TwitchAccount.get(_user, fetch=False)
+            final_twitch_channels.append(obj)
+
+        return final_twitch_channels
+
     async def update_posted(self, channel_ids: List[int], posted: bool) -> None:
         """
         Update the media and status ids for the game in the database.
@@ -243,8 +287,8 @@ class TwitchAccount(Subscription):
         .. NOTE:: TwitchAccount objects are added to cache on creation.
         """
         return await internal_fetch_all(
-            obj=TwitchAccount, request={"route": "twitch", "method": "GET"}
-        )
+            obj=TwitchAccount, request={"route": "twitch", "method": "GET"},
+            bulk=True)
 
 
 _accounts: Dict[str, TwitchAccount] = dict()

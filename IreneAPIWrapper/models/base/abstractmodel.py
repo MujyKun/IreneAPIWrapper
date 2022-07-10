@@ -1,3 +1,6 @@
+from typing import List
+
+
 class AbstractModel:
     def __init__(self, obj_id):
         r"""An abstract model to assist with type hints, the creation, and fetching of cache objects.
@@ -42,6 +45,14 @@ class AbstractModel:
     async def create(*args, **kwargs):
         """Create an object."""
         ...
+
+    @staticmethod
+    async def create_bulk(list_of_dicts: List[dict]):
+        """Bulk create objects
+
+        :param list_of_dicts: List[dict]
+            A list of dictionaries.
+        """
 
     @staticmethod
     async def get(unique_id: int, fetch: bool):
