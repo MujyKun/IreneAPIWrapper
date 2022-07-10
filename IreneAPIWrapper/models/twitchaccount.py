@@ -41,15 +41,15 @@ class TwitchAccount(Subscription):
                  mention_roles: Optional[Dict[Channel, int]] = None):
         super(TwitchAccount, self).__init__(account_id=username,
                                             account_name=username,
-                                            followed=channels_following)
-
-        if not _accounts.get(self.id):
+                                            followed=channels_following,
+                                            mention_roles=mention_roles)
+        self._update_channels = False
+        acc = _accounts.get(self.id)
+        if not acc:
             # we need to make sure not to override the current object in cache.
             _accounts[self.id] = self
         else:
-            account = _accounts[self.id] = self
-            for channel in channels_following:
-                account._sub_in_cache(channel, role_id=mention_roles.get(channel.id))
+            acc._sub_in_cache(channels=channels_following, role_ids=mention_roles)
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -79,7 +79,6 @@ class TwitchAccount(Subscription):
         role_id = kwargs.get("roleid")
 
         TwitchAccount(username, [channel], dict({channel: role_id}))
-
         return _accounts[username]
 
     async def update_posted(self, channel_ids: List[int], posted: bool) -> None:

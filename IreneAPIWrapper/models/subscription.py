@@ -44,7 +44,7 @@ class Subscription(AbstractModel):
         super(Subscription, self).__init__(account_id)
         self.name: str = account_name.lower()
         self._followed: List[Channel] = followed or []
-        self._mention_roles: Dict[Channel, int] = mention_roles or {}  # channel_id: role_id
+        self._mention_roles: Dict[Channel, int] = mention_roles or {}
 
     def __iter__(self):
         return self._followed.__iter__()
@@ -55,18 +55,27 @@ class Subscription(AbstractModel):
     def __ne__(self, other):
         return self.id != other.id
 
-    def _sub_in_cache(self, channel: Channel, role_id: int = None):
+    def _sub_in_cache(self, channel: Channel = None, role_id: int = None,
+                      channels: Optional[List[Channel]] = None, role_ids: Optional[Dict[Channel, int]] = None):
         """
         Make a channel subscribe.
 
-        :param channel: :ref:`Channel`
+        :param channel: Union[:ref:`Channel`, List[:ref:`Channel`]
             A :ref:`Channel` object to add to cache.
         :param role_id: int
             The role ID to add.
         """
-        self._followed.append(channel)
-        if role_id:
+        if channel and channel not in self:
+            self._followed.append(channel)
+
+        if role_id and channel:
             self._mention_roles[channel] = role_id
+
+        if channels:
+            self._followed += channels
+
+        if role_ids:
+            self._mention_roles |= role_ids  # merge the dictionaries.
 
     def _unsub_in_cache(self, channel: Channel):
         """
