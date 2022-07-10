@@ -135,6 +135,20 @@ class TwitchAccount(Subscription):
         _accounts.pop(self.id)
 
     @staticmethod
+    async def subbed_in(guild_id):
+        """
+        Get the twitch channels subscribed to in a Guild.
+
+        :param guild_id: The guild ID.
+        :return: Optional[List[:ref:`TwitchAccount`]]
+        """
+        return await internal_fetch_all(TwitchAccount, request={
+            'route': 'twitch/filter/$guild_id',
+            'guild_id': guild_id,
+            'method': 'GET'
+        })
+
+    @staticmethod
     async def insert(username: str, guild_id: int, channel_id: int, role_id: Optional[int]):
         """
         Insert a new TwitchAccount into the database.
