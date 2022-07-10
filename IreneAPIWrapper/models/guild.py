@@ -27,8 +27,6 @@ class Guild(AbstractModel):
         The guild name.
     emoji_count: int
         Current amount of emojis on the guild.
-    region: str
-        The guild region.
     afk_timeout: int
         The time before a User gets timed out in a voice channel.
     icon: str
@@ -77,8 +75,6 @@ class Guild(AbstractModel):
         The guild name.
     emoji_count: int
         Current amount of emojis on the guild.
-    region: str
-        The guild region.
     afk_timeout: int
         The time before a User gets timed out in a voice channel.
     icon: str
@@ -179,7 +175,6 @@ class Guild(AbstractModel):
         guild_id = kwargs.get("guildid")
         name = kwargs.get("name")
         emoji_count = kwargs.get("emojicount")
-        region = kwargs.get("region")
         afk_timeout = kwargs.get("afktimeout")
         icon = kwargs.get("icon")
 
@@ -206,7 +201,6 @@ class Guild(AbstractModel):
             guild_id,
             name,
             emoji_count,
-            region,
             afk_timeout,
             icon,
             owner_id,
@@ -258,7 +252,6 @@ class Guild(AbstractModel):
         guild_id,
         name=None,
         emoji_count=None,
-        region=None,
         afk_timeout=None,
         icon=None,
         owner_id=None,
@@ -291,8 +284,6 @@ class Guild(AbstractModel):
             Name of the guild.
         emoji_count: int
             Number of emojis the guild has.
-        region: str
-            Region the guild connects to.
         afk_timeout: int
             Guild AFK timeout for voice channels
         icon: str
@@ -338,7 +329,6 @@ class Guild(AbstractModel):
                 "guild_id": guild_id,
                 "name": name,
                 "emoji_count": emoji_count,
-                "region": region,
                 "afk_timeout": afk_timeout,
                 "icon": icon,
                 "owner_id": owner_id,
