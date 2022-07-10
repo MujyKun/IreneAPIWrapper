@@ -98,6 +98,9 @@ class TwitchAccount(Subscription):
         })
 
     async def unsubscribe(self, channel: Union[Channel]):
+        # if channel not in self:
+        #     return
+
         await basic_call(request={
             "route": "twitch/$username",
             "username": self.name,
@@ -107,11 +110,15 @@ class TwitchAccount(Subscription):
         self._unsub_in_cache(channel)
 
     async def subscribe(self, channel: Channel, role_id: Optional[int] = None):
+        if channel in self:
+            return
+
         await basic_call(request={
             "route": "twitch/$username",
             "username": self.name,
             "channel_id": channel.id,
             "guild_id": channel.guild_id,
+            "role_id": role_id,
             "method": "POST"
         })
         self._sub_in_cache(channel, role_id)
@@ -146,6 +153,7 @@ class TwitchAccount(Subscription):
             "username": username,
             "channel_id": channel_id,
             "guild_id": guild_id,
+            "role_id": role_id,
             "method": "POST"
         })
 
