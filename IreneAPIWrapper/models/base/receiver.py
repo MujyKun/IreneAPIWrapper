@@ -48,7 +48,7 @@ async def internal_fetch_all(obj: AbstractModel, request: dict, bulk: bool = Fal
     if not bulk:
         return [await obj.create(**info) for info in callback.response["results"].values()]
     else:
-        return await obj.create_bulk(**callback.response["results"].values())
+        return await obj.create_bulk(list(callback.response["results"].values()))
 
 
 async def internal_delete(obj: AbstractModel, request: dict) -> CallBack:
