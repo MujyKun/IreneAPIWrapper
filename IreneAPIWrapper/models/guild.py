@@ -160,7 +160,7 @@ class Guild(AbstractModel):
         self.member_count = member_count
         self.role_count = role_count
         self.shard_id = shard_id
-        self.create_date = str(create_date)
+        self.create_date = create_date
         self.has_bot = has_bot
         if not _guilds.get(self.id):
             _guilds[self.id] = self
@@ -345,7 +345,7 @@ class Guild(AbstractModel):
                 "member_count": member_count,
                 "role_count": role_count,
                 "shard_id": shard_id,
-                "create_date": create_date,
+                "create_date": str(create_date),
                 "has_bot": has_bot,
                 "method": "POST",
             }
