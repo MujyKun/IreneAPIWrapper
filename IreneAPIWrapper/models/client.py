@@ -3,7 +3,7 @@ import asyncio
 from IreneAPIWrapper.exceptions import InvalidToken, APIError
 from IreneAPIWrapper.sections import outer as ref_outer_client
 from typing import Union, Optional
-from IreneAPIWrapper.models import CallBack, callbacks
+from IreneAPIWrapper.models import CallBack, callbacks, Preload
 
 
 class IreneAPIClient:
@@ -23,42 +23,6 @@ class IreneAPIClient:
         Defaults to localhost. Websocket URL is expected to be ws://{api_url}:{port}/ws.
     port: int
         The api port.
-    load_all_tags: bool
-        Whether to preload all cache for tags.
-    load_all_person_aliases: bool
-        Whether to preload all cache for person_aliases.
-    load_all_group_aliases: bool
-        Whether to preload all cache for group_aliases.
-    load_all_persons: bool
-        Whether to preload all cache for persons.
-    load_all_groups: bool
-        Whether to preload all cache for groups.
-    load_all_twitter_accounts: bool
-        Whether to preload all cache for twitter_accounts.
-    load_all_users: bool
-        Whether to preload all cache for users.
-    load_all_guilds: bool
-        Whether to preload all cache for guilds.
-    load_all_affiliations: bool
-        Whether to preload all cache for affiliations.
-    load_all_bloodtypes: bool
-        Whether to preload all cache for bloodtypes.
-    load_all_media: bool
-        Whether to preload all cache for media.
-    load_all_displays: bool
-        Whether to preload all cache for displays.
-    load_all_companies: bool
-        Whether to preload all cache for companies.
-    load_all_dates: bool
-        Whether to preload all cache for dates.
-    load_all_locations: bool
-        Whether to preload all cache for locations.
-    load_all_positions: bool
-        Whether to preload all cache for positions.
-    load_all_socials: bool
-        Whether to preload all cache for socials.
-    load_all_fandoms: bool
-        Whether to preload all cache for fandoms.
     test: bool
         Whether to go into test/dev mode. Does not currently have a significant difference.
     reconnect: bool
@@ -84,25 +48,7 @@ class IreneAPIClient:
         user_id: Union[int, str],
         api_url="localhost",
         port=5454,
-        load_all_tags=True,
-        load_all_person_aliases=True,
-        load_all_group_aliases=True,
-        load_all_persons=True,
-        load_all_groups=True,
-        load_all_twitter_accounts=True,
-        load_all_users=False,
-        load_all_guilds=False,
-        load_all_affiliations=True,
-        load_all_bloodtypes=True,
-        load_all_media=True,
-        load_all_displays=True,
-        load_all_companies=True,
-        load_all_dates=True,
-        load_all_locations=True,
-        load_all_positions=True,
-        load_all_socials=True,
-        load_all_fandoms=True,
-        load_all_channels=False,
+        preload_cache: Preload = None,
         test=False,
         reconnect=True
     ):
@@ -123,49 +69,9 @@ class IreneAPIClient:
 
         self._disconnect = dict({"disconnect": True})
 
-        from . import (
-            Tag,
-            PersonAlias,
-            GroupAlias,
-            Affiliation,
-            BloodType,
-            Media,
-            Display,
-            Company,
-            Date,
-            Location,
-            Position,
-            Social,
-            Person,
-            TwitterAccount,
-            User,
-            Channel,
-            Group,
-            Fandom,
-            Guild,
-        )
+        self._preload_cache = preload_cache or Preload()
 
-        self.__cache_preload = {
-            Tag: load_all_tags,
-            PersonAlias: load_all_person_aliases,
-            GroupAlias: load_all_group_aliases,
-            Affiliation: load_all_affiliations,
-            BloodType: load_all_bloodtypes,
-            Media: load_all_media,
-            Display: load_all_displays,
-            Company: load_all_companies,
-            Date: load_all_dates,
-            Location: load_all_locations,
-            Position: load_all_positions,
-            Social: load_all_socials,
-            Fandom: load_all_fandoms,
-            Person: load_all_persons,
-            Group: load_all_groups,
-            TwitterAccount: load_all_twitter_accounts,
-            User: load_all_users,
-            Guild: load_all_guilds,
-            Channel: load_all_channels,
-        }
+        self.__cache_preload = self._preload_cache.get_evaluation()
 
         self.in_testing = test
         self.reconnect = reconnect

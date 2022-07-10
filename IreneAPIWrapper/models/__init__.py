@@ -34,7 +34,9 @@ from .user import User
 from .guild import Guild
 from .channel import Channel
 from .subscription import Subscription
+from .twitchaccount import TwitchAccount
 from .twitteraccount import TwitterAccount
+from .preloadcache import Preload
 from .client import IreneAPIClient
 from .guessinggame import GuessingGame
 from .unscramblegame import UnscrambleGame
