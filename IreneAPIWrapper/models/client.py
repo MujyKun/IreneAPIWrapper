@@ -263,7 +263,7 @@ class IreneAPIClient:
 
         except aiohttp.WSServerHandshakeError:
             raise InvalidToken
-        except ConnectionResetError:
+        except (ConnectionResetError, aiohttp.ClientConnectorError):
             if self.reconnect:
                 while True:
                     await self.connect()
