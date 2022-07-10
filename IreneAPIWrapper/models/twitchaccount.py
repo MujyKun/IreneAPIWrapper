@@ -60,6 +60,9 @@ class TwitchAccount(Subscription):
         """
         # if a bundle of accounts is sent in, create them all.
         if not kwargs.get("username"):
+            if len(kwargs.keys()) == 1:
+                return await TwitchAccount.create(**kwargs["0"])
+
             for key in kwargs.keys():
                 await TwitchAccount.create(**kwargs[key])
 
