@@ -45,6 +45,7 @@ class TwitchAccount(Subscription):
                                             mention_roles=mention_roles)
         self._update_channels = False
         acc = _accounts.get(self.id)
+        self.is_live = False
         if not acc:
             # we need to make sure not to override the current object in cache.
             _accounts[self.id] = self
@@ -143,17 +144,17 @@ class TwitchAccount(Subscription):
             "method": "PUT"
         })
 
-    async def is_live(self) -> bool:
+    async def check_live(self) -> bool:
         """
         Check if the current twitch account is live.
 
         :return: bool
         """
-        dict_response = await self.is_live_bulk([self])
+        dict_response = await self.check_live_bulk([self])
         return dict_response[self.id]
 
     @staticmethod
-    async def is_live_bulk(accounts: List[AbstractModel]) -> Dict[AbstractModel, bool]:
+    async def check_live_bulk(accounts: List[AbstractModel]) -> Dict[AbstractModel, bool]:
         """
         A list of Twitch accounts.
 
@@ -163,12 +164,32 @@ class TwitchAccount(Subscription):
             A dictionary with the key as the account and the value if they are live.
         """
         callback = await basic_call(request={
-            "route": "twitch/is_live/$username",
+            "route": "twitch/is_live",
             "usernames": [account.id for account in accounts],
             "method": "GET"
         })
 
-        return {}
+        live_dict: dict = callback.response["results"]
+        for user, is_live in live_dict.items():
+            acc = await TwitchAccount.get(user)
+            acc.is_live = is_live
+        return live_dict
+
+    @staticmethod
+    async def check_user_exists(username) -> bool:
+        """
+        Check if a twitch username exists.
+
+        :param username: The twitch display or login username.
+        :return: bool
+            Whether the username exists.
+        """
+        callback = await basic_call(request={
+            "route": "twitch/exists/$username",
+            "username": username.lower(),
+            "method": "GET"
+        })
+        return callback.response["results"]
 
     def check_subscribed(self, channels: List[Channel]) -> List[Channel]:
         """Checks which :ref:`Channel`s are subscribed to the current twitch account
@@ -179,7 +200,6 @@ class TwitchAccount(Subscription):
             A list of :ref:`Channel`s from the channels provided that are subscribed.
         """
         return [channel for channel in channels if channel in self]
-
 
     async def unsubscribe(self, channel: Union[Channel]):
         # if channel not in self:
