@@ -114,9 +114,9 @@ class TwitchAccount(Subscription):
 
             if role_id:
                 if not final_roles.get(username):
-                    final_roles[username] = dict({Channel: role_id})
+                    final_roles[username] = dict({channel: role_id})
                 else:
-                    final_roles[username][Channel] = role_id
+                    final_roles[username][channel] = role_id
 
         final_twitch_channels = []
         for _user, _channels in final_channels.items():
