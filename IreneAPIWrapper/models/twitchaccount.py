@@ -175,14 +175,14 @@ class TwitchAccount(Subscription):
         return dict_response[self.id]
 
     @staticmethod
-    async def check_live_bulk(accounts: List[AbstractModel]) -> Dict[AbstractModel, bool]:
+    async def check_live_bulk(accounts: List[AbstractModel]) -> Dict[str, bool]:
         """
         A list of Twitch accounts.
 
         :param accounts: List[:ref:`TwitchAccount`]
             A list of twitch accounts.
-        :returns: Dict[:ref:`TwitchAccount`, bool]
-            A dictionary with the key as the account and the value if they are live.
+        :returns: Dict[:ref:`str`, bool]
+            A dictionary with the key as the username and the value if they are live.
         """
         callback = await basic_call(request={
             "route": "twitch/is_live",
@@ -191,12 +191,10 @@ class TwitchAccount(Subscription):
         })
 
         live_dict: Dict[str, bool] = callback.response["results"]
-        acc_dict: Dict[TwitchAccount, bool] = {}
         for user, is_live in live_dict.items():
             acc = await TwitchAccount.get(user)
             acc.is_live = is_live
-            acc_dict[acc] = is_live
-        return acc_dict
+        return live_dict
 
     @staticmethod
     async def check_user_exists(username) -> bool:
