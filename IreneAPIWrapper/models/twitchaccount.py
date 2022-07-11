@@ -126,6 +126,24 @@ class TwitchAccount(Subscription):
 
         return final_twitch_channels
 
+    async def get_posted(self) -> List[Channel]:
+        """
+        Get a list of channels that have already posted to discord.
+        :return: List[:ref:`Channel`]
+        """
+        callback = await basic_call(request={
+            'route': 'twitch/already_posted/$username',
+            'username': self.id,
+            'method': 'GET'
+        })
+        results = callback.response.get("results")
+        if not results:
+            return []
+
+        channel_ids = [row["channelid"] for row in results.values()]
+        channels = [await Channel.get(channel_id) for channel_id in channel_ids]
+        return channels
+
     async def update_posted(self, channel_ids: List[int], posted: bool) -> None:
         """
         Update the media and status ids for the game in the database.
@@ -136,6 +154,9 @@ class TwitchAccount(Subscription):
             Whether the update has been posted to the channels.
         :return: None
         """
+        if not channel_ids:
+            return
+
         await basic_call(request={
             "route": "twitch/$username",
             "username": self.name,

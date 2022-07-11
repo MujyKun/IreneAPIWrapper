@@ -104,3 +104,7 @@ class Subscription(AbstractModel):
         :param channel: :ref:`Channel`
         :return: None
         """
+
+    async def get_role_id(self, channel: Channel):
+        """Get the role id to mention of a channel."""
+        return self._mention_roles[channel]
