@@ -107,4 +107,4 @@ class Subscription(AbstractModel):
 
     async def get_role_id(self, channel: Channel):
         """Get the role id to mention of a channel."""
-        return self._mention_roles[channel]
+        return self._mention_roles.get(channel)
