@@ -190,11 +190,13 @@ class TwitchAccount(Subscription):
             "method": "GET"
         })
 
-        live_dict: dict = callback.response["results"]
+        live_dict: Dict[str, bool] = callback.response["results"]
+        acc_dict: Dict[TwitchAccount, bool] = {}
         for user, is_live in live_dict.items():
             acc = await TwitchAccount.get(user)
             acc.is_live = is_live
-        return live_dict
+            acc_dict[acc] = is_live
+        return acc_dict
 
     @staticmethod
     async def check_user_exists(username) -> bool:
