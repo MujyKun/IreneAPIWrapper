@@ -93,10 +93,10 @@ class TwitchAccount(Subscription):
         final_roles = {}
         for _dictionary in list_of_dicts:
             username = _dictionary["username"]
-            guild_id = _dictionary["guild_id"]
-            channel_id = _dictionary["channel_id"]
-            posted = _dictionary["posted"]
-            role_id = _dictionary["role_id"]
+            guild_id = _dictionary["guildid"]
+            channel_id = _dictionary["channelid"]
+            # posted = _dictionary["posted"]
+            role_id = _dictionary["roleid"]
 
             channel = await Channel.get(channel_id)
             if not channel:
@@ -119,7 +119,7 @@ class TwitchAccount(Subscription):
 
         final_twitch_channels = []
         for _user, _channels in final_channels.items():
-            TwitchAccount(_user, _channels, final_roles[_user])
+            TwitchAccount(_user, _channels, final_roles.get(_user))
             obj = await TwitchAccount.get(_user, fetch=False)
             final_twitch_channels.append(obj)
 
@@ -142,6 +142,33 @@ class TwitchAccount(Subscription):
             "posted": posted,
             "method": "PUT"
         })
+
+    async def is_live(self) -> bool:
+        """
+        Check if the current twitch account is live.
+
+        :return: bool
+        """
+        dict_response = await self.is_live_bulk([self])
+        return dict_response[self.id]
+
+    @staticmethod
+    async def is_live_bulk(accounts: List[AbstractModel]) -> Dict[AbstractModel, bool]:
+        """
+        A list of Twitch accounts.
+
+        :param accounts: List[:ref:`TwitchAccount`]
+            A list of twitch accounts.
+        :returns: Dict[:ref:`TwitchAccount`, bool]
+            A dictionary with the key as the account and the value if they are live.
+        """
+        callback = await basic_call(request={
+            "route": "twitch/is_live/$username",
+            "usernames": [account.id for account in accounts],
+            "method": "GET"
+        })
+
+        return {}
 
     def check_subscribed(self, channels: List[Channel]) -> List[Channel]:
         """Checks which :ref:`Channel`s are subscribed to the current twitch account
