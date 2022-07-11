@@ -99,9 +99,9 @@ class IreneAPIClient:
             if callback.response.get('results'):
                 error = callback.response["results"][
                     "error"
-                ]  # forcing a KeyError (if raised, is a success)
+                ]  # forcing a KeyError/TypeError (if raised, is a success)
                 raise APIError(callback, error_msg=error)
-        except KeyError:
+        except (KeyError, TypeError):
             pass
 
     async def __load_up_cache(self):
