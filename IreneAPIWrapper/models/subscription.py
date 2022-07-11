@@ -72,7 +72,7 @@ class Subscription(AbstractModel):
             self._mention_roles[channel] = role_id
 
         if channels:
-            self._followed += channels
+            self._followed += [_channel for _channel in channels if _channel not in self._followed]
 
         if role_ids:
             self._mention_roles |= role_ids  # merge the dictionaries.
