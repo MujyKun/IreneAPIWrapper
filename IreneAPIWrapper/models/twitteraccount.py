@@ -1,6 +1,6 @@
 from typing import Optional, List, Dict
 
-from . import Subscription, Channel, Timeline, CallBack, Tweet
+from . import Subscription, Channel, Timeline, CallBack, Tweet, basic_call
 from IreneAPIWrapper.sections import outer
 
 BASE_URL = "https://twitter.com"
@@ -63,9 +63,7 @@ class TwitterAccount(Subscription):
         This returns the exact API Callback. This may only be useful internally.
         :returns: :ref:`CallBack`
         """
-        callback = CallBack(request={"route": "twitter/subscriptions", "method": "GET"})
-
-        await outer.client.add_and_wait(callback)
+        callback = await basic_call(request={"route": "twitter/subscriptions", "method": "GET"})
         return callback
 
     @staticmethod
@@ -90,7 +88,7 @@ class TwitterAccount(Subscription):
 
         for key, sub_info in (subs_callback.response["results"]).items():
             channel = await Channel.get(sub_info["channelid"])
-            _twitter_accounts[sub_info["accountid"]]._add_to_cache(
+            _twitter_accounts[sub_info["accountid"]]._sub_in_cache(
                 channel, sub_info["roleid"]
             )
 
@@ -132,7 +130,7 @@ class TwitterAccount(Subscription):
         )
 
         await outer.client.add_and_wait(callback)
-        self._remove_from_cache(channel)
+        self._unsub_in_cache(channel)
 
     async def subscribe(self, channel: Channel, role_id=None):
         """
@@ -157,7 +155,7 @@ class TwitterAccount(Subscription):
         callback = CallBack(request=request)
 
         await outer.client.add_and_wait(callback)
-        self._add_to_cache(channel, role_id=role_id)
+        self._sub_in_cache(channel, role_id=role_id)
 
     @staticmethod
     async def get(
