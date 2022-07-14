@@ -25,17 +25,22 @@ class Timeline:
         Represents a Twitter account's timeline and contains a list of tweets.
         """
         self.tweets: List[Tweet] = []
+        self.new_tweets: List[Tweet] = []
         self.update_tweets(results)
 
     @property
     def latest_tweet(self) -> Optional[Tweet]:
         """Get the latest tweet."""
-        return self[0]
+        return self[-1]
 
     def update_tweets(self, results: List[dict]):
         """Update the list of tweets with information from the API."""
         result_tweets = [Tweet(result["id"], result["text"]) for result in results]
-        self.tweets = list(set(result_tweets + self.tweets))
+        new_tweets = self.new_tweets + [tweet for tweet in result_tweets if tweet not in self.tweets]
+        # we only consider a tweet new if older tweets were present beforehand.
+        self.new_tweets = new_tweets if self.tweets else []
+        # confirm no duplicates.
+        self.tweets = list(set(self.tweets + new_tweets))
 
     def __iter__(self):
         return self.tweets.__iter__()
