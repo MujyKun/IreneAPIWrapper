@@ -147,7 +147,7 @@ class TwitterAccount(Subscription):
 
     async def fetch_timeline(self) -> Timeline:
         """Fetch the latest tweets for this account from Twitter"""
-        callback = await outer.client.add_and_wait(request={
+        callback = await basic_call(request={
             "route": "twitter/$twitter_id",
             "twitter_id": self.id,
             "method": "GET",
