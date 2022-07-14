@@ -140,7 +140,7 @@ class TwitterAccount(Subscription):
         for _account_id, _values in final_channels.items():
             TwitterAccount(_account_id, _values["username"], _values["channels"],
                            final_roles.get(_account_id))
-            obj = await TwitterAccount.get(_account_id, fetch=False)
+            obj = await TwitterAccount.get(_values["username"], fetch=False)
             final_twitter_channels.append(obj)
 
         return final_twitter_channels
