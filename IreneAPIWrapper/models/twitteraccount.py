@@ -19,8 +19,10 @@ class TwitterAccount(Subscription):
         The Twitter Account's ID.
     account_name: str
         The account's username.
-    followed: Optional[List[:ref:`Channel`]]
+    channels_following: Optional[List[:ref:`Channel`]]
         List of :ref:`Channel` objects that are following the Twitter Account.
+    mention_roles: Optional[Dict[:ref:`Channel`, int]]
+        Roles that are to be mentioned in a discord channel.
 
     Attributes
     ----------
@@ -45,7 +47,7 @@ class TwitterAccount(Subscription):
                          mention_roles=mention_roles)
 
         # If the latest tweet does not exist, the first fetch will never be considered a new tweet.
-        self.latest_tweet: Optional[Tweet] = None
+        self._timeline: Timeline = Timeline(results=[])
 
         acc = _twitter_accounts.get(self.id)
 
@@ -55,6 +57,11 @@ class TwitterAccount(Subscription):
             _twitter_accounts_by_user[self.name] = self
         else:
             acc._sub_in_cache(channels=channels_following, role_ids=mention_roles)
+
+    @property
+    def latest_tweet(self) -> Optional[Tweet]:
+        """Get the latest tweet."""
+        return self._timeline.latest_tweet
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -145,7 +152,9 @@ class TwitterAccount(Subscription):
             "twitter_id": self.id,
             "method": "GET",
         })
-        return Timeline(**callback.response["results"])
+        results = callback.response["results"]
+        self._timeline.update_tweets(results)
+        return self._timeline
 
     async def unsubscribe(self, channel: Channel):
         """

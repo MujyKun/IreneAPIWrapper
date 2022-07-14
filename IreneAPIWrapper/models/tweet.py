@@ -11,5 +11,8 @@ class Tweet:
     """
 
     def __init__(self, *args, **kwargs):
-        self.id = None
-        self.content = None
+        self.id = args[0]
+        self.text = args[1]
+
+    def __eq__(self, other):
+        return self.id == other.id
