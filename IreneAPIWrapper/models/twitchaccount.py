@@ -215,16 +215,6 @@ class TwitchAccount(Subscription):
         })
         return callback.response["results"]
 
-    def check_subscribed(self, channels: List[Channel]) -> List[Channel]:
-        """Checks which :ref:`Channel`s are subscribed to the current twitch account
-        from a selection of channels.
-
-        :param channels: List[:ref:`Channel`]
-        :returns List[:ref:`Channel`]
-            A list of :ref:`Channel`s from the channels provided that are subscribed.
-        """
-        return [channel for channel in channels if channel in self]
-
     async def unsubscribe(self, channel: Union[Channel]):
         """
         Have a channel unsubscribe from the account if it is not already.

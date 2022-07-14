@@ -108,3 +108,13 @@ class Subscription(AbstractModel):
     async def get_role_id(self, channel: Channel):
         """Get the role id to mention of a channel."""
         return self._mention_roles.get(channel)
+
+    def check_subscribed(self, channels: List[Channel]) -> List[Channel]:
+        """Checks which :ref:`Channel`s are subscribed to the current subscription account
+        from a selection of channels.
+
+        :param channels: List[:ref:`Channel`]
+        :returns List[:ref:`Channel`]
+            A list of :ref:`Channel`s from the channels provided that are subscribed.
+        """
+        return [channel for channel in channels if channel in self]
