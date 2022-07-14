@@ -15,6 +15,7 @@ class APIError(Exception):
 
     def __init__(self, callback: CallBack, error_msg=None):
         self.callback = callback
+        self.error_msg = error_msg
         super(APIError, self).__init__(
             f"IreneAPI has returned back an error for Callback ID: {self.callback.id}.\n "
             f"Error Message: {error_msg}"
