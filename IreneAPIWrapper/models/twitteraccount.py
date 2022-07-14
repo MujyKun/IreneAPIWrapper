@@ -183,7 +183,12 @@ class TwitterAccount(Subscription):
         :param role_id: The role id to mention.
         """
         if channel in self:
-            return
+            # check for a role id update
+            if self.get_role_id(channel) != role_id:
+                # unsubscribe them, then we resubscribe with the new role id.
+                await self.unsubscribe(channel)
+            else:
+                return
 
         await basic_call(request={
             "route": "twitter/modify/$twitter_id",
