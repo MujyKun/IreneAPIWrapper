@@ -21,6 +21,26 @@ class APIError(Exception):
             f"Error Message: {error_msg}"
         )
 
+    def get_detailed_report(self):
+        from pprint import pformat
+        cb = self.callback
+        msg = f"""
+        **CallBack Information**
+        **--------------------------**
+        **ID:** {cb.id}
+
+        **Request:** {pformat(cb.request)}
+
+        **Response:** {pformat(cb.response)}
+
+        **Type:** {cb.type}
+
+        **Done (Flag):** {cb.done}
+
+        **Error Message:** {pformat(self.error_msg)}
+        """
+        return msg
+
 
 class Empty(Exception):
     """An exception caused when an iterable is empty."""
