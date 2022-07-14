@@ -56,7 +56,8 @@ class TwitterAccount(Subscription):
         else:
             acc._sub_in_cache(channels=channels_following, role_ids=mention_roles)
 
-    async def create(self, *args, **kwargs):
+    @staticmethod
+    async def create(*args, **kwargs):
         """
         Create a TwitterAccount object.
 
