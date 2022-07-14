@@ -80,15 +80,19 @@ class Channel(AbstractModel):
         _channels.pop(self.id)
 
     @staticmethod
-    async def insert(channel_id) -> None:
+    async def insert(channel_id, guild_id) -> None:
         """
         Insert a new channel into the database.
 
         :param channel_id: The channel ID to insert.
+        :param guild_id: The guild ID to insert.
         :return: None
         """
         await internal_insert(
-            request={"route": "channel", "channel_id": channel_id, "method": "POST"}
+            request={"route": "channel",
+                     "channel_id": channel_id,
+                     "guild_id": guild_id,
+                     "method": "POST"}
         )
 
     @staticmethod

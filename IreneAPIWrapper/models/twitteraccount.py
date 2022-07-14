@@ -263,7 +263,7 @@ class TwitterAccount(Subscription):
         if not twitter_id:
             return None
 
-        await basic_call(request={
+        await internal_insert(request={
             "route": "twitter/modify/$twitter_id",
             "twitter_id": twitter_id,
             "channel_id": channel_id,
