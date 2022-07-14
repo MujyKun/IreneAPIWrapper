@@ -92,6 +92,8 @@ class IreneAPIClient:
         """
         await self.add_to_queue(callback)
         await callback.wait_for_completion()
+        if callback.response is None:
+            raise APIError(callback, detailed_report=True)
         if callback.response.get("error"):
             raise APIError(callback, error_msg=callback.response.get("error"))
 

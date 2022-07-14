@@ -13,12 +13,12 @@ class InvalidToken(Exception):
 class APIError(Exception):
     """An Exception Raised When the API returned an error."""
 
-    def __init__(self, callback: CallBack, error_msg=None):
+    def __init__(self, callback: CallBack, error_msg=None, detailed_report=False):
         self.callback = callback
-        self.error_msg = error_msg
+        self.error_msg = error_msg if not detailed_report else self.get_detailed_report()
         super(APIError, self).__init__(
             f"IreneAPI has returned back an error for Callback ID: {self.callback.id}.\n "
-            f"Error Message: {error_msg}"
+            f"Error Message: {self.error_msg}"
         )
 
     def get_detailed_report(self):
