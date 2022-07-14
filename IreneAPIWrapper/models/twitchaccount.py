@@ -43,7 +43,6 @@ class TwitchAccount(Subscription):
                                             account_name=username,
                                             followed=channels_following,
                                             mention_roles=mention_roles)
-        self._update_channels = False
         acc = _accounts.get(self.id)
         self.is_live = False
         if not acc:
@@ -56,6 +55,10 @@ class TwitchAccount(Subscription):
     async def create(*args, **kwargs):
         """
         Create a TwitchAccount object.
+
+        If several rows containing the same accounts are being passed in,
+        use :ref:`create_bulk` instead for proper optimization.
+        This will happen by default in a fallback if multiple rows are detected.
 
         :returns: :ref:`TwitchAccount`
         """
@@ -223,8 +226,15 @@ class TwitchAccount(Subscription):
         return [channel for channel in channels if channel in self]
 
     async def unsubscribe(self, channel: Union[Channel]):
-        # if channel not in self:
-        #     return
+        """
+        Have a channel unsubscribe from the account if it is not already.
+
+
+        :param channel: :ref:`Channel`
+            The channel to unsubscribe from the account.
+        """
+        if channel not in self:
+             return
 
         await basic_call(request={
             "route": "twitch/$username",
@@ -331,8 +341,6 @@ class TwitchAccount(Subscription):
     @staticmethod
     async def fetch(username: str):
         """Fetch an updated TwitchAccount object from the API.
-
-        .. NOTE:: affiliation objects are added to cache on creation.
 
         :param username: int
             The Twitch account username to fetch.

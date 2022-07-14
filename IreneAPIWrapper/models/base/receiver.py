@@ -21,7 +21,10 @@ async def internal_fetch(obj: AbstractModel, request: dict) -> Optional[Abstract
     callback = await basic_call(request)
     if not callback.response.get("results"):
         return None
-    return await obj.create(**callback.response.get("results"))
+    obj = await obj.create(**callback.response.get("results"))
+    if isinstance(obj, list) and obj:
+        obj = obj[0]
+    return obj
 
 
 async def internal_fetch_all(obj: AbstractModel, request: dict, bulk: bool = False) -> List[AbstractModel]:
