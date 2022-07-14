@@ -184,7 +184,7 @@ class TwitterAccount(Subscription):
         """
         if channel in self:
             # check for a role id update
-            if self.get_role_id(channel) != role_id:
+            if await self.get_role_id(channel) != role_id:
                 # unsubscribe them, then we resubscribe with the new role id.
                 await self.unsubscribe(channel)
             else:
