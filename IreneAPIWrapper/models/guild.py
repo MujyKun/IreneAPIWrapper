@@ -240,6 +240,10 @@ class Guild(AbstractModel):
         :param prefix: str
             The prefix to add.
         """
+        prefix = prefix.lower()
+        if prefix in self.prefixes:
+            return
+
         await basic_call(request={
             'route': 'guild/prefix/$guild_id',
             'guild_id': self.id,
@@ -247,18 +251,26 @@ class Guild(AbstractModel):
             'method': 'POST'
         })
 
+        self.prefixes.append(prefix)
+
     async def delete_prefix(self, prefix: str) -> None:
         """Delete a guild prefix.
 
         :param prefix: str
             The prefix to delete.
         """
+        prefix = prefix.lower()
+        if prefix not in self.prefixes:
+            return
+
         await basic_call(request={
             'route': 'guild/prefix/$guild_id',
             'guild_id': self.id,
             'prefix': prefix,
             'method': 'DELETE'
         })
+
+        self.prefixes.remove(prefix)
 
     async def fetch_prefixes(self) -> List[str]:
         """Get a list of prefixes for the guild from the API.
