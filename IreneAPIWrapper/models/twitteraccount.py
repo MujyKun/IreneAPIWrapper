@@ -114,7 +114,6 @@ class TwitterAccount(Subscription):
             username = _dictionary["username"]
             guild_id = _dictionary["guildid"]
             channel_id = _dictionary["channelid"]
-            # posted = _dictionary["posted"]
             role_id = _dictionary["roleid"]
 
             channel = await Channel.get(channel_id)

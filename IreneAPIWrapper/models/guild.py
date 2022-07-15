@@ -11,6 +11,7 @@ from . import (
     User,
     internal_insert,
     internal_delete,
+    basic_call
 )
 
 
@@ -65,7 +66,8 @@ class Guild(AbstractModel):
         The date the guild was created.
     has_bot: bool
         Whether the bot exists in the guild.
-
+    prefixes: Optional[List[str]]
+        A list of prefixes the guild uses.
 
     Attributes
     ----------
@@ -113,6 +115,8 @@ class Guild(AbstractModel):
         The date the guild was created.
     has_bot: bool
         Whether the bot exists in the guild.
+    prefixes: Optional[List[str]]
+        A list of prefixes the guild uses.
     """
 
     def __init__(
@@ -139,6 +143,7 @@ class Guild(AbstractModel):
         shard_id,
         create_date,
         has_bot,
+        prefixes=None
     ):
         super(Guild, self).__init__(guild_id)
         self.name = name
@@ -162,6 +167,7 @@ class Guild(AbstractModel):
         self.shard_id = shard_id
         self.create_date = create_date
         self.has_bot = has_bot
+        self.prefixes: List[str] = prefixes or []
         if not _guilds.get(self.id):
             _guilds[self.id] = self
 
@@ -196,6 +202,10 @@ class Guild(AbstractModel):
         shard_id = kwargs.get("shardid")
         create_date = kwargs.get("createdate")
         has_bot: bool = kwargs.get("hasbot")
+        prefixes = kwargs.get("prefixes")
+
+        if prefixes:
+            prefixes = list(prefixes)
 
         Guild(
             guild_id,
@@ -220,8 +230,63 @@ class Guild(AbstractModel):
             shard_id,
             create_date,
             has_bot,
+            prefixes
         )
         return _guilds[guild_id]
+
+    async def add_prefix(self, prefix: str) -> None:
+        """Add a guild prefix.
+
+        :param prefix: str
+            The prefix to add.
+        """
+        await basic_call(request={
+            'route': 'guild/prefix/$guild_id',
+            'guild_id': self.id,
+            'prefix': prefix,
+            'method': 'POST'
+        })
+
+    async def delete_prefix(self, prefix: str) -> None:
+        """Delete a guild prefix.
+
+        :param prefix: str
+            The prefix to delete.
+        """
+        await basic_call(request={
+            'route': 'guild/prefix/$guild_id',
+            'guild_id': self.id,
+            'prefix': prefix,
+            'method': 'DELETE'
+        })
+
+    async def fetch_prefixes(self) -> List[str]:
+        """Get a list of prefixes for the guild from the API.
+
+        :return: List[str]
+        """
+        callback = await basic_call(request={
+            'route': 'guild/prefix/$guild_id',
+            'guild_id': self.id,
+            'method': 'GET'
+        })
+        prefixes = callback.response.get('results')
+        if prefixes:
+            self.prefixes: List[str] = list(prefixes)
+        return prefixes  # returns response from the api, not cache.
+
+    @staticmethod
+    async def fetch_all_prefixes() -> Dict[int, List[str]]:
+        """Fetch all prefixes.
+
+        :return: Dict[int, List[str]]
+        """
+        callback = await basic_call(request={
+            'route': 'guild/prefix/',
+            'method': 'GET'
+        })
+
+        return callback.response.get('results')
 
     async def delete(self) -> None:
         """
