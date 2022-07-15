@@ -15,7 +15,10 @@ class APIError(Exception):
 
     def __init__(self, callback: CallBack, error_msg=None, detailed_report=False):
         self.callback = callback
-        self.error_msg = error_msg if not detailed_report else self.get_detailed_report()
+        self.error_msg = error_msg
+        # do not simplify this condition. get_detailed_report utilizes self.error_msg, so it must exist prior.
+        if detailed_report:
+            self.get_detailed_report()
         super(APIError, self).__init__(
             f"IreneAPI has returned back an error for Callback ID: {self.callback.id}.\n "
             f"Error Message: {self.error_msg}"
