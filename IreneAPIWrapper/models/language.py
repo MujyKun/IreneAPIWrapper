@@ -3,6 +3,7 @@ from typing import List, Dict, Optional
 from . import AbstractModel
 from . import internal_fetch_all
 from IreneAPIWrapper.exceptions import IncorrectNumberOfItems
+from json import loads
 
 
 class PackMessage:
@@ -128,7 +129,8 @@ class Language(AbstractModel):
         language_id = kwargs.get("languageid")
         short_name = kwargs.get("shortname")
         name = kwargs.get("name")
-        raw_pack: List[dict] = kwargs.get("pack") or []
+        _pack = kwargs.get("pack")
+        raw_pack: List[dict] = list(loads(_pack)) if _pack else []
         pack = [await PackMessage.create(dict_info) for dict_info in raw_pack]
         Language(language_id, short_name, name, pack)
         return _langs[language_id]

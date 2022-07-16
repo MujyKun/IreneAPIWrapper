@@ -58,3 +58,11 @@ class IncorrectNumberOfItems(Exception):
 
     def __init__(self, msg):
         super(IncorrectNumberOfItems, self).__init__(msg)
+
+
+class FailedObjectCreation(Exception):
+    """An exception caused when objects failed to properly create."""
+
+    def __init__(self, callback):
+        self.callback = callback
+        super(FailedObjectCreation, self).__init__()

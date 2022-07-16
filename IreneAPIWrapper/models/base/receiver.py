@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from .. import CallBack
 from IreneAPIWrapper.sections import outer
+from IreneAPIWrapper.exceptions import FailedObjectCreation
 from . import AbstractModel
 
 
@@ -48,10 +49,13 @@ async def internal_fetch_all(obj: AbstractModel, request: dict, bulk: bool = Fal
     if not callback.response.get("results"):
         return []
 
-    if not bulk:
-        return [await obj.create(**info) for info in callback.response["results"].values()]
-    else:
-        return await obj.create_bulk(list(callback.response["results"].values()))
+    try:
+        if not bulk:
+            return [await obj.create(**info) for info in callback.response["results"].values()]
+        else:
+            return await obj.create_bulk(list(callback.response["results"].values()))
+    except Exception as e:
+        raise FailedObjectCreation(callback)
 
 
 async def internal_delete(obj: AbstractModel, request: dict) -> CallBack:
