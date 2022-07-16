@@ -123,6 +123,7 @@ class Language(AbstractModel):
             _langs_by_short_name[self.short_name] = self
             _langs[self.id] = self
 
+    @staticmethod
     async def create(*args, **kwargs):
         language_id = kwargs.get("languageid")
         short_name = kwargs.get("shortname")
