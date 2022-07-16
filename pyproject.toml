@@ -2,7 +2,7 @@
 name = "IreneAPIWrapper"
 version = "2.0"
 description = "The Wrapper for the Websocket and REST API of Irene."
-authors = ["MujyKun <mujy@irenebot.com>", "A-Phamfam <alextampham3000@gmail.com>"]
+authors = ["MujyKun <mujy@irenebot.com>"]
 classifiers = [
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
