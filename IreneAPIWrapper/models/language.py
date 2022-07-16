@@ -136,6 +136,15 @@ class Language(AbstractModel):
         return self._organized_pack.get(key)
 
     @staticmethod
+    def get_english():
+        """
+        Get the English Language Pack.
+
+        :return: :ref:`Language`
+        """
+        return _langs_by_short_name["en-us"]
+
+    @staticmethod
     async def fetch_all():
         return await internal_fetch_all(Language, request={
             "route": "language/",
