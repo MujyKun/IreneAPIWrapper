@@ -50,6 +50,8 @@ class Preload:
         Whether to preload all twitch subscriptions (Defaults to False).
     twitter_subscriptions: bool
         Whether to preload all twitter subscriptions (Defaults to False).
+    languages: bool
+        Whether to preload all languages (Defaults to True)
     """
     tags = True,
     person_aliases = True,
@@ -72,6 +74,7 @@ class Preload:
     channels = False
     twitch_subscriptions = False
     twitter_subscriptions = False
+    languages = True
 
     def get_evaluation(self):
         from . import (
@@ -94,7 +97,8 @@ class Preload:
             Fandom,
             Guild,
             TwitchAccount,
-            TwitterAccount
+            TwitterAccount,
+            Language
         )
         eval_dict = {
             Tag: self.tags,
@@ -117,5 +121,6 @@ class Preload:
             Channel: self.channels,
             TwitchAccount: self.twitch_subscriptions,
             TwitterAccount: self.twitter_accounts,
+            Language: self.languages
         }
         return eval_dict

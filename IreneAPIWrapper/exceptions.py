@@ -50,3 +50,11 @@ class Empty(Exception):
 
     def __init__(self):
         super(Empty, self).__init__()
+
+
+class IncorrectNumberOfItems(Exception):
+    """An Exception caused when there is not enough or too much
+    of something (for example arguments)."""
+
+    def __init__(self, msg):
+        super(IncorrectNumberOfItems, self).__init__(msg)

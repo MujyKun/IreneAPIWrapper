@@ -33,6 +33,7 @@ from .media import Media
 from .user import User
 from .guild import Guild
 from .channel import Channel
+from .language import Language, PackMessage
 from .subscription import Subscription
 from .twitchaccount import TwitchAccount
 from .twitteraccount import TwitterAccount
