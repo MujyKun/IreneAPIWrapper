@@ -117,7 +117,7 @@ class Language(AbstractModel):
         self._pack: List[PackMessage] = pack
 
         # organized pack
-        self._organized_pack: Dict[str, PackMessage] = {pack_message.label: pack for pack_message in self._pack}
+        self._organized_pack: Dict[str, PackMessage] = {_pack.label: _pack for _pack in self._pack}
 
         lang = _langs.get(self.id)
         if not lang:
