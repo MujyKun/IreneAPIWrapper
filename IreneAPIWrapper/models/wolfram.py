@@ -6,7 +6,7 @@ class Wolfram:
     A model for sending requests to WolframAlpha.
     """
     @staticmethod
-    async def query(self, query):
+    async def query(query):
         """Query a request to Wolfram."""
         callback = await basic_call(request={
             "route": "wolfram/",
