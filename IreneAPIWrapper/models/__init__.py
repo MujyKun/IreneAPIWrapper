@@ -14,6 +14,7 @@ from .base import (
     File,
     basic_call,
 )
+from .biasgame import BiasGame
 from .wolfram import Wolfram
 from .date import Date
 from .tag import Tag
