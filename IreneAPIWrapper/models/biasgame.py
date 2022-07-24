@@ -25,3 +25,19 @@ class BiasGame:
         })
         return callback.response.get("results")
 
+    @staticmethod
+    async def generate_bracket(game_info):
+        """
+        Generate a PvP bracket and return an image url.
+
+        :param game_info: dict
+            All BiasGame round(s) information.
+        :return: str
+            The BiasGame bracket image url.
+        """
+        callback = await basic_call(request={
+            'route': 'biasgame/generate_bracket',
+            'game_info': game_info,
+            'method': 'POST'
+        })
+        return callback.response.get("results")
