@@ -6,9 +6,27 @@ class BiasGame:
         ...
 
     @staticmethod
+    async def upsert_win(user_id, person_id) -> None:
+        """
+        Upsert a win for a user's BiasGame.
+
+        :param user_id: int
+            User ID of the bias game player.
+        :param person_id: int
+            Person ID that won the bias game.
+        :return: None
+        """
+        await basic_call(request={
+            'route': 'biasgame/winners',
+            'user_id': user_id,
+            'person_id': person_id,
+            'method': 'PUT'
+        })
+
+    @staticmethod
     async def fetch_winners(user_id, limit=15) -> dict:
         """
-        Fetch the winners of a user's bias game.
+        Fetch the winners of a user's bias game in DESC order.
 
         :param user_id: int
             User ID to return results for.
