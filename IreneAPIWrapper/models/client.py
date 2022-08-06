@@ -125,7 +125,7 @@ class IreneAPIClient:
 
         try:
             async with self._ws_client.ws_connect(
-                self._ws_url, headers=self._headers, params=self._query_params
+                self._ws_url, headers=self._headers, params=self._query_params, max_msg_size=1073741824, timeout=60
             ) as ws:
                 self.connected = True
                 await self.__load_up_cache()

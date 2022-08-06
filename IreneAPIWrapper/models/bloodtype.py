@@ -96,6 +96,9 @@ class BloodType(AbstractModel):
         :returns: Optional[:ref:`BloodType`]
             The blood type object requested.
         """
+        if not blood_id:
+            return None
+
         return await internal_fetch(
             obj=BloodType,
             request={

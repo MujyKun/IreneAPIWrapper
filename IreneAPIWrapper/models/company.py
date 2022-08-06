@@ -144,6 +144,9 @@ class Company(AbstractModel):
         :returns: Optional[:ref:`Company`]
             The company object requested.
         """
+        if not company_id:
+            return None
+
         return await internal_fetch(
             obj=Company,
             request={

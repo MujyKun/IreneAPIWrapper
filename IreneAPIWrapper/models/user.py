@@ -378,6 +378,9 @@ class User(AbstractModel):
             The user's ID to fetch.
         :returns: :ref:`User`
         """
+        if not user_id:
+            return None
+
         return await internal_fetch(
             obj=User,
             request={"route": "user/$user_id", "user_id": user_id, "method": "GET"},
