@@ -71,7 +71,6 @@ class IreneAPIClient:
 
         self._preload_cache = preload_cache or Preload()
 
-        self.__cache_preload = self._preload_cache.get_evaluation()
 
         self.in_testing = test
         self.reconnect = reconnect
@@ -113,8 +112,10 @@ class IreneAPIClient:
         .. NOTE::: If an object is dependent on another object, it will create the other object.
         """
         loop = asyncio.get_event_loop()
-        for category_class, load_cache in self.__cache_preload.items():
-            future = asyncio.run_coroutine_threadsafe(category_class.fetch_all(), loop)
+        evaluation = self._preload_cache.get_evaluation()
+        for category_class, load_cache in evaluation.items():
+            if load_cache:
+                future = asyncio.run_coroutine_threadsafe(category_class.fetch_all(), loop)
 
     async def connect(self):
         """
