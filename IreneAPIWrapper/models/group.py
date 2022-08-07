@@ -247,7 +247,7 @@ class Group(AbstractModel):
         """
         existing = _groups.get(group_id)
         if not existing and fetch:
-            await Group.fetch(group_id)
+            return await Group.fetch(group_id)
         return existing
 
     @staticmethod

@@ -71,7 +71,6 @@ class IreneAPIClient:
 
         self._preload_cache = preload_cache or Preload()
 
-
         self.in_testing = test
         self.reconnect = reconnect
 
