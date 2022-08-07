@@ -206,7 +206,7 @@ class Media(AbstractModel):
         return existing
 
     @staticmethod
-    async def get_all(affiliations: List[Affiliation] = None):
+    async def get_all(affiliations: List[Affiliation] = None, limit=None):
         """
         Get all Media objects in cache.
 
@@ -216,13 +216,19 @@ class Media(AbstractModel):
         if affiliations is None:
             return _media.values()
         else:
-            media_objs = []
-            for media in _media.values():
-                for affiliation in affiliations:
-                    if affiliation == media.affiliation:
-                        media_objs.append(media)
+            callback = await basic_call(request={
+                "route": "media/affiliations",
+                "affiliation_ids": [aff.id for aff in affiliations],
+                "limit": limit,
+                "method": "GET",
+            })
+            results = callback.response.get("results")
+            if not results:
+                return []
 
+            media_objs = [await Media.get(media_info["mediaid"]) for media_info in results.values()]
             return media_objs
+
 
     @staticmethod
     async def fetch(object_id: int, affiliation=False, person=False, group=False):
