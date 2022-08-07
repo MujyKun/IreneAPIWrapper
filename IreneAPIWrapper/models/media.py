@@ -210,6 +210,11 @@ class Media(AbstractModel):
         """
         Get all Media objects in cache.
 
+        :param affiliations: Optional[List[:ref:`Affiliation`]]
+            A list of affiliations that must belong with the media.
+        :param limit: Optional[int]
+            A maximum number of results to be sent if fetched.
+
         :returns: dict_values[:ref:`Media`]
             All Media objects from cache.
         """

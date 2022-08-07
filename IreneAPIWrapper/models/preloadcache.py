@@ -124,3 +124,28 @@ class Preload:
             Language: self.languages
         }
         return eval_dict
+
+    def all_false(self):
+        self.tags = False
+        self.person_aliases = False
+        self.group_aliases = False
+        self.persons = False
+        self.groups = False
+        self.twitter_accounts = False
+        self.users = False
+        self.guilds = False
+        self.affiliations = False
+        self.bloodtypes = False
+        self.media = False
+        self.displays = False
+        self.companies = False
+        self.dates = False
+        self.locations = False
+        self.positions = False
+        self.socials = False
+        self.fandoms = False
+        self.channels = False
+        self.twitch_subscriptions = False
+        self.twitter_subscriptions = False
+        self.languages = False
+

@@ -114,7 +114,7 @@ class IreneAPIClient:
         """
         loop = asyncio.get_event_loop()
         for category_class, load_cache in self.__cache_preload.items():
-            asyncio.run_coroutine_threadsafe(category_class.fetch_all(), loop)
+            future = asyncio.run_coroutine_threadsafe(category_class.fetch_all(), loop)
 
     async def connect(self):
         """
