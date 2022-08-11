@@ -206,6 +206,51 @@ class Media(AbstractModel):
         return existing
 
     @staticmethod
+    async def get_random(object_id: int, affiliation=False, person=False, group=False, min_faces=1, max_faces=999,
+                         can_be_nsfw=False, is_enabled=True, file_type=None):
+        """Get a random Media object from the API.
+
+        :param object_id: int
+            The object ID to grab media for.
+            This can be an affiliation, person, group, or media (default) ID if specified.
+        :param affiliation: bool
+            If the object ID is an Affiliation ID.
+        :param person: bool
+            If the object ID is a Person ID.
+        :param group: bool
+            If the object ID is a Group ID.
+        :param min_faces: int
+            Minimum number of faces the media can have
+        :param max_faces: int
+            Maximum number of faces the media can have
+        :param can_be_nsfw: bool
+            If it is okay to have NSFW media.
+        :param is_enabled: bool
+            The media object is officially active.
+        :param file_type: str
+            A restricted file type.
+        """
+        request = {'method': 'POST',
+                   "min_faces": min_faces,
+                   "max_faces": max_faces,
+                   "file_type": file_type,
+                   "nsfw": can_be_nsfw,
+                   "enabled": is_enabled
+                   }
+        if affiliation:
+            request['route'] = 'affiliation/$affiliation_id/media'
+            request['affiliation_id'] = object_id
+        elif person:
+            request['route'] = 'person/$person_id/media'
+            request['person_id'] = object_id
+        elif group:
+            request['route'] = 'group/$group_id/media'
+            request['group_id'] = object_id
+        # one does not exist for media id since it cannot be filtered.
+        # Although it is possible to pass it into the API.
+        callback = await basic_call(request=request)
+
+    @staticmethod
     async def get_all(affiliations: List[Affiliation] = None, limit=None):
         """
         Get all Media objects in cache.
@@ -254,26 +299,23 @@ class Media(AbstractModel):
             request = {
                 "route": "affiliation/$affiliation_id/media",
                 "affiliation_id": object_id,
-                "method": "GET",
             }
         elif person:
             request = {
                 "route": "person/$person_id/media",
                 "person_id": object_id,
-                "method": "GET",
             }
         elif group:
             request = {
                 "route": "group/$group_id/media",
                 "group_id": object_id,
-                "method": "GET",
             }
         else:  # Default - Media ID
             request = {
                 "route": "media/$media_id",
                 "media_id": object_id,
-                "method": "GET",
             }
+        request['method'] = "GET"
 
         return await internal_fetch(obj=Media, request=request)
 
