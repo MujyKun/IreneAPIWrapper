@@ -82,6 +82,12 @@ class Media(AbstractModel):
 
         return self.correct_guesses / (self.correct_guesses + self.failed_guesses)
 
+    @property
+    def url(self):
+        """Get the media source url."""
+        if self.source:
+            return self.source.url
+
     @staticmethod
     async def create(*args, **kwargs):
         """
