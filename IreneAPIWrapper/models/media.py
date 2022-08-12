@@ -101,7 +101,7 @@ class Media(AbstractModel):
         faces = kwargs.get("faces")
         file_type = kwargs.get("filetype")
 
-        source = MediaSource(url=link, file_type=file_type)
+        source = MediaSource(url=link, media_id=media_id, file_type=file_type)
 
         affiliation_id = kwargs.get("affiliationid")
         affiliation: Affiliation = await Affiliation.get(affiliation_id)
@@ -116,6 +116,11 @@ class Media(AbstractModel):
             media_id, source, faces, affiliation, is_enabled, is_nsfw, failed, correct
         )
         return _media[media_id]
+
+    async def fetch_image_host_url(self):
+        if self.source:
+            image_host_url = self.source.image_host_url or await self.source.download_and_get_image_host_url()
+            return image_host_url or self.source.url
 
     async def upsert_guesses(self, correct: bool):
         """
@@ -255,6 +260,7 @@ class Media(AbstractModel):
         # one does not exist for media id since it cannot be filtered.
         # Although it is possible to pass it into the API.
         callback = await basic_call(request=request)
+        results = callback.response.get("results")
 
     @staticmethod
     async def get_all(affiliations: List[Affiliation] = None, limit=None):
@@ -284,7 +290,6 @@ class Media(AbstractModel):
 
             media_objs = [await Media.get(media_info["mediaid"]) for media_info in results.values()]
             return media_objs
-
 
     @staticmethod
     async def fetch(object_id: int, affiliation=False, person=False, group=False):
