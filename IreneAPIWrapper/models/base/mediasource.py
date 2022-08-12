@@ -18,18 +18,25 @@ class MediaSource(File):
         The URL of the media.
     """
 
-    def __init__(self, url, media_id: int, file_type=None):
+    def __init__(self, url, media_id: int = None, file_type=None):
         # TODO: file location
         super(MediaSource, self).__init__(file_type=file_type)
         self.media_id = media_id
         self.url = url
         self.image_host_url: Optional[str] = None
 
-    async def download_and_get_image_host_url(self) -> Optional[str]:
-        callback = await basic_call(request={
-            'route': "media/download/$media_id",
-            'media_id': self.media_id,
-            'method': 'GET'
-        })
-        self.image_host_url = callback.response.get("results")
-        return self.image_host_url
+    async def download_and_get_image_host_url(self) -> str:
+        """
+        Download and get the image host url if possible, otherwise fallback to the default url.
+
+        :return: str
+            A image host url or fallbacks to the default url.
+        """
+        if self.media_id:
+            callback = await basic_call(request={
+                'route': "media/download/$media_id",
+                'media_id': self.media_id,
+                'method': 'GET'
+            })
+            self.image_host_url = callback.response.get("results")
+        return self.image_host_url or self.url
