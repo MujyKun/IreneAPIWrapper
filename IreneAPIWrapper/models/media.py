@@ -261,6 +261,11 @@ class Media(AbstractModel):
         # Although it is possible to pass it into the API.
         callback = await basic_call(request=request)
         results = callback.response.get("results")
+        if results:
+            media = await Media.get(results["mediaid"])
+            if media.source:
+                media.source.image_host_url = results["host"]
+            return media
 
     @staticmethod
     async def get_all(affiliations: List[Affiliation] = None, limit=None):
