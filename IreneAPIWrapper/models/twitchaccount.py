@@ -73,8 +73,8 @@ class TwitchAccount(Subscription):
         username = kwargs.get("username")
         channel_id = kwargs.get("channelid")
         channel = await Channel.get(channel_id)
-        if not channel:
-            await Channel.insert(channel_id)
+        if not channel:  # should never be the case.
+            await Channel.insert(channel_id, None)
             channel = await Channel.get(channel_id)
 
         if not channel.guild_id:
@@ -97,7 +97,7 @@ class TwitchAccount(Subscription):
         final_roles = {}
         for _dictionary in list_of_dicts:
             username = _dictionary["username"]
-            guild_id = _dictionary["guildid"]
+            guild_id = _dictionary.get("guildid")
             channel_id = _dictionary["channelid"]
             # posted = _dictionary["posted"]
             role_id = _dictionary["roleid"]
@@ -246,7 +246,6 @@ class TwitchAccount(Subscription):
             "route": "twitch/$username",
             "username": self.name,
             "channel_id": channel.id,
-            "guild_id": channel.guild_id,
             "role_id": role_id,
             "method": "POST"
         })
@@ -275,14 +274,12 @@ class TwitchAccount(Subscription):
         })
 
     @staticmethod
-    async def insert(username: str, guild_id: int, channel_id: int, role_id: Optional[int]):
+    async def insert(username: str, channel_id: int, role_id: Optional[int]):
         """
         Insert a new TwitchAccount into the database.
 
         :param username: int
             The Twitch Account username.
-        :param guild_id: int
-            The first guild ID that is subscribing.
         :param channel_id: int
             The first channel id that is subscribing.
         :param role_id: Optional[int]
@@ -295,7 +292,6 @@ class TwitchAccount(Subscription):
             "route": "twitch/$username",
             "username": username,
             "channel_id": channel_id,
-            "guild_id": guild_id,
             "role_id": role_id,
             "method": "POST"
         })
