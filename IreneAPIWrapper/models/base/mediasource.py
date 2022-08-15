@@ -38,5 +38,6 @@ class MediaSource(File):
                 'media_id': self.media_id,
                 'method': 'GET'
             })
-            self.image_host_url = callback.response.get("results")
+            results = callback.response.get("results")
+            self.image_host_url = results.get('host')
         return self.image_host_url or self.url
