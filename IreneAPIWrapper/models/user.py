@@ -386,8 +386,10 @@ class User(AbstractModel):
             request={"route": "user/$user_id", "user_id": user_id, "method": "GET"},
         )
 
-        if not obj:
-            await User.insert(user_id)
+        if obj:
+            return obj
+
+        await User.insert(user_id)
         return await User.fetch(user_id)
 
     @staticmethod
