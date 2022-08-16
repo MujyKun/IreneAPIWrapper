@@ -381,10 +381,14 @@ class User(AbstractModel):
         if not user_id:
             return None
 
-        return await internal_fetch(
+        obj = await internal_fetch(
             obj=User,
             request={"route": "user/$user_id", "user_id": user_id, "method": "GET"},
         )
+
+        if not obj:
+            await User.insert(user_id)
+        return await User.fetch(user_id)
 
     @staticmethod
     async def fetch_all():
