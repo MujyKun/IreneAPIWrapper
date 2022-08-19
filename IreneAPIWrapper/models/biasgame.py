@@ -44,21 +44,21 @@ class BiasGame:
         return callback.response.get("results")
 
     @staticmethod
-    async def generate_pvp(first_file_name, second_file_name):
+    async def generate_pvp(first_image_url, second_image_url):
         """
         Generate a PvP image and return an image url.
 
-        :param first_file_name: str
-            The first image file name.
-        :param second_file_name: str
-            The second image file name.
+        :param first_image_url: str
+            The first image url.
+        :param second_image_url: str
+            The second image url.
         :return: str
             The PvP image url.
         """
         callback = await basic_call(request={
             'route': 'biasgame/generate_pvp',
-            'first_file_name': first_file_name,
-            'second_file_name': second_file_name,
+            'first_image_url': first_image_url,
+            'second_image_url': second_image_url,
             'method': 'POST'
         })
         return callback.response.get("results")
