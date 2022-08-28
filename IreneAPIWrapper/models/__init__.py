@@ -15,6 +15,7 @@ from .base import (
     basic_call,
 )
 from .biasgame import BiasGame
+from .eightball import EightBallResponse
 from .wolfram import Wolfram
 from .date import Date
 from .tag import Tag
