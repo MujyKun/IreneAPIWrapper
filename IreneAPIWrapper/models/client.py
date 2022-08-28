@@ -184,8 +184,9 @@ class IreneAPIClient:
         except aiohttp.WSServerHandshakeError:
             raise InvalidToken
         except (ConnectionResetError, aiohttp.ClientConnectorError):
-            self.logger.error("Connection to IreneAPI Dropped.")
-            self.connected = False
+            if self.connected:
+                self.logger.error("Connection to IreneAPI Dropped.")
+                self.connected = False
             if self.reconnect:
                 while True:
                     self.logger.info("Attempting to reconnect to IreneAPI.")
