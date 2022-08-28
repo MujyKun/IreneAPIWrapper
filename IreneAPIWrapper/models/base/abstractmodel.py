@@ -32,6 +32,15 @@ class AbstractModel:
         """Delete the current object from the database and remove it from cache."""
         ...
 
+    async def get_card(self, markdown=False):
+        """
+        Get a list representing of the current object as a card.
+
+        :param markdown: bool
+            Whether the returned list should support markdown.
+        :return: List[str]
+            A list of strings for the card.
+        """
     async def _remove_from_cache(self):
         """Remove the current object from cache."""
         ...

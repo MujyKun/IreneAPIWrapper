@@ -45,6 +45,9 @@ class Location(AbstractModel):
         if not _locations.get(self.id):
             _locations[self.id] = self
 
+    def __str__(self):
+        return f"{self.country} - {self.country}"
+
     @staticmethod
     async def create(*args, **kwargs):
         """

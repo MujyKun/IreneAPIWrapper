@@ -47,6 +47,14 @@ class Date(AbstractModel):
         if not _dates.get(self.id):
             _dates[self.id] = self
 
+    async def get_card(self, markdown=False):
+        card_data = []
+        if self.start:
+            card_data.append(f"Start Date: {self.start}")
+        if self.end:
+            card_data.append(f"End Date: {self.end}")
+        return card_data
+
     @staticmethod
     async def create(*args, **kwargs):
         """

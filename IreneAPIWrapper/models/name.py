@@ -48,6 +48,13 @@ class Name(AbstractModel):
     def __str__(self):
         return f"{self.first} {self.last}"
 
+    async def get_card(self, markdown=False, extra=True):
+        card_data = []
+        if self.id:
+            card_data.append(f"Name ID: {self.id}")
+        card_data.append(f"Name: {str(self)}")
+        return card_data
+
     @staticmethod
     async def create(*args, **kwargs):
         """

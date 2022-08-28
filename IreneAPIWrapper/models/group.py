@@ -103,6 +103,41 @@ class Group(AbstractModel):
         if not _groups.get(self.id):
             _groups[self.id] = self
 
+    async def get_card(self, markdown=False, extra=True):
+        card_data = []
+        if self.id:
+            card_data.append(f"Group ID: {self.id}")
+        if self.name:
+            card_data.append(f"Group Name: {self.name}")
+
+        if not extra:
+            return card_data
+
+        if self.date:
+            date_card = await self.date.get_card(markdown=markdown)
+            [card_data.append(info) for info in date_card]
+        if self.company:
+            company_card = await self.company.get_card(markdown=markdown)
+            [card_data.append(info) for info in company_card]
+        if self.display:
+            display_card = await self.display.get_card(markdown=markdown)
+            [card_data.append(info) for info in display_card]
+        if self.website:
+            card_data.append(f"Custom Website: {self.website}") if not markdown else card_data.append(f"[Custom Website]({self.website})")
+        if self.social:
+            social_card = await self.social.get_card(markdown=markdown)
+            [card_data.append(info) for info in social_card]
+        if self.tags:
+            tags = ', '.join([str(tag) for tag in self.tags])
+            card_data.append(f"Tags: {tags}")
+        if self.aliases:
+            aliases = ', '.join([str(alias) for alias in self.aliases])
+            card_data.append(f"Aliases: {aliases}")
+        if self.affiliations:
+            affiliations = ', '.join([str(aff) for aff in self.affiliations])
+            card_data.append(f"Affiliations: {affiliations}")
+        return card_data
+
     @staticmethod
     async def create(*args, **kwargs):
         """

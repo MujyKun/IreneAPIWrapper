@@ -67,6 +67,28 @@ class Affiliation(AbstractModel):
             # we need to make sure not to override the current object in cache.
             _affiliations[self.id] = self
 
+    async def get_card(self, markdown=False, extra=True):
+        card_data = []
+        if self.id:
+            card_data.append(f"Aff ID: {self.id}")
+        if self.stage_name:
+            card_data.append(f"Stage Name: {self.stage_name}")
+
+        if not extra:
+            return card_data
+
+        if self.group:
+            card_data.append(f"Group: {self.group.get_card(markdown=markdown, extra=False)}")
+        if self.person:
+            card_data.append(f"Person: {self.person.get_card(markdown=markdown, extra=False)}")
+
+        if not extra:
+            return card_data
+
+    def __str__(self):
+        return f"Aff {self.id} - Person {self.stage_name} [{self.person.id}] - Group {str(self.group)} " \
+               f"[{self.group.id}]"
+
     @staticmethod
     async def create(*args, **kwargs):
         """

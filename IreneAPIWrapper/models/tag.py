@@ -39,6 +39,9 @@ class Tag(AbstractModel):
         if not _tags.get(self.id):
             _tags[self.id] = self
 
+    def __str__(self):
+        return self.name
+
     @staticmethod
     async def create(*args, **kwargs):
         """

@@ -47,6 +47,14 @@ class Display(AbstractModel):
         if not _displays.get(self.id):
             _displays[self.id] = self
 
+    async def get_card(self, markdown=False):
+        card_data = []
+        if self.avatar:
+            card_data.append(f"Avatar: {self.avatar}") if not markdown else card_data.append(f"[Avatar]({self.avatar})")
+        if self.banner:
+            card_data.append(f"Banner: {self.banner}") if not markdown else card_data.append(f"[Banner]({self.banner})")
+        return card_data
+
     @staticmethod
     async def create(*args, **kwargs):
         """

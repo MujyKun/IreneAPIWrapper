@@ -39,3 +39,6 @@ class Alias(AbstractModel):
         self.name: str = alias_name
         self._obj_id: int = obj_id
         self.guild_id: Optional[int] = guild_id
+
+    def __str__(self):
+        return self.name

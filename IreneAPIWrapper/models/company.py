@@ -51,6 +51,14 @@ class Company(AbstractModel):
         if not _companies.get(self.id):
             _companies[self.id] = self
 
+    async def get_card(self, markdown=False):
+        card_data = []
+        if self.id:
+            card_data.append(f"Company ID: {self.id}")
+        if self.name:
+            card_data.append(f"Company Name: {self.name}")
+        return card_data
+
     @staticmethod
     async def create(*args, **kwargs):
         """

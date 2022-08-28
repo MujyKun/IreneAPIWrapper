@@ -95,21 +95,21 @@ class Person(AbstractModel):
     """
 
     def __init__(
-        self,
-        person_id,
-        date,
-        name,
-        former_name,
-        display,
-        social,
-        location,
-        blood_type,
-        gender,
-        description,
-        height,
-        call_count,
-        tags,
-        aliases,
+            self,
+            person_id,
+            date,
+            name,
+            former_name,
+            display,
+            social,
+            location,
+            blood_type,
+            gender,
+            description,
+            height,
+            call_count,
+            tags,
+            aliases,
     ):
         super(Person, self).__init__(person_id)
         self.date: Date = date
@@ -129,6 +129,51 @@ class Person(AbstractModel):
 
         if not _persons.get(self.id):
             _persons[self.id] = self
+
+    async def get_card(self, markdown=False, extra=True):
+        card_data = []
+        if self.id:
+            card_data.append(f"Person ID: {self.id}")
+        if self.name:
+            name_card = await self.name.get_card(markdown=markdown, extra=False)
+            [card_data.append(info) for info in name_card]
+
+        if not extra:
+            return card_data
+
+        if self.former_name:
+            former_name_card = await self.name.get_card(markdown=markdown, extra=False)
+            [card_data.append(info) for info in former_name_card]
+        if self.call_count:
+            card_data.append(f"Called: {self.call_count} time(s).")
+        if self.height:
+            card_data.append(f"Height: {self.height}")
+        if self.blood_type:
+            card_data.append(f"BloodType: {self.blood_type.name}")
+        if self.location:
+            card_data.append(f"Birth Location: {str(self.location)}")
+        if self.gender:
+            card_data.append(f"Gender: {self.gender}")
+        if self.date:
+            date_card = await self.date.get_card(markdown=markdown)
+            [card_data.append(info) for info in date_card]
+        if self.display:
+            display_card = await self.display.get_card(markdown=markdown)
+            [card_data.append(info) for info in display_card]
+        if self.social:
+            social_card = await self.social.get_card(markdown=markdown)
+            [card_data.append(info) for info in social_card]
+        if self.tags:
+            tags = ', '.join([str(tag) for tag in self.tags])
+            card_data.append(f"Tags: {tags}")
+        if self.aliases:
+            aliases = ', '.join([str(alias) for alias in self.aliases])
+            card_data.append(f"Aliases: {aliases}")
+        if self.affiliations:
+            affiliations = ', '.join([str(aff) for aff in self.affiliations])
+            card_data.append(f"Affiliations: {affiliations}")
+        return card_data
+
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -228,18 +273,18 @@ class Person(AbstractModel):
 
     @staticmethod
     async def insert(
-        date_id,
-        name_id,
-        former_name_id,
-        gender,
-        description,
-        height,
-        display_id,
-        social_id,
-        location_id,
-        tag_ids,
-        blood_id,
-        call_count,
+            date_id,
+            name_id,
+            former_name_id,
+            gender,
+            description,
+            height,
+            display_id,
+            social_id,
+            location_id,
+            tag_ids,
+            blood_id,
+            call_count,
     ) -> None:
         r"""
         Insert a new person into the database.
