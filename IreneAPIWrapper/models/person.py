@@ -136,6 +136,8 @@ class Person(AbstractModel):
             card_data.append(f"Person ID: {self.id}")
         if self.name:
             card_data.append(f"Name: {str(self.name)}")
+        if self.description:
+            card_data.append(f"Description: {self.description}")
 
         if not extra:
             return card_data

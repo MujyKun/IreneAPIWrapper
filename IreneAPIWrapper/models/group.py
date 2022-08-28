@@ -109,6 +109,8 @@ class Group(AbstractModel):
             card_data.append(f"Group ID: {self.id}")
         if self.name:
             card_data.append(f"Group Name: {self.name}")
+        if self.description:
+            card_data.append(f"Description: {self.description}")
 
         if not extra:
             return card_data
