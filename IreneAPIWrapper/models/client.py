@@ -1,3 +1,5 @@
+import logging
+
 import aiohttp
 import asyncio
 from IreneAPIWrapper.exceptions import InvalidToken, APIError
@@ -40,17 +42,23 @@ class IreneAPIClient:
         Whether the Client is in testing mode.
     reconnect: bool
         Whether to reconnect to the API if a connection is severed. True by default.
+    verbose: bool
+        Whether to print verbose messages.
+    logger: logging.Logger
+        A logging object for messages to be sent to.
     """
 
     def __init__(
-        self,
-        token: str,
-        user_id: Union[int, str],
-        api_url="localhost",
-        port=5454,
-        preload_cache: Preload = None,
-        test=False,
-        reconnect=True
+            self,
+            token: str,
+            user_id: Union[int, str],
+            api_url="localhost",
+            port=5454,
+            preload_cache: Preload = None,
+            test=False,
+            reconnect=True,
+            verbose=False,
+            logger: logging.Logger = None
     ):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
@@ -73,6 +81,8 @@ class IreneAPIClient:
 
         self.in_testing = test
         self.reconnect = reconnect
+        self.verbose = verbose
+        self.logger = logger
 
     async def add_to_queue(self, callback: CallBack):
         """
@@ -125,7 +135,7 @@ class IreneAPIClient:
 
         try:
             async with self._ws_client.ws_connect(
-                self._ws_url, headers=self._headers, params=self._query_params, max_msg_size=1073741824, timeout=60
+                    self._ws_url, headers=self._headers, params=self._query_params, max_msg_size=1073741824, timeout=60
             ) as ws:
                 self.connected = True
                 await self.__load_up_cache()
@@ -166,14 +176,20 @@ class IreneAPIClient:
                         # so we can now finish the callback and lease out the callback name to a new object.
                         callback.set_as_done()
                     else:
-                        # TODO: Remove Print
-                        print(f"Could not find CallBack instance for: {data_response}")
+                        err_msg = f"Could not find CallBack instance for: {data_response}"
+                        self.logger.warning(err_msg)
+                        if self.verbose:
+                            print(err_msg)
 
         except aiohttp.WSServerHandshakeError:
             raise InvalidToken
         except (ConnectionResetError, aiohttp.ClientConnectorError):
+            self.logger.error("Connection to IreneAPI Dropped.")
+            self.connected = False
             if self.reconnect:
                 while True:
+                    self.logger.info("Attempting to reconnect to IreneAPI.")
+                    await asyncio.sleep(5)
                     await self.connect()
 
         self.connected = False
