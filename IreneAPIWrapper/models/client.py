@@ -81,8 +81,7 @@ class IreneAPIClient:
 
         self.in_testing = test
         self.reconnect = reconnect
-        self.verbose = verbose
-        self.logger = logger
+        self.logger: Logger = Logger(verbose=verbose, logger=logger)
 
     async def add_to_queue(self, callback: CallBack):
         """
@@ -138,8 +137,9 @@ class IreneAPIClient:
                     self._ws_url, headers=self._headers, params=self._query_params, max_msg_size=1073741824, timeout=60
             ) as ws:
                 self.connected = True
+                self.logger.info("Connected to IreneAPI.")
                 await self.__load_up_cache()
-
+                no_found_instance = f"Could not find CallBack instance"
                 while True:
                     # test cases
                     if self.in_testing and self._queue.empty():
@@ -161,7 +161,10 @@ class IreneAPIClient:
                     # get response from server.
                     # in case of any inconsistencies, a callback id is sent back and forth and is checked for
                     # authenticity before completing a request.
-                    data_response = (await ws.receive()).json()
+                    _data = await ws.receive()
+                    if _data is None:
+                        self.logger.warning(no_found_instance + ": Received data was NoneType.")
+                    data_response = _data.json()
 
                     response_callback_id = int(data_response.get("callback_id") or 0)
                     if response_callback_id and (response_callback_id != callback.id):
@@ -176,10 +179,7 @@ class IreneAPIClient:
                         # so we can now finish the callback and lease out the callback name to a new object.
                         callback.set_as_done()
                     else:
-                        err_msg = f"Could not find CallBack instance for: {data_response}"
-                        self.logger.warning(err_msg)
-                        if self.verbose:
-                            print(err_msg)
+                        self.logger.warning(f"{no_found_instance}: {data_response}")
 
         except aiohttp.WSServerHandshakeError:
             raise InvalidToken
@@ -203,3 +203,45 @@ class IreneAPIClient:
         else:
             callback = CallBack(callback_type="disconnect", request=self._disconnect)
             await self.add_to_queue(callback)
+
+
+class Logger:
+    """
+    A logger to allow for simpler referencing and checks.
+
+    Parameters
+    ----------
+    verbose: bool
+        Whether to print verbose messages.
+    logger: logging.Logger
+        A logging object for messages to be sent to.
+
+    Attributes
+    ----------
+    verbose: bool
+        Whether to print verbose messages.
+    logger: logging.Logger
+        A logging object for messages to be sent to.
+    """
+    def __init__(self, verbose=False, logger=None):
+        self.verbose = verbose
+        self.logger: Optional[logging.Logger] = logger
+
+    def warning(self, msg, *args, **kwargs):
+        self.print(msg)
+        if self.logger:
+            self.logger.warning(msg)
+
+    def info(self, msg, *args, **kwargs):
+        self.print(msg)
+        if self.logger:
+            self.logger.info(msg)
+
+    def error(self, msg, *args, **kwargs):
+        self.print(msg)
+        if self.logger:
+            self.logger.error(msg)
+
+    def print(self, msg):
+        if self.verbose:
+            print(msg)
