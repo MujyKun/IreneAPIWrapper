@@ -135,19 +135,17 @@ class Person(AbstractModel):
         if self.id:
             card_data.append(f"Person ID: {self.id}")
         if self.name:
-            name_card = await self.name.get_card(markdown=markdown, extra=False)
-            [card_data.append(info) for info in name_card]
+            card_data.append(f"Name: {str(self.name)}")
 
         if not extra:
             return card_data
 
         if self.former_name:
-            former_name_card = await self.name.get_card(markdown=markdown, extra=False)
-            [card_data.append(info) for info in former_name_card]
+            card_data.append(f"Former Name: {str(self.former_name)}")
         if self.call_count:
             card_data.append(f"Called: {self.call_count} time(s).")
         if self.height:
-            card_data.append(f"Height: {self.height}")
+            card_data.append(f"Height: {self.height}cm")
         if self.blood_type:
             card_data.append(f"BloodType: {self.blood_type.name}")
         if self.location:
@@ -170,7 +168,7 @@ class Person(AbstractModel):
             aliases = ', '.join([str(alias) for alias in self.aliases])
             card_data.append(f"Aliases: {aliases}")
         if self.affiliations:
-            affiliations = ', '.join([str(aff) for aff in self.affiliations])
+            affiliations = '\n'.join([str(aff) for aff in self.affiliations])
             card_data.append(f"Affiliations: {affiliations}")
         return card_data
 
