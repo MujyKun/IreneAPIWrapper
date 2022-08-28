@@ -86,7 +86,7 @@ class Affiliation(AbstractModel):
             return card_data
 
     def __str__(self):
-        return f"Aff {self.id} - Person {self.stage_name} [{self.person.id}] - Group {str(self.group)} " \
+        return f"Aff {self.id} - Person: {self.stage_name} [{self.person.id}] - Group: {str(self.group)} " \
                f"[{self.group.id}]"
 
     @staticmethod
