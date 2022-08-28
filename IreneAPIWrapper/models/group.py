@@ -134,7 +134,7 @@ class Group(AbstractModel):
             aliases = ', '.join([str(alias) for alias in self.aliases])
             card_data.append(f"Aliases: {aliases}")
         if self.affiliations:
-            affiliations = ', '.join([str(aff) for aff in self.affiliations])
+            affiliations = '\n'.join([str(aff) for aff in self.affiliations])
             card_data.append(f"Affiliations: {affiliations}")
         return card_data
 
