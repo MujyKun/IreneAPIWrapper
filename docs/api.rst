@@ -56,6 +56,65 @@ Channel
 .. autoclass:: IreneAPIWrapper.models.Channel
     :members:
 
+============
+Notification
+============
+
+.. autoclass:: IreneAPIWrapper.models.Notification
+    :members:
+
+========
+BiasGame
+========
+
+.. autoclass:: IreneAPIWrapper.models.BiasGame
+    :members:
+
+============
+GuessingGame
+============
+
+.. autoclass:: IreneAPIWrapper.models.GuessingGame
+    :members:
+
+==============
+UnscrambleGame
+==============
+
+.. autoclass:: IreneAPIWrapper.models.UnscrambleGame
+    :members:
+
+=======
+Wolfram
+=======
+
+.. autoclass:: IreneAPIWrapper.models.Wolfram
+    :members:
+
+=================
+EightBallResponse
+=================
+
+.. autoclass:: IreneAPIWrapper.models.EightBallResponse
+    :members:
+
+===========
+PackMessage
+===========
+
+.. autoclass:: IreneAPIWrapper.models.PackMessage
+    :members:
+
+========
+Language
+========
+
+.. autoclass:: IreneAPIWrapper.models.Language
+    :members:
+
+
+
+
 =====
 Guild
 =====
@@ -158,12 +217,18 @@ Subscription
 .. autoclass:: IreneAPIWrapper.models.Subscription
     :members:
 
-
 ==============
 TwitterAccount
 ==============
 
 .. autoclass:: IreneAPIWrapper.models.TwitterAccount
+    :members:
+
+==============
+TwitchAccount
+==============
+
+.. autoclass:: IreneAPIWrapper.models.TwitchAccount
     :members:
 
 =====
@@ -203,12 +268,38 @@ Date
 .. autoclass:: IreneAPIWrapper.models.Date
     :members:
 
+====
+Mode
+====
 
+.. autoclass:: IreneAPIWrapper.models.Mode
+    :members:
+
+=======
+Preload
+=======
+
+.. autoclass:: IreneAPIWrapper.models.Preload
+    :members:
+
+==========
+Difficulty
+==========
+
+.. autoclass:: IreneAPIWrapper.models.Difficulty
+    :members:
 
 ========
 Location
 ========
 .. autoclass:: IreneAPIWrapper.models.Location
+    :members:
+
+==========
+UserStatus
+==========
+
+.. autoclass:: IreneAPIWrapper.models.UserStatus
     :members:
 
 Exceptions
@@ -218,11 +309,27 @@ Exceptions
 ============
 InvalidToken
 ============
+
 .. autoexception:: IreneAPIWrapper.exceptions.InvalidToken
     :members:
 
 ========
 APIError
 ========
+
 .. autoexception:: IreneAPIWrapper.exceptions.APIError
+    :members:
+
+=====
+Empty
+=====
+
+.. autoexception:: IreneAPIWrapper.exceptions.Empty
+    :members:
+
+======================
+IncorrectNumberOfItems
+======================
+
+.. autoexception:: IreneAPIWrapper.exceptions.IncorrectNumberOfItems
     :members:
