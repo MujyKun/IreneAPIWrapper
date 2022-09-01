@@ -167,16 +167,6 @@ class Notification(AbstractModel):
         return _notifications.values()
 
     @staticmethod
-    async def get_filtered_notifications(guild_id=None, user_id=None):
-        """
-
-        :param guild_id:
-        :param user_id:
-        :return:
-        """
-        return [noti for noti in _notifications.values() if guild_id == noti.guild_id and user_id == noti.user_id]
-
-    @staticmethod
     async def fetch(noti_id: int):
         """Fetch an updated noti object from the API.
 
