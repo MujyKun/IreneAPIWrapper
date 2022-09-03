@@ -51,6 +51,16 @@ class InteractionType(AbstractModel):
         """
         return _interaction_types.get(type_id)
 
+    @staticmethod
+    async def get_all():
+        """
+        Get all Interaction Type objects in cache.
+
+        :returns: dict_values[:ref:`InteractionType`]
+            All Interaction Type objects from cache.
+        """
+        return _interaction_types.values()
+
     async def delete(self) -> None:
         """
         Delete the InteractionType object from the database and remove it from cache.
@@ -95,7 +105,7 @@ class InteractionType(AbstractModel):
 
         results = callback.response.get("results")
         if results:
-            type_id = results['0']['addinteractiontype']
+            type_id = results["0"]["addinteractiontype"]
             InteractionType(type_id, name)  # add to cache.
 
 
