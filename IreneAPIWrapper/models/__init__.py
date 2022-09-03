@@ -14,6 +14,7 @@ from .base import (
     File,
     basic_call,
 )
+from .interactions import Interaction, InteractionType
 from .biasgame import BiasGame
 from .eightball import EightBallResponse
 from .wolfram import Wolfram

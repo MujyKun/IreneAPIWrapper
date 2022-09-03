@@ -56,6 +56,20 @@ Channel
 .. autoclass:: IreneAPIWrapper.models.Channel
     :members:
 
+===========
+Interaction
+===========
+
+.. autoclass:: IreneAPIWrapper.models.Interaction
+    :members:
+
+===============
+InteractionType
+===============
+
+.. autoclass:: IreneAPIWrapper.models.InteractionType
+    :members:
+
 ============
 Notification
 ============

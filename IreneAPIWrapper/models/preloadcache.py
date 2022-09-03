@@ -56,6 +56,8 @@ class Preload:
         Whether to preload all 8ball responses (Defaults to True)
     notifications: bool
         Whether to preload all user notifications (Defaults to True)
+    interactions: bool
+        Whether to preload all interactions (Defaults to True)
     """
     tags = True,
     person_aliases = True,
@@ -81,6 +83,7 @@ class Preload:
     languages = True
     eight_ball_responses = True
     notifications = True
+    interactions = True
 
     def get_evaluation(self):
         from . import (
@@ -106,7 +109,8 @@ class Preload:
             TwitterAccount,
             Language,
             EightBallResponse,
-            Notification
+            Notification,
+            Interaction
         )
         eval_dict = {
             Tag: self.tags,
@@ -131,7 +135,8 @@ class Preload:
             TwitterAccount: self.twitter_accounts,
             Language: self.languages,
             EightBallResponse: self.eight_ball_responses,
-            Notification: self.notifications
+            Notification: self.notifications,
+            Interaction: self.interactions
         }
         return eval_dict
 
@@ -160,4 +165,5 @@ class Preload:
         self.languages = False
         self.eight_ball_responses = False
         self.notifications = False
+        self.interactions = False
 
