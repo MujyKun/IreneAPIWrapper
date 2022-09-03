@@ -10,7 +10,7 @@ from . import (
     internal_insert,
     Difficulty,
     get_difficulty,
-    basic_call
+    basic_call,
 )
 
 
@@ -41,13 +41,14 @@ class UnscrambleGame(AbstractModel):
     difficulty: :ref:`Difficulty`
         The difficulty of the game.
     """
+
     def __init__(
         self,
         game_id: int,
         date_id: int,
         status_ids: List[int],
         mode_id: int,
-        difficulty: Difficulty
+        difficulty: Difficulty,
     ):
         super(UnscrambleGame, self).__init__(game_id)
         self.date_id = date_id
@@ -73,9 +74,7 @@ class UnscrambleGame(AbstractModel):
         difficulty_id = kwargs.get("difficultyid")
         difficulty = get_difficulty(difficulty_id)
 
-        UnscrambleGame(
-            game_id, date_id, status_ids, mode_id, difficulty
-        )
+        UnscrambleGame(game_id, date_id, status_ids, mode_id, difficulty)
 
         return _uss[game_id]
 
@@ -86,12 +85,14 @@ class UnscrambleGame(AbstractModel):
         :return: None
         """
         self.status_ids = status_ids
-        await basic_call(request={
-            "route": "unscramblegame/$us_id",
-            "game_id": self.id,
-            "status_ids": self.status_ids,
-            "method": "PUT"
-        })
+        await basic_call(
+            request={
+                "route": "unscramblegame/$us_id",
+                "game_id": self.id,
+                "status_ids": self.status_ids,
+                "method": "PUT",
+            }
+        )
 
     async def delete(self) -> None:
         """

@@ -16,12 +16,14 @@ class BiasGame:
             Person ID that won the bias game.
         :return: None
         """
-        await basic_call(request={
-            'route': 'biasgame/winners',
-            'user_id': user_id,
-            'person_id': person_id,
-            'method': 'PUT'
-        })
+        await basic_call(
+            request={
+                "route": "biasgame/winners",
+                "user_id": user_id,
+                "person_id": person_id,
+                "method": "PUT",
+            }
+        )
 
     @staticmethod
     async def fetch_winners(user_id, limit=15) -> dict:
@@ -35,12 +37,14 @@ class BiasGame:
         :return: dict
             Dictionary of person IDs to the amount of times they've won.
         """
-        callback = await basic_call(request={
-            'route': 'biasgame/winners',
-            'user_id': user_id,
-            'limit': limit,
-            'method': 'POST'
-        })
+        callback = await basic_call(
+            request={
+                "route": "biasgame/winners",
+                "user_id": user_id,
+                "limit": limit,
+                "method": "POST",
+            }
+        )
         return callback.response.get("results")
 
     @staticmethod
@@ -55,12 +59,14 @@ class BiasGame:
         :return: str
             The PvP image url.
         """
-        callback = await basic_call(request={
-            'route': 'biasgame/generate_pvp',
-            'first_image_url': first_image_url,
-            'second_image_url': second_image_url,
-            'method': 'POST'
-        })
+        callback = await basic_call(
+            request={
+                "route": "biasgame/generate_pvp",
+                "first_image_url": first_image_url,
+                "second_image_url": second_image_url,
+                "method": "POST",
+            }
+        )
         return callback.response.get("results")
 
     @staticmethod
@@ -73,9 +79,11 @@ class BiasGame:
         :return: str
             The BiasGame bracket image url.
         """
-        callback = await basic_call(request={
-            'route': 'biasgame/generate_bracket',
-            'game_info': game_info,
-            'method': 'POST'
-        })
+        callback = await basic_call(
+            request={
+                "route": "biasgame/generate_bracket",
+                "game_info": game_info,
+                "method": "POST",
+            }
+        )
         return callback.response.get("results")

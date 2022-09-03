@@ -49,16 +49,16 @@ class IreneAPIClient:
     """
 
     def __init__(
-            self,
-            token: str,
-            user_id: Union[int, str],
-            api_url="localhost",
-            port=5454,
-            preload_cache: Preload = None,
-            test=False,
-            reconnect=True,
-            verbose=False,
-            logger: logging.Logger = None
+        self,
+        token: str,
+        user_id: Union[int, str],
+        api_url="localhost",
+        port=5454,
+        preload_cache: Preload = None,
+        test=False,
+        reconnect=True,
+        verbose=False,
+        logger: logging.Logger = None,
     ):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
@@ -105,7 +105,7 @@ class IreneAPIClient:
             raise APIError(callback, error_msg=callback.response.get("error"))
 
         try:
-            if callback.response.get('results'):
+            if callback.response.get("results"):
                 error = callback.response["results"][
                     "error"
                 ]  # forcing a KeyError/TypeError (if raised, is a success)
@@ -123,7 +123,9 @@ class IreneAPIClient:
         evaluation = self._preload_cache.get_evaluation()
         for category_class, load_cache in evaluation.items():
             if load_cache:
-                future = asyncio.run_coroutine_threadsafe(category_class.fetch_all(), loop)
+                future = asyncio.run_coroutine_threadsafe(
+                    category_class.fetch_all(), loop
+                )
 
     async def connect(self):
         """
@@ -134,7 +136,11 @@ class IreneAPIClient:
 
         try:
             async with self._ws_client.ws_connect(
-                    self._ws_url, headers=self._headers, params=self._query_params, max_msg_size=1073741824, timeout=60
+                self._ws_url,
+                headers=self._headers,
+                params=self._query_params,
+                max_msg_size=1073741824,
+                timeout=60,
             ) as ws:
                 self.connected = True
                 self.logger.info("Connected to IreneAPI.")
@@ -163,7 +169,9 @@ class IreneAPIClient:
                     # authenticity before completing a request.
                     _data = await ws.receive()
                     if _data is None:
-                        self.logger.warning(no_found_instance + ": Received data was NoneType.")
+                        self.logger.warning(
+                            no_found_instance + ": Received data was NoneType."
+                        )
                     data_response = _data.json()
 
                     response_callback_id = int(data_response.get("callback_id") or 0)
@@ -224,6 +232,7 @@ class Logger:
     logger: logging.Logger
         A logging object for messages to be sent to.
     """
+
     def __init__(self, verbose=False, logger=None):
         self.verbose = verbose
         self.logger: Optional[logging.Logger] = logger

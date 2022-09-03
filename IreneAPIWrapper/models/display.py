@@ -50,9 +50,13 @@ class Display(AbstractModel):
     async def get_card(self, markdown=False):
         card_data = []
         if self.avatar:
-            card_data.append(f"Avatar: {self.avatar.url}") if not markdown else card_data.append(f"[Avatar]({self.avatar.url})")
+            card_data.append(
+                f"Avatar: {self.avatar.url}"
+            ) if not markdown else card_data.append(f"[Avatar]({self.avatar.url})")
         if self.banner:
-            card_data.append(f"Banner: {self.banner.url}") if not markdown else card_data.append(f"[Banner]({self.banner.url})")
+            card_data.append(
+                f"Banner: {self.banner.url}"
+            ) if not markdown else card_data.append(f"[Banner]({self.banner.url})")
         return card_data
 
     @staticmethod

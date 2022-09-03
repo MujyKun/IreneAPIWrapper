@@ -33,11 +33,13 @@ class MediaSource(File):
             A image host url or fallbacks to the default url.
         """
         if self.media_id:
-            callback = await basic_call(request={
-                'route': "media/download/$media_id",
-                'media_id': self.media_id,
-                'method': 'GET'
-            })
+            callback = await basic_call(
+                request={
+                    "route": "media/download/$media_id",
+                    "media_id": self.media_id,
+                    "method": "GET",
+                }
+            )
             results = callback.response.get("results")
-            self.image_host_url = results.get('host')
+            self.image_host_url = results.get("host")
         return self.image_host_url or self.url

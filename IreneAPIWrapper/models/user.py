@@ -67,8 +67,16 @@ class User(AbstractModel):
 
     @property
     def is_considered_patron(self):
-        return any([self.is_patron, self.is_super_patron, self.is_translator, self.is_data_mod,
-                    self.is_proofreader, self.is_mod])
+        return any(
+            [
+                self.is_patron,
+                self.is_super_patron,
+                self.is_translator,
+                self.is_data_mod,
+                self.is_proofreader,
+                self.is_mod,
+            ]
+        )
 
     @staticmethod
     async def create(*args, **kwargs):

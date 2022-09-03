@@ -59,24 +59,24 @@ class Preload:
     interactions: bool
         Whether to preload all interactions (Defaults to True)
     """
-    tags = True,
-    person_aliases = True,
-    group_aliases = True,
-    persons = True,
-    groups = True,
-    twitter_accounts = True,
-    users = False,
-    guilds = False,
-    affiliations = True,
-    bloodtypes = True,
-    media = True,
-    displays = True,
-    companies = True,
-    dates = True,
-    locations = True,
-    positions = True,
-    socials = True,
-    fandoms = True,
+    tags = (True,)
+    person_aliases = (True,)
+    group_aliases = (True,)
+    persons = (True,)
+    groups = (True,)
+    twitter_accounts = (True,)
+    users = (False,)
+    guilds = (False,)
+    affiliations = (True,)
+    bloodtypes = (True,)
+    media = (True,)
+    displays = (True,)
+    companies = (True,)
+    dates = (True,)
+    locations = (True,)
+    positions = (True,)
+    socials = (True,)
+    fandoms = (True,)
     channels = False
     twitch_subscriptions = False
     twitter_subscriptions = False
@@ -110,8 +110,9 @@ class Preload:
             Language,
             EightBallResponse,
             Notification,
-            Interaction
+            Interaction,
         )
+
         eval_dict = {
             Tag: self.tags,
             PersonAlias: self.person_aliases,
@@ -136,7 +137,7 @@ class Preload:
             Language: self.languages,
             EightBallResponse: self.eight_ball_responses,
             Notification: self.notifications,
-            Interaction: self.interactions
+            Interaction: self.interactions,
         }
         return eval_dict
 
@@ -166,4 +167,3 @@ class Preload:
         self.eight_ball_responses = False
         self.notifications = False
         self.interactions = False
-

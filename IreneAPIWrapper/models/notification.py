@@ -43,8 +43,11 @@ class Notification(AbstractModel):
     """
 
     def __init__(
-            self,
-            noti_id, guild_id, user_id, phrase,
+        self,
+        noti_id,
+        guild_id,
+        user_id,
+        phrase,
     ):
         super(Notification, self).__init__(noti_id)
         self.guild_id: int = guild_id
@@ -95,9 +98,9 @@ class Notification(AbstractModel):
 
     @staticmethod
     async def insert(
-            guild_id,
-            user_id,
-            phrase,
+        guild_id,
+        user_id,
+        phrase,
     ) -> None:
         r"""
         Insert a new Noti into the database and cache.
@@ -159,9 +162,15 @@ class Notification(AbstractModel):
             All Notification objects from cache.
         """
         if guild_id and user_id:
-            return [noti for noti in _notifications.values() if guild_id == noti.guild_id and user_id == noti.user_id]
+            return [
+                noti
+                for noti in _notifications.values()
+                if guild_id == noti.guild_id and user_id == noti.user_id
+            ]
         elif guild_id:
-            return [noti for noti in _notifications.values() if guild_id == noti.guild_id]
+            return [
+                noti for noti in _notifications.values() if guild_id == noti.guild_id
+            ]
         elif user_id:
             return [noti for noti in _notifications.values() if user_id == noti.user_id]
         return _notifications.values()

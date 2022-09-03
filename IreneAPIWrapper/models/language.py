@@ -32,6 +32,7 @@ class PackMessage:
     num_inputs: int
         The number of custom inputs.
     """
+
     def __init__(self, language_id, label, message, num_inputs):
         self.language_id = language_id
         self.label = label
@@ -52,9 +53,13 @@ class PackMessage:
         Pass in as many strings as inputs are required.
         """
         if len(args) < self.num_inputs:
-            raise IncorrectNumberOfItems(f"There are not enough arguments passed in to {self.language_id}.{self.label}")
+            raise IncorrectNumberOfItems(
+                f"There are not enough arguments passed in to {self.language_id}.{self.label}"
+            )
         elif len(args) > self.num_inputs:
-            raise IncorrectNumberOfItems(f"There are too many arguments passed in to {self.language_id}.{self.label}")
+            raise IncorrectNumberOfItems(
+                f"There are too many arguments passed in to {self.language_id}.{self.label}"
+            )
 
         msg = self.message
         for idx, arg in enumerate(args, start=1):
@@ -62,7 +67,11 @@ class PackMessage:
             start_input = msg.find(f":{idx}$")
             end_input = msg.find(f"${idx}:") + len(f"{idx}") + 2
             msg_list = [char for char in msg]
-            msg = ''.join(msg_list[0:start_input]) + arg_as_string + ''.join(msg_list[end_input::])
+            msg = (
+                "".join(msg_list[0:start_input])
+                + arg_as_string
+                + "".join(msg_list[end_input::])
+            )
         return msg
 
     @staticmethod
@@ -110,6 +119,7 @@ class Language(AbstractModel):
     ----------
     short_name:
     """
+
     def __init__(self, language_id, short_name, name, pack: List[PackMessage]):
         super(Language, self).__init__(language_id)
         self.short_name = short_name.lower()
@@ -117,7 +127,9 @@ class Language(AbstractModel):
         self._pack: List[PackMessage] = pack
 
         # organized pack
-        self._organized_pack: Dict[str, PackMessage] = {_pack.label: _pack for _pack in self._pack}
+        self._organized_pack: Dict[str, PackMessage] = {
+            _pack.label: _pack for _pack in self._pack
+        }
 
         lang = _langs.get(self.id)
         if not lang:
@@ -149,9 +161,8 @@ class Language(AbstractModel):
 
     @staticmethod
     async def fetch_all():
-        return await internal_fetch_all(Language, request={
-            "route": "language/",
-            "method": "GET"}
+        return await internal_fetch_all(
+            Language, request={"route": "language/", "method": "GET"}
         )
 
     @staticmethod

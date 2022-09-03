@@ -95,21 +95,21 @@ class Person(AbstractModel):
     """
 
     def __init__(
-            self,
-            person_id,
-            date,
-            name,
-            former_name,
-            display,
-            social,
-            location,
-            blood_type,
-            gender,
-            description,
-            height,
-            call_count,
-            tags,
-            aliases,
+        self,
+        person_id,
+        date,
+        name,
+        former_name,
+        display,
+        social,
+        location,
+        blood_type,
+        gender,
+        description,
+        height,
+        call_count,
+        tags,
+        aliases,
     ):
         super(Person, self).__init__(person_id)
         self.date: Date = date
@@ -164,16 +164,15 @@ class Person(AbstractModel):
             social_card = await self.social.get_card(markdown=markdown)
             [card_data.append(info) for info in social_card]
         if self.tags:
-            tags = ', '.join([str(tag) for tag in self.tags])
+            tags = ", ".join([str(tag) for tag in self.tags])
             card_data.append(f"Tags: {tags}")
         if self.aliases:
-            aliases = ', '.join([str(alias) for alias in self.aliases])
+            aliases = ", ".join([str(alias) for alias in self.aliases])
             card_data.append(f"Aliases: {aliases}")
         if self.affiliations:
-            affiliations = '\n'.join([str(aff) for aff in self.affiliations])
+            affiliations = "\n".join([str(aff) for aff in self.affiliations])
             card_data.append(f"Affiliations:\n{affiliations}")
         return card_data
-
 
     @staticmethod
     async def create(*args, **kwargs):
@@ -273,18 +272,18 @@ class Person(AbstractModel):
 
     @staticmethod
     async def insert(
-            date_id,
-            name_id,
-            former_name_id,
-            gender,
-            description,
-            height,
-            display_id,
-            social_id,
-            location_id,
-            tag_ids,
-            blood_id,
-            call_count,
+        date_id,
+        name_id,
+        former_name_id,
+        gender,
+        description,
+        height,
+        display_id,
+        social_id,
+        location_id,
+        tag_ids,
+        blood_id,
+        call_count,
     ) -> None:
         r"""
         Insert a new person into the database.

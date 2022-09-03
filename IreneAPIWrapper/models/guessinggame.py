@@ -15,7 +15,7 @@ from . import (
     internal_insert,
     Difficulty,
     get_difficulty,
-    basic_call
+    basic_call,
 )
 
 
@@ -99,7 +99,9 @@ class GuessingGame(AbstractModel):
 
         return _ggs[game_id]
 
-    async def update_media_and_status(self, media_ids: List[int], status_ids: List[int]) -> None:
+    async def update_media_and_status(
+        self, media_ids: List[int], status_ids: List[int]
+    ) -> None:
         """
         Update the media and status ids for the game in the database.
 
@@ -107,13 +109,15 @@ class GuessingGame(AbstractModel):
         """
         self.media_ids = media_ids
         self.status_ids = status_ids
-        await basic_call(request={
-            "route": "guessinggame/$gg_id",
-            "game_id": self.id,
-            "media_ids": self.media_ids,
-            "status_ids": self.status_ids,
-            "method": "PUT"
-        })
+        await basic_call(
+            request={
+                "route": "guessinggame/$gg_id",
+                "game_id": self.id,
+                "media_ids": self.media_ids,
+                "status_ids": self.status_ids,
+                "method": "PUT",
+            }
+        )
 
     async def delete(self) -> None:
         """

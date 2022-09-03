@@ -89,10 +89,12 @@ class Channel(AbstractModel):
         :return: None
         """
         await internal_insert(
-            request={"route": "channel",
-                     "channel_id": channel_id,
-                     "guild_id": guild_id,
-                     "method": "POST"}
+            request={
+                "route": "channel",
+                "channel_id": channel_id,
+                "guild_id": guild_id,
+                "method": "POST",
+            }
         )
 
     @staticmethod

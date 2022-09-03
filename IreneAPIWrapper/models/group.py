@@ -125,18 +125,20 @@ class Group(AbstractModel):
             display_card = await self.display.get_card(markdown=markdown)
             [card_data.append(info) for info in display_card]
         if self.website:
-            card_data.append(f"Custom Website: {self.website}") if not markdown else card_data.append(f"[Custom Website]({self.website})")
+            card_data.append(
+                f"Custom Website: {self.website}"
+            ) if not markdown else card_data.append(f"[Custom Website]({self.website})")
         if self.social:
             social_card = await self.social.get_card(markdown=markdown)
             [card_data.append(info) for info in social_card]
         if self.tags:
-            tags = ', '.join([str(tag) for tag in self.tags])
+            tags = ", ".join([str(tag) for tag in self.tags])
             card_data.append(f"Tags: {tags}")
         if self.aliases:
-            aliases = ', '.join([str(alias) for alias in self.aliases])
+            aliases = ", ".join([str(alias) for alias in self.aliases])
             card_data.append(f"Aliases: {aliases}")
         if self.affiliations:
-            affiliations = '\n'.join([str(aff) for aff in self.affiliations])
+            affiliations = "\n".join([str(aff) for aff in self.affiliations])
             card_data.append(f"Affiliations:\n{affiliations}")
         return card_data
 

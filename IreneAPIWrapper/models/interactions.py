@@ -31,6 +31,7 @@ class InteractionType(AbstractModel):
     name: str
         Name of the interaction type.
     """
+
     def __init__(self, type_id, name):
         super(InteractionType, self).__init__(type_id)
         self.name = name
@@ -38,7 +39,9 @@ class InteractionType(AbstractModel):
             _interaction_types[self.id] = self
 
     @staticmethod
-    async def get(type_id: int):  # signature does not match on purpose; no fetching here.
+    async def get(
+        type_id: int,
+    ):  # signature does not match on purpose; no fetching here.
         """Get an InteractionType object.
 
         If the InteractionType object does not exist in cache
@@ -140,10 +143,7 @@ class Interaction(AbstractModel):
         if not interaction_type:
             interaction_type = InteractionType(type_id, type_name)
 
-        Interaction(
-            interaction_type=interaction_type,
-            url=url
-        )
+        Interaction(interaction_type=interaction_type, url=url)
         return _interactions[Interaction.generate_id(interaction_type, url)]
 
     async def delete(self) -> None:

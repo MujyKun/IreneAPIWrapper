@@ -68,7 +68,11 @@ class UserStatus(AbstractModel):
         """
         await internal_delete(
             self,
-            request={"route": "user_status/$status_id", "status_id": self.id, "method": "DELETE"},
+            request={
+                "route": "user_status/$status_id",
+                "status_id": self.id,
+                "method": "DELETE",
+            },
         )
 
     async def increment(self, by=1):
@@ -173,7 +177,11 @@ class UserStatus(AbstractModel):
         """
         return await internal_fetch(
             UserStatus,
-            request={"route": "user_status/$status_id", "status_id": status_id, "method": "GET"},
+            request={
+                "route": "user_status/$status_id",
+                "status_id": status_id,
+                "method": "GET",
+            },
         )
 
     @staticmethod

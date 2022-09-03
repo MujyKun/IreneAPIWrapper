@@ -39,7 +39,7 @@ class Subscription(AbstractModel):
         account_id: Union[int, str],
         account_name: str,
         followed: Optional[List[Channel]] = None,
-        mention_roles: Optional[Dict[Channel, int]] = None
+        mention_roles: Optional[Dict[Channel, int]] = None,
     ):
         super(Subscription, self).__init__(account_id)
         self.name: str = account_name.lower()
@@ -55,8 +55,13 @@ class Subscription(AbstractModel):
     def __ne__(self, other):
         return self.id != other.id
 
-    def _sub_in_cache(self, channel: Channel = None, role_id: int = None,
-                      channels: Optional[List[Channel]] = None, role_ids: Optional[Dict[Channel, int]] = None):
+    def _sub_in_cache(
+        self,
+        channel: Channel = None,
+        role_id: int = None,
+        channels: Optional[List[Channel]] = None,
+        role_ids: Optional[Dict[Channel, int]] = None,
+    ):
         """
         Make a channel subscribe.
 
@@ -72,7 +77,9 @@ class Subscription(AbstractModel):
             self._mention_roles[channel] = role_id
 
         if channels:
-            self._followed += [_channel for _channel in channels if _channel not in self._followed]
+            self._followed += [
+                _channel for _channel in channels if _channel not in self._followed
+            ]
 
         if role_ids:
             self._mention_roles |= role_ids  # merge the dictionaries.

@@ -28,7 +28,9 @@ async def internal_fetch(obj: AbstractModel, request: dict) -> Optional[Abstract
     return obj
 
 
-async def internal_fetch_all(obj: AbstractModel, request: dict, bulk: bool = False) -> List[AbstractModel]:
+async def internal_fetch_all(
+    obj: AbstractModel, request: dict, bulk: bool = False
+) -> List[AbstractModel]:
     """
     Fetch all known instances of the concrete object from the API.
 
@@ -51,7 +53,10 @@ async def internal_fetch_all(obj: AbstractModel, request: dict, bulk: bool = Fal
 
     try:
         if not bulk:
-            return [await obj.create(**info) for info in callback.response["results"].values()]
+            return [
+                await obj.create(**info)
+                for info in callback.response["results"].values()
+            ]
         else:
             return await obj.create_bulk(list(callback.response["results"].values()))
     except Exception as e:

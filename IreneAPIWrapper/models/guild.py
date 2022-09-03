@@ -11,7 +11,7 @@ from . import (
     User,
     internal_insert,
     internal_delete,
-    basic_call
+    basic_call,
 )
 
 
@@ -143,7 +143,7 @@ class Guild(AbstractModel):
         shard_id,
         create_date,
         has_bot,
-        prefixes=None
+        prefixes=None,
     ):
         super(Guild, self).__init__(guild_id)
         self.name = name
@@ -230,7 +230,7 @@ class Guild(AbstractModel):
             shard_id,
             create_date,
             has_bot,
-            prefixes
+            prefixes,
         )
         return _guilds[guild_id]
 
@@ -244,12 +244,14 @@ class Guild(AbstractModel):
         if prefix in self.prefixes:
             return
 
-        await basic_call(request={
-            'route': 'guild/prefix/$guild_id',
-            'guild_id': self.id,
-            'prefix': prefix,
-            'method': 'POST'
-        })
+        await basic_call(
+            request={
+                "route": "guild/prefix/$guild_id",
+                "guild_id": self.id,
+                "prefix": prefix,
+                "method": "POST",
+            }
+        )
 
         self.prefixes.append(prefix)
 
@@ -263,12 +265,14 @@ class Guild(AbstractModel):
         if prefix not in self.prefixes:
             return
 
-        await basic_call(request={
-            'route': 'guild/prefix/$guild_id',
-            'guild_id': self.id,
-            'prefix': prefix,
-            'method': 'DELETE'
-        })
+        await basic_call(
+            request={
+                "route": "guild/prefix/$guild_id",
+                "guild_id": self.id,
+                "prefix": prefix,
+                "method": "DELETE",
+            }
+        )
 
         self.prefixes.remove(prefix)
 
@@ -277,12 +281,14 @@ class Guild(AbstractModel):
 
         :return: List[str]
         """
-        callback = await basic_call(request={
-            'route': 'guild/prefix/$guild_id',
-            'guild_id': self.id,
-            'method': 'GET'
-        })
-        prefixes = callback.response.get('results')
+        callback = await basic_call(
+            request={
+                "route": "guild/prefix/$guild_id",
+                "guild_id": self.id,
+                "method": "GET",
+            }
+        )
+        prefixes = callback.response.get("results")
         if prefixes:
             self.prefixes: List[str] = list(prefixes)
         return prefixes  # returns response from the api, not cache.
@@ -293,12 +299,9 @@ class Guild(AbstractModel):
 
         :return: Dict[int, List[str]]
         """
-        callback = await basic_call(request={
-            'route': 'guild/prefix/',
-            'method': 'GET'
-        })
+        callback = await basic_call(request={"route": "guild/prefix/", "method": "GET"})
 
-        return callback.response.get('results')
+        return callback.response.get("results")
 
     async def delete(self) -> None:
         """

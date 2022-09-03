@@ -11,7 +11,7 @@ from . import (
     Affiliation,
     internal_insert,
     internal_delete,
-    basic_call
+    basic_call,
 )
 
 
@@ -119,7 +119,10 @@ class Media(AbstractModel):
 
     async def fetch_image_host_url(self):
         if self.source:
-            image_host_url = self.source.image_host_url or await self.source.download_and_get_image_host_url()
+            image_host_url = (
+                self.source.image_host_url
+                or await self.source.download_and_get_image_host_url()
+            )
             return image_host_url or self.source.url
 
     async def upsert_guesses(self, correct: bool):
@@ -135,13 +138,15 @@ class Media(AbstractModel):
             self.failed_guesses += 1
 
         if (self.correct_guesses + self.failed_guesses) % 5 == 0:
-            await basic_call(request={
+            await basic_call(
+                request={
                     "route": "media/$media_id",
                     "media_id": self.id,
                     "failed_guesses": self.failed_guesses,
                     "correct_guesses": self.correct_guesses,
                     "method": "POST",
-                })
+                }
+            )
 
     async def delete(self) -> None:
         """
@@ -217,8 +222,17 @@ class Media(AbstractModel):
         return existing
 
     @staticmethod
-    async def get_random(object_id: int, affiliation=False, person=False, group=False, min_faces=1, max_faces=999,
-                         can_be_nsfw=False, is_enabled=True, file_type=None):
+    async def get_random(
+        object_id: int,
+        affiliation=False,
+        person=False,
+        group=False,
+        min_faces=1,
+        max_faces=999,
+        can_be_nsfw=False,
+        is_enabled=True,
+        file_type=None,
+    ):
         """Get a random Media object from the API.
 
         :param object_id: int
@@ -241,22 +255,23 @@ class Media(AbstractModel):
         :param file_type: str
             A restricted file type.
         """
-        request = {'method': 'POST',
-                   "min_faces": min_faces,
-                   "max_faces": max_faces,
-                   "file_type": file_type,
-                   "nsfw": can_be_nsfw,
-                   "enabled": is_enabled
-                   }
+        request = {
+            "method": "POST",
+            "min_faces": min_faces,
+            "max_faces": max_faces,
+            "file_type": file_type,
+            "nsfw": can_be_nsfw,
+            "enabled": is_enabled,
+        }
         if affiliation:
-            request['route'] = 'affiliation/$affiliation_id/media'
-            request['affiliation_id'] = object_id
+            request["route"] = "affiliation/$affiliation_id/media"
+            request["affiliation_id"] = object_id
         elif person:
-            request['route'] = 'person/$person_id/media'
-            request['person_id'] = object_id
+            request["route"] = "person/$person_id/media"
+            request["person_id"] = object_id
         elif group:
-            request['route'] = 'group/$group_id/media'
-            request['group_id'] = object_id
+            request["route"] = "group/$group_id/media"
+            request["group_id"] = object_id
         # one does not exist for media id since it cannot be filtered.
         # Although it is possible to pass it into the API.
         callback = await basic_call(request=request)
@@ -283,17 +298,22 @@ class Media(AbstractModel):
         if affiliations is None:
             return _media.values()
         else:
-            callback = await basic_call(request={
-                "route": "media/affiliations",
-                "affiliation_ids": [aff.id for aff in affiliations],
-                "limit": limit,
-                "method": "GET",
-            })
+            callback = await basic_call(
+                request={
+                    "route": "media/affiliations",
+                    "affiliation_ids": [aff.id for aff in affiliations],
+                    "limit": limit,
+                    "method": "GET",
+                }
+            )
             results = callback.response.get("results")
             if not results:
                 return []
 
-            media_objs = [await Media.get(media_info["mediaid"]) for media_info in results.values()]
+            media_objs = [
+                await Media.get(media_info["mediaid"])
+                for media_info in results.values()
+            ]
             return media_objs
 
     @staticmethod
@@ -331,7 +351,7 @@ class Media(AbstractModel):
                 "route": "media/$media_id",
                 "media_id": object_id,
             }
-        request['method'] = "GET"
+        request["method"] = "GET"
 
         return await internal_fetch(obj=Media, request=request)
 

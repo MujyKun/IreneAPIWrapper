@@ -26,6 +26,7 @@ class APIError(Exception):
 
     def get_detailed_report(self):
         from pprint import pformat
+
         cb = self.callback
         msg = f"""
         **CallBack Information**

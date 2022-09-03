@@ -41,6 +41,7 @@ class AbstractModel:
         :return: List[str]
             A list of strings for the card.
         """
+
     async def _remove_from_cache(self):
         """Remove the current object from cache."""
         ...

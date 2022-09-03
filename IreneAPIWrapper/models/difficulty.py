@@ -15,6 +15,7 @@ class Difficulty:
         The difficulty name.
 
     """
+
     def __init__(self, diff_id: int, name: str):
         self.id = diff_id
         self.name = name.lower()
@@ -27,13 +28,11 @@ class Difficulty:
 
 
 # PRE DEFINED DIFFICULTIES
-EASY = Difficulty(1, 'easy')
-MEDIUM = Difficulty(2, 'medium')
-HARD = Difficulty(3, 'hard')
+EASY = Difficulty(1, "easy")
+MEDIUM = Difficulty(2, "medium")
+HARD = Difficulty(3, "hard")
 
-_diff = {1: EASY,
-         2: MEDIUM,
-         3: HARD}
+_diff = {1: EASY, 2: MEDIUM, 3: HARD}
 
 
 def get_difficulty(difficulty: Union[int, str]) -> Difficulty:

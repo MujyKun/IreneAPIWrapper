@@ -1,7 +1,17 @@
 from typing import Optional, List, Dict
 
-from . import Subscription, Channel, Timeline, CallBack, Tweet, basic_call, internal_delete, internal_fetch, \
-    internal_fetch_all, internal_insert
+from . import (
+    Subscription,
+    Channel,
+    Timeline,
+    CallBack,
+    Tweet,
+    basic_call,
+    internal_delete,
+    internal_fetch,
+    internal_fetch_all,
+    internal_insert,
+)
 from IreneAPIWrapper.sections import outer
 
 BASE_URL = "https://twitter.com"
@@ -35,16 +45,18 @@ class TwitterAccount(Subscription):
     """
 
     def __init__(
-            self,
-            account_id: int,
-            account_name: str,
-            channels_following: Optional[List[Channel]] = None,
-            mention_roles: Optional[Dict[Channel, int]] = None
+        self,
+        account_id: int,
+        account_name: str,
+        channels_following: Optional[List[Channel]] = None,
+        mention_roles: Optional[Dict[Channel, int]] = None,
     ):
-        super().__init__(account_id=account_id,
-                         account_name=account_name,
-                         followed=channels_following,
-                         mention_roles=mention_roles)
+        super().__init__(
+            account_id=account_id,
+            account_name=account_name,
+            followed=channels_following,
+            mention_roles=mention_roles,
+        )
 
         # If the latest tweet does not exist, the first fetch will never be considered a new tweet.
         self._timeline: Timeline = Timeline(results=[])
@@ -125,7 +137,10 @@ class TwitterAccount(Subscription):
                 channel.guild_id = guild_id
 
             if not final_channels.get(account_id):
-                final_channels[account_id] = {"channels": [channel], "username": username}
+                final_channels[account_id] = {
+                    "channels": [channel],
+                    "username": username,
+                }
             else:
                 final_channels[account_id]["channels"].append(channel)
 
@@ -137,8 +152,12 @@ class TwitterAccount(Subscription):
 
         final_twitter_channels = []
         for _account_id, _values in final_channels.items():
-            TwitterAccount(_account_id, _values["username"], _values["channels"],
-                           final_roles.get(_account_id))
+            TwitterAccount(
+                _account_id,
+                _values["username"],
+                _values["channels"],
+                final_roles.get(_account_id),
+            )
             obj = await TwitterAccount.get(_values["username"], fetch=False)
             final_twitter_channels.append(obj)
 
@@ -146,11 +165,13 @@ class TwitterAccount(Subscription):
 
     async def fetch_timeline(self) -> Timeline:
         """Fetch the latest tweets for this account from Twitter"""
-        callback = await basic_call(request={
-            "route": "twitter/$twitter_id",
-            "twitter_id": self.id,
-            "method": "GET",
-        })
+        callback = await basic_call(
+            request={
+                "route": "twitter/$twitter_id",
+                "twitter_id": self.id,
+                "method": "GET",
+            }
+        )
         results = callback.response["results"]
         self._timeline.update_tweets(results)
         return self._timeline
@@ -165,12 +186,13 @@ class TwitterAccount(Subscription):
         if channel not in self:
             return
 
-        await basic_call(request={
-            "route": "twitter/modify/$twitter_id",
-            "twitter_id": self.id,
-            "channel_id": channel.id,
-            "method": "DELETE",
-        }
+        await basic_call(
+            request={
+                "route": "twitter/modify/$twitter_id",
+                "twitter_id": self.id,
+                "channel_id": channel.id,
+                "method": "DELETE",
+            }
         )
         self._unsub_in_cache(channel)
 
@@ -189,13 +211,15 @@ class TwitterAccount(Subscription):
             else:
                 return
 
-        await basic_call(request={
-            "route": "twitter/modify/$twitter_id",
-            "twitter_id": self.id,
-            "channel_id": channel.id,
-            "role_id": role_id,
-            "method": "POST",
-        })
+        await basic_call(
+            request={
+                "route": "twitter/modify/$twitter_id",
+                "twitter_id": self.id,
+                "channel_id": channel.id,
+                "role_id": role_id,
+                "method": "POST",
+            }
+        )
         self._sub_in_cache(channel, role_id=role_id)
 
     async def _remove_from_cache(self) -> None:
@@ -214,11 +238,14 @@ class TwitterAccount(Subscription):
         :param guild_id: The guild ID.
         :return: Optional[List[:ref:`TwitterAccount`]]
         """
-        return await internal_fetch_all(TwitterAccount, request={
-            'route': 'twitter/filter/$guild_id',
-            'guild_id': guild_id,
-            'method': 'GET'
-        })
+        return await internal_fetch_all(
+            TwitterAccount,
+            request={
+                "route": "twitter/filter/$guild_id",
+                "guild_id": guild_id,
+                "method": "GET",
+            },
+        )
 
     @staticmethod
     async def check_user_exists(username) -> bool:
@@ -229,10 +256,13 @@ class TwitterAccount(Subscription):
         :return: bool
             Whether the username exists.
         """
-        callback = await basic_call(request={
-            "route": "twitter/exists/$username",
-            "username": username,
-            "method": "GET"})
+        callback = await basic_call(
+            request={
+                "route": "twitter/exists/$username",
+                "username": username,
+                "method": "GET",
+            }
+        )
         return callback.response["results"]
 
     @staticmethod
@@ -244,10 +274,13 @@ class TwitterAccount(Subscription):
         :return: Optional[int]
             The account ID.
         """
-        callback = await basic_call(request={
-            "route": "twitter/account/$username",
-            "username": username,
-            "method": "POST"})
+        callback = await basic_call(
+            request={
+                "route": "twitter/account/$username",
+                "username": username,
+                "method": "POST",
+            }
+        )
 
         results = callback.response.get("results")
         if not results:
@@ -256,7 +289,9 @@ class TwitterAccount(Subscription):
         return results.get("twitter_id")
 
     @staticmethod
-    async def insert(username: str, guild_id: int, channel_id: int, role_id: Optional[int]):
+    async def insert(
+        username: str, guild_id: int, channel_id: int, role_id: Optional[int]
+    ):
         """
         Insert a new TwitterAccount into the database.
 
@@ -277,21 +312,22 @@ class TwitterAccount(Subscription):
         if not twitter_id:
             return None
 
-        await internal_insert(request={
-            "route": "twitter/modify/$twitter_id",
-            "twitter_id": twitter_id,
-            "channel_id": channel_id,
-            "role_id": role_id,
-            "method": "POST",
-        })
+        await internal_insert(
+            request={
+                "route": "twitter/modify/$twitter_id",
+                "twitter_id": twitter_id,
+                "channel_id": channel_id,
+                "role_id": role_id,
+                "method": "POST",
+            }
+        )
 
         # have the model created and added to cache.
         twitter_account = await TwitterAccount.fetch(username)
         return twitter_account
 
     @staticmethod
-    async def get(
-            username: str = None, fetch=True) -> Optional[Subscription]:
+    async def get(username: str = None, fetch=True) -> Optional[Subscription]:
         """
         Get a TwitterAccount instance from cache or fetch it from the api.
 
@@ -344,9 +380,12 @@ class TwitterAccount(Subscription):
         :return: List[:ref:`TwitterAccount`]
             A list of TwitterAccount objects.
         """
-        return await internal_fetch_all(TwitterAccount, request={
-            "route": "twitter/", "method": "GET"}, bulk=True)
+        return await internal_fetch_all(
+            TwitterAccount, request={"route": "twitter/", "method": "GET"}, bulk=True
+        )
 
 
 _twitter_accounts: Dict[int, TwitterAccount] = dict()
-_twitter_accounts_by_user: Dict[str, TwitterAccount] = dict()  # used for faster searching.
+_twitter_accounts_by_user: Dict[
+    str, TwitterAccount
+] = dict()  # used for faster searching.

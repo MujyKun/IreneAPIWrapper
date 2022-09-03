@@ -99,31 +99,49 @@ class Social(AbstractModel):
             card_data.append(f"Social ID: {self.id}")
         if self.twitter:
             link = "https://twitter.com/" + self.twitter
-            card_data.append(f"Twitter: {self.twitter}") if not markdown else card_data.append(f"[Twitter]({link})")
+            card_data.append(
+                f"Twitter: {self.twitter}"
+            ) if not markdown else card_data.append(f"[Twitter]({link})")
         if self.youtube:
             link = "https://www.youtube.com/channel/" + self.youtube
-            card_data.append(f"Youtube: {self.youtube}") if not markdown else card_data.append(f"[Youtube]({link})")
+            card_data.append(
+                f"Youtube: {self.youtube}"
+            ) if not markdown else card_data.append(f"[Youtube]({link})")
         if self.melon:
             link = "https://www.melon.com/artist/song.htm?artistId=" + self.melon
-            card_data.append(f"Melon: {self.melon}") if not markdown else card_data.append(f"[Melon]({link})")
+            card_data.append(
+                f"Melon: {self.melon}"
+            ) if not markdown else card_data.append(f"[Melon]({link})")
         if self.instagram:
             link = "https://instagram.com/" + self.instagram
-            card_data.append(f"Instagram: {self.instagram}") if not markdown else card_data.append(f"[Instagram]({link})")
+            card_data.append(
+                f"Instagram: {self.instagram}"
+            ) if not markdown else card_data.append(f"[Instagram]({link})")
         if self.vlive:
             link = "https://channels.vlive.tv/" + self.vlive
-            card_data.append(f"Vlive: {self.vlive}") if not markdown else card_data.append(f"[Vlive]({link})")
+            card_data.append(
+                f"Vlive: {self.vlive}"
+            ) if not markdown else card_data.append(f"[Vlive]({link})")
         if self.spotify:
             link = "https://open.spotify.com/artist/" + self.spotify
-            card_data.append(f"Spotify: {self.spotify}") if not markdown else card_data.append(f"[Spotify]({link})")
+            card_data.append(
+                f"Spotify: {self.spotify}"
+            ) if not markdown else card_data.append(f"[Spotify]({link})")
         if self.fancafe:
             link = "https://m.cafe.daum.net/" + self.fancafe
-            card_data.append(f"Fancafe: {self.fancafe}") if not markdown else card_data.append(f"[Fancafe]({link})")
+            card_data.append(
+                f"Fancafe: {self.fancafe}"
+            ) if not markdown else card_data.append(f"[Fancafe]({link})")
         if self.facebook:
             link = "https://www.facebook.com/" + self.facebook
-            card_data.append(f"Facebook: {self.facebook}") if not markdown else card_data.append(f"[Facebook]({link})")
+            card_data.append(
+                f"Facebook: {self.facebook}"
+            ) if not markdown else card_data.append(f"[Facebook]({link})")
         if self.tiktok:
             link = "https://www.tiktok.com/" + self.tiktok
-            card_data.append(f"Tiktok: {self.tiktok}") if not markdown else card_data.append(f"[Tiktok]({link})")
+            card_data.append(
+                f"Tiktok: {self.tiktok}"
+            ) if not markdown else card_data.append(f"[Tiktok]({link})")
         return card_data
 
     @staticmethod

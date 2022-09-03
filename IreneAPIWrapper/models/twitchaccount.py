@@ -17,7 +17,7 @@ from . import (
     get_difficulty,
     basic_call,
     Subscription,
-    Channel
+    Channel,
 )
 
 
@@ -36,13 +36,18 @@ class TwitchAccount(Subscription):
         The role ids of channels that need mentioning on updates.
     """
 
-    def __init__(self, username: str,
-                 channels_following: Optional[List[Channel]] = None,
-                 mention_roles: Optional[Dict[Channel, int]] = None):
-        super(TwitchAccount, self).__init__(account_id=username,
-                                            account_name=username,
-                                            followed=channels_following,
-                                            mention_roles=mention_roles)
+    def __init__(
+        self,
+        username: str,
+        channels_following: Optional[List[Channel]] = None,
+        mention_roles: Optional[Dict[Channel, int]] = None,
+    ):
+        super(TwitchAccount, self).__init__(
+            account_id=username,
+            account_name=username,
+            followed=channels_following,
+            mention_roles=mention_roles,
+        )
         acc = _accounts.get(self.id)
         self.is_live = False
         if not acc:
@@ -134,11 +139,13 @@ class TwitchAccount(Subscription):
         Get a list of channels that have already posted to discord.
         :return: List[:ref:`Channel`]
         """
-        callback = await basic_call(request={
-            'route': 'twitch/already_posted/$username',
-            'username': self.id,
-            'method': 'GET'
-        })
+        callback = await basic_call(
+            request={
+                "route": "twitch/already_posted/$username",
+                "username": self.id,
+                "method": "GET",
+            }
+        )
         results = callback.response.get("results")
         if not results:
             return []
@@ -160,13 +167,15 @@ class TwitchAccount(Subscription):
         if not channel_ids:
             return
 
-        await basic_call(request={
-            "route": "twitch/$username",
-            "username": self.name,
-            "channel_ids": channel_ids,
-            "posted": posted,
-            "method": "PUT"
-        })
+        await basic_call(
+            request={
+                "route": "twitch/$username",
+                "username": self.name,
+                "channel_ids": channel_ids,
+                "posted": posted,
+                "method": "PUT",
+            }
+        )
 
     async def check_live(self) -> bool:
         """
@@ -187,11 +196,13 @@ class TwitchAccount(Subscription):
         :returns: Dict[:ref:`str`, bool]
             A dictionary with the key as the username and the value if they are live.
         """
-        callback = await basic_call(request={
-            "route": "twitch/is_live",
-            "usernames": [account.id for account in accounts],
-            "method": "GET"
-        })
+        callback = await basic_call(
+            request={
+                "route": "twitch/is_live",
+                "usernames": [account.id for account in accounts],
+                "method": "GET",
+            }
+        )
 
         live_dict: Dict[str, bool] = callback.response["results"]
         for user, is_live in live_dict.items():
@@ -208,11 +219,13 @@ class TwitchAccount(Subscription):
         :return: bool
             Whether the username exists.
         """
-        callback = await basic_call(request={
-            "route": "twitch/exists/$username",
-            "username": username.lower(),
-            "method": "GET"
-        })
+        callback = await basic_call(
+            request={
+                "route": "twitch/exists/$username",
+                "username": username.lower(),
+                "method": "GET",
+            }
+        )
         return callback.response["results"]
 
     async def unsubscribe(self, channel: Union[Channel]):
@@ -224,14 +237,16 @@ class TwitchAccount(Subscription):
             The channel to unsubscribe from the account.
         """
         if channel not in self:
-             return
+            return
 
-        await basic_call(request={
-            "route": "twitch/$username",
-            "username": self.name,
-            "channel_id": channel.id,
-            "method": "DELETE"
-        })
+        await basic_call(
+            request={
+                "route": "twitch/$username",
+                "username": self.name,
+                "channel_id": channel.id,
+                "method": "DELETE",
+            }
+        )
         self._unsub_in_cache(channel)
 
     async def subscribe(self, channel: Channel, role_id: Optional[int] = None):
@@ -242,13 +257,15 @@ class TwitchAccount(Subscription):
                 await self.unsubscribe(channel)
             return
 
-        await basic_call(request={
-            "route": "twitch/$username",
-            "username": self.name,
-            "channel_id": channel.id,
-            "role_id": role_id,
-            "method": "POST"
-        })
+        await basic_call(
+            request={
+                "route": "twitch/$username",
+                "username": self.name,
+                "channel_id": channel.id,
+                "role_id": role_id,
+                "method": "POST",
+            }
+        )
         self._sub_in_cache(channel, role_id)
 
     async def _remove_from_cache(self) -> None:
@@ -267,11 +284,14 @@ class TwitchAccount(Subscription):
         :param guild_id: The guild ID.
         :return: Optional[List[:ref:`TwitchAccount`]]
         """
-        return await internal_fetch_all(TwitchAccount, request={
-            'route': 'twitch/filter/$guild_id',
-            'guild_id': guild_id,
-            'method': 'GET'
-        })
+        return await internal_fetch_all(
+            TwitchAccount,
+            request={
+                "route": "twitch/filter/$guild_id",
+                "guild_id": guild_id,
+                "method": "GET",
+            },
+        )
 
     @staticmethod
     async def insert(username: str, channel_id: int, role_id: Optional[int]):
@@ -288,13 +308,15 @@ class TwitchAccount(Subscription):
         :return: :ref:`TwitchAccount`
             The TwitchAccount object.
         """
-        await basic_call(request={
-            "route": "twitch/$username",
-            "username": username,
-            "channel_id": channel_id,
-            "role_id": role_id,
-            "method": "POST"
-        })
+        await basic_call(
+            request={
+                "route": "twitch/$username",
+                "username": username,
+                "channel_id": channel_id,
+                "role_id": role_id,
+                "method": "POST",
+            }
+        )
 
         # have the model created and added to cache.
         twitch_account = await TwitchAccount.fetch(username)
@@ -353,8 +375,8 @@ class TwitchAccount(Subscription):
         .. NOTE:: TwitchAccount objects are added to cache on creation.
         """
         return await internal_fetch_all(
-            obj=TwitchAccount, request={"route": "twitch", "method": "GET"},
-            bulk=True)
+            obj=TwitchAccount, request={"route": "twitch", "method": "GET"}, bulk=True
+        )
 
 
 _accounts: Dict[str, TwitchAccount] = dict()
