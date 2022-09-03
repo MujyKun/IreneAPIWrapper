@@ -65,6 +65,11 @@ class User(AbstractModel):
         if not _users.get(self.id):
             _users[self.id] = self
 
+    @property
+    def is_considered_patron(self):
+        return any([self.is_patron, self.is_super_patron, self.is_translator, self.is_data_mod,
+                    self.is_proofreader, self.is_mod])
+
     @staticmethod
     async def create(*args, **kwargs):
         """
