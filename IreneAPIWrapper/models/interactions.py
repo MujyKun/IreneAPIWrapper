@@ -84,15 +84,19 @@ class InteractionType(AbstractModel):
             The type name.
         :return: None
         """
+        name = name.lower()
         callback = await internal_insert(
             request={
-                "route": "interaction/type",
+                "route": "interactions/type",
                 "name": name,
                 "method": "POST",
             }
         )
 
         results = callback.response.get("results")
+        if results:
+            type_id = results['0']['addinteractiontype']
+            InteractionType(type_id, name)  # add to cache.
 
 
 class Interaction(AbstractModel):
@@ -184,7 +188,7 @@ class Interaction(AbstractModel):
         """
         await internal_insert(
             request={
-                "route": "interaction/",
+                "route": "interactions/",
                 "type_id": type_id,
                 "url": url,
                 "method": "POST",
@@ -208,7 +212,7 @@ class Interaction(AbstractModel):
         .. NOTE::: Interaction objects are added to cache on creation.
         """
         return await internal_fetch_all(
-            obj=Interaction, request={"route": "interaction/", "method": "GET"}
+            obj=Interaction, request={"route": "interactions/", "method": "GET"}
         )
 
 
