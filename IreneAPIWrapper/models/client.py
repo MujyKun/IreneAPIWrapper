@@ -130,14 +130,18 @@ class IreneAPIClient:
         evaluation = self._preload_cache.get_evaluation()
         self.__futures = []
 
-        for category_class, load_cache in dict(sorted(evaluation.items(), key=lambda model: model[0].priority)):
-            if load_cache:
-                if self._preload_cache.force:
-                    await category_class.fetch_all()
-                else:
-                    self.__futures.append(asyncio.run_coroutine_threadsafe(
-                        category_class.fetch_all(), loop
-                    ))
+        for category_class, load_cache in dict(sorted(evaluation.items(),
+                                                      key=lambda model: model[0].priority())).items():
+            try:
+                if load_cache:
+                    if self._preload_cache.force:
+                        await category_class.fetch_all()
+                    else:
+                        self.__futures.append(asyncio.run_coroutine_threadsafe(
+                            category_class.fetch_all(), loop
+                        ))
+            except Exception as e:
+                self.logger.warning(msg=f"Cache for {category_class} did not load. - {e}")
 
     async def connect(self):
         """
@@ -156,7 +160,7 @@ class IreneAPIClient:
             ) as ws:
                 self.connected = True
                 self.logger.info("Connected to IreneAPI.")
-                await self.__load_up_cache()
+                asyncio.run_coroutine_threadsafe(self.__load_up_cache(), asyncio.get_event_loop())
                 no_found_instance = f"Could not find CallBack instance"
                 while True:
                     # test cases
