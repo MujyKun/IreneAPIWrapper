@@ -44,6 +44,8 @@ class Group(AbstractModel):
         A custom website for the group.
     social: :ref:`Social`
         The social media associated with the group.
+    media_count: int
+        The media a group has.
     tags: List[:ref:`Tag`]
         The tags that affiliated with the group.
     aliases: List[:ref:`GroupAlias`]
@@ -67,6 +69,8 @@ class Group(AbstractModel):
         A custom website for the group.
     social: :ref:`Social`
         The social media associated with the group.
+    media_count: int
+        The media a group has.
     tags: List[:ref:`Tag`]
         The tags that affiliated with the group.
     aliases: List[:ref:`GroupAlias`]
@@ -86,6 +90,7 @@ class Group(AbstractModel):
         display,
         website,
         social,
+        media_count,
         tags,
         aliases,
     ):
@@ -97,6 +102,7 @@ class Group(AbstractModel):
         self.display: Display = display
         self.website: str = website
         self.social: Social = social
+        self.media_count: int = media_count
         self.tags: List[Tag] = tags
         self.aliases: List[GroupAlias] = aliases
         self.affiliations: List[Affiliation] = []
@@ -168,6 +174,8 @@ class Group(AbstractModel):
         social_id = kwargs.get("socialid")
         social = await Social.get(social_id)
 
+        media_count = kwargs.get("mediacount")
+
         tag_ids = kwargs.get("tagids")
         tags = [] if not tag_ids else [await Tag.get(tag_id) for tag_id in tag_ids]
 
@@ -191,6 +199,7 @@ class Group(AbstractModel):
             display,
             website,
             social,
+            media_count,
             tags,
             aliases,
         )

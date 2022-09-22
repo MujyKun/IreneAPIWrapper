@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
 
 class Person(AbstractModel):
+
     r"""Represents a Person (or a living entity).
 
     A Person object inherits from :ref:`AbstractModel`.
@@ -55,6 +56,8 @@ class Person(AbstractModel):
         The height of the person in centimeters (cm)
     call_count: int
         The amount of times the person has been called. (Increment determined by client side and not from the API)
+    media_count: int
+        The media a person has.
     tags: List[:ref:`Tag`]
         The tags associated with the person.
     aliases: List[:ref:`PersonAlias`]
@@ -86,6 +89,8 @@ class Person(AbstractModel):
         The height of the person in centimeters (cm)
     call_count: int
         The amount of times the person has been called. (Increment determined by client side and not from the API)
+    media_count: int
+        The media a person has.
     tags: List[:ref:`Tag`]
         The tags associated with the person.
     aliases: List[:ref:`PersonAlias`]
@@ -93,7 +98,6 @@ class Person(AbstractModel):
     affiliations: List[:ref:`Affiliation`]
         A list of :ref:`Affiliation` objects between the :ref:`Person` and the :ref:`Group` objects they are in.
     """
-
     def __init__(
         self,
         person_id,
@@ -108,6 +112,7 @@ class Person(AbstractModel):
         description,
         height,
         call_count,
+        media_count,
         tags,
         aliases,
     ):
@@ -123,6 +128,7 @@ class Person(AbstractModel):
         self.description: str = description
         self.height: int = height
         self.call_count: int = call_count
+        self.media_count: int = media_count
         self.tags: List[Tag] = tags
         self.aliases: List[PersonAlias] = aliases
         self.affiliations: List[Affiliation] = []
@@ -207,6 +213,7 @@ class Person(AbstractModel):
         height = kwargs.get("height")
 
         call_count = kwargs.get("callcount")
+        media_count = kwargs.get("mediacount")
 
         tag_ids = kwargs.get("tagids")
         tags = [] if not tag_ids else [await Tag.get(tag_id) for tag_id in tag_ids]
@@ -235,6 +242,7 @@ class Person(AbstractModel):
             description,
             height,
             call_count,
+            media_count,
             tags,
             aliases,
         )
