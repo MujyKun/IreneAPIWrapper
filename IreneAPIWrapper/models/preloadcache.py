@@ -8,6 +8,8 @@ class Preload:
 
     Attributes
     ----------
+    force: bool
+        Whether to make sure all cache is preloaded. (Defaults to True)
     tags: bool
         Whether to preload all cache for tags (Defaults to True).
     person_aliases: bool
@@ -42,6 +44,8 @@ class Preload:
         Whether to preload all cache for positions (Defaults to True).
     socials: bool
         Whether to preload all cache for socials (Defaults to True).
+    names: bool
+        Whether to preload all cache for names (Defaults to True).
     fandoms: bool
         Whether to preload all cache for fandoms (Defaults to True).
     channels: bool
@@ -59,58 +63,18 @@ class Preload:
     interactions: bool
         Whether to preload all interactions (Defaults to True)
     """
-    tags = (True,)
-    person_aliases = (True,)
-    group_aliases = (True,)
-    persons = (True,)
-    groups = (True,)
-    twitter_accounts = (True,)
-    users = (False,)
-    guilds = (False,)
-    affiliations = (True,)
-    bloodtypes = (True,)
-    media = (True,)
-    displays = (True,)
-    companies = (True,)
-    dates = (True,)
-    locations = (True,)
-    positions = (True,)
-    socials = (True,)
-    fandoms = (True,)
-    channels = False
-    twitch_subscriptions = False
-    twitter_subscriptions = False
-    languages = True
-    eight_ball_responses = True
-    notifications = True
-    interactions = True
+    tags = person_aliases = group_aliases = persons = groups = twitter_accounts = \
+        affiliations = bloodtypes = media = displays = companies = dates = locations = \
+        positions = socials = fandoms = languages = eight_ball_responses = notifications = interactions = names = True
+    users = guilds = channels = twitch_subscriptions = twitter_subscriptions = False
+
+    force: bool = True
 
     def get_evaluation(self):
         from . import (
-            Tag,
-            PersonAlias,
-            GroupAlias,
-            Affiliation,
-            BloodType,
-            Media,
-            Display,
-            Company,
-            Date,
-            Location,
-            Position,
-            Social,
-            Person,
-            User,
-            Channel,
-            Group,
-            Fandom,
-            Guild,
-            TwitchAccount,
-            TwitterAccount,
-            Language,
-            EightBallResponse,
-            Notification,
-            Interaction,
+            Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, Position,
+            Social, Person, User, Channel, Group, Fandom, Guild, TwitchAccount, TwitterAccount, Language,
+            EightBallResponse, Notification, Interaction, Name
         )
 
         eval_dict = {
@@ -138,32 +102,15 @@ class Preload:
             EightBallResponse: self.eight_ball_responses,
             Notification: self.notifications,
             Interaction: self.interactions,
+            Name: self.names
         }
-        return eval_dict
+
+        eval_dict_only_true = {key: val for key, val in eval_dict.items() if key}
+        return eval_dict_only_true
 
     def all_false(self):
-        self.tags = False
-        self.person_aliases = False
-        self.group_aliases = False
-        self.persons = False
-        self.groups = False
-        self.twitter_accounts = False
-        self.users = False
-        self.guilds = False
-        self.affiliations = False
-        self.bloodtypes = False
-        self.media = False
-        self.displays = False
-        self.companies = False
-        self.dates = False
-        self.locations = False
-        self.positions = False
-        self.socials = False
-        self.fandoms = False
-        self.channels = False
-        self.twitch_subscriptions = False
-        self.twitter_subscriptions = False
-        self.languages = False
-        self.eight_ball_responses = False
-        self.notifications = False
-        self.interactions = False
+        self.tags = self.person_aliases = self.group_aliases = self.persons = self.groups = self.twitter_accounts = \
+            self.users = self.guilds = self.affiliations = self.bloodtypes = self.media = self.displays = \
+            self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
+            self.channels = self.twitch_subscriptions = self.twitter_subscriptions = self.languages = \
+            self.eight_ball_responses = self.notifications = self.interactions = self.names = False

@@ -82,6 +82,13 @@ class IreneAPIClient:
         self.in_testing = test
         self.reconnect = reconnect
         self.logger: Logger = Logger(verbose=verbose, logger=logger)
+        self.__futures: list = []
+
+    @property
+    def is_preloaded(self):
+        """Check if the client is preloaded with cache."""
+        # if there are any futures not done, return False
+        return not any([not future.done() for future in self.__futures])
 
     async def add_to_queue(self, callback: CallBack):
         """
@@ -121,11 +128,16 @@ class IreneAPIClient:
         """
         loop = asyncio.get_event_loop()
         evaluation = self._preload_cache.get_evaluation()
-        for category_class, load_cache in evaluation.items():
+        self.__futures = []
+
+        for category_class, load_cache in dict(sorted(evaluation.items(), key=lambda model: model.priority)):
             if load_cache:
-                future = asyncio.run_coroutine_threadsafe(
-                    category_class.fetch_all(), loop
-                )
+                if self._preload_cache.force:
+                    await category_class.fetch_all()
+                else:
+                    self.__futures.append(asyncio.run_coroutine_threadsafe(
+                        category_class.fetch_all(), loop
+                    ))
 
     async def connect(self):
         """

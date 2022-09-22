@@ -145,7 +145,7 @@ class Guild(AbstractModel):
         has_bot,
         prefixes=None,
     ):
-        super(Guild, self).__init__(guild_id)
+        super(Guild, self).__init__(guild_id, priority=3)
         self.name = name
         self.emoji_count = emoji_count
         self.afk_timeout = afk_timeout

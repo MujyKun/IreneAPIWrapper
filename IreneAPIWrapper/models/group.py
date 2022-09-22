@@ -94,7 +94,7 @@ class Group(AbstractModel):
         tags,
         aliases,
     ):
-        super(Group, self).__init__(group_id)
+        super(Group, self).__init__(group_id, priority=1)
         self.name: str = name
         self.date: Date = date
         self.description = description

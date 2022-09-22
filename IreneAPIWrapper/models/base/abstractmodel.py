@@ -2,7 +2,7 @@ from typing import List
 
 
 class AbstractModel:
-    def __init__(self, obj_id):
+    def __init__(self, obj_id, priority: int = 0):
         r"""An abstract model to assist with type hints, the creation, and fetching of cache objects.
 
         .. container:: operations
@@ -11,13 +11,23 @@ class AbstractModel:
             .. describe:: x != y
                 Checks if two models do not have the same ID.
 
+        Arguments
+        ---------
+        id: int
+            The model's id.
+        priority: int
+            The priority of the model.
+
         Attributes
         ----------
         id: int
             The model's id.
+        priority: int
+            The priority of the model. The lower the priority value, the faster it gets loaded.
 
         """
         self.id = obj_id
+        self._priority = priority
 
     def __hash__(self):
         return id(self)

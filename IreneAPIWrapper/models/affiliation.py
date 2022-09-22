@@ -57,7 +57,7 @@ class Affiliation(AbstractModel):
         positions: Optional[List[Position]],
         stage_name: str,
     ):
-        super(Affiliation, self).__init__(affiliation_id)
+        super(Affiliation, self).__init__(affiliation_id, priority=2)
         self.person: Person = person
         self.group: Group = group
         self.positions: Optional[List[Position]] = positions

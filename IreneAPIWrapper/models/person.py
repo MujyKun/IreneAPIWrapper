@@ -116,7 +116,7 @@ class Person(AbstractModel):
         tags,
         aliases,
     ):
-        super(Person, self).__init__(person_id)
+        super(Person, self).__init__(person_id, priority=1)
         self.date: Date = date
         self.name: Name = name
         self.former_name: Name = former_name
