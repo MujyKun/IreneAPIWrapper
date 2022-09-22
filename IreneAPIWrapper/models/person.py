@@ -116,7 +116,7 @@ class Person(AbstractModel):
         tags,
         aliases,
     ):
-        super(Person, self).__init__(person_id, priority=1)
+        super(Person, self).__init__(person_id)
         self.date: Date = date
         self.name: Name = name
         self.former_name: Name = former_name
@@ -135,6 +135,10 @@ class Person(AbstractModel):
 
         if not _persons.get(self.id):
             _persons[self.id] = self
+
+    @staticmethod
+    def priority():
+        return 1
 
     async def get_card(self, markdown=False, extra=True):
         card_data = []

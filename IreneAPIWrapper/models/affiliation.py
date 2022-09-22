@@ -57,7 +57,7 @@ class Affiliation(AbstractModel):
         positions: Optional[List[Position]],
         stage_name: str,
     ):
-        super(Affiliation, self).__init__(affiliation_id, priority=2)
+        super(Affiliation, self).__init__(affiliation_id)
         self.person: Person = person
         self.group: Group = group
         self.positions: Optional[List[Position]] = positions
@@ -66,6 +66,10 @@ class Affiliation(AbstractModel):
         if not _affiliations.get(self.id):
             # we need to make sure not to override the current object in cache.
             _affiliations[self.id] = self
+
+    @staticmethod
+    def priority():
+        return 2
 
     async def get_card(self, markdown=False, extra=True):
         card_data = []

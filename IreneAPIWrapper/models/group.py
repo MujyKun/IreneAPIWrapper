@@ -94,7 +94,7 @@ class Group(AbstractModel):
         tags,
         aliases,
     ):
-        super(Group, self).__init__(group_id, priority=1)
+        super(Group, self).__init__(group_id)
         self.name: str = name
         self.date: Date = date
         self.description = description
@@ -108,6 +108,10 @@ class Group(AbstractModel):
         self.affiliations: List[Affiliation] = []
         if not _groups.get(self.id):
             _groups[self.id] = self
+
+    @staticmethod
+    def priority():
+        return 1
 
     async def get_card(self, markdown=False, extra=True):
         card_data = []

@@ -65,6 +65,10 @@ class User(AbstractModel):
         if not _users.get(self.id):
             _users[self.id] = self
 
+    @staticmethod
+    def priority():
+        return 3
+
     @property
     def is_considered_patron(self):
         return any(

@@ -145,7 +145,7 @@ class Guild(AbstractModel):
         has_bot,
         prefixes=None,
     ):
-        super(Guild, self).__init__(guild_id, priority=3)
+        super(Guild, self).__init__(guild_id)
         self.name = name
         self.emoji_count = emoji_count
         self.afk_timeout = afk_timeout
@@ -170,6 +170,10 @@ class Guild(AbstractModel):
         self.prefixes: List[str] = prefixes or []
         if not _guilds.get(self.id):
             _guilds[self.id] = self
+
+    @staticmethod
+    def priority():
+        return 3
 
     @staticmethod
     async def create(*args, **kwargs):
