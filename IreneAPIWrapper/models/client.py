@@ -141,7 +141,7 @@ class IreneAPIClient:
                             category_class.fetch_all(), loop
                         ))
             except Exception as e:
-                self.logger.warning(msg=f"Cache for {category_class} did not load. - {e}")
+                self.logger.warning(msg=f"Cache for {category_class.__name__} did not load. - {e}")
 
     async def connect(self):
         """

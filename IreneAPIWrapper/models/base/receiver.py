@@ -63,7 +63,8 @@ async def internal_fetch_all(
         else:
             data = await obj.create_bulk(list(callback.response["results"].values()))
         if outer.client.logger:
-            outer.client.logger.info(f"Finished creating/fetching all cache for {obj} in {perf_counter() - start}s")
+            outer.client.logger.info(f"Finished creating/fetching all cache for {obj.__name__} in "
+                                     f"{perf_counter() - start}s")
         return data
     except Exception as e:
         raise FailedObjectCreation(callback)
