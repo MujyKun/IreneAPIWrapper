@@ -163,6 +163,12 @@ class TwitterAccount(Subscription):
 
         return final_twitter_channels
 
+    async def delete(self):
+        """Delete Twitter account and it's followings."""
+        for channel in self:
+            await self.unsubscribe(channel)
+        await self._remove_from_cache()
+
     async def fetch_timeline(self) -> Timeline:
         """Fetch the latest tweets for this account from Twitter"""
         callback = await basic_call(
@@ -173,7 +179,11 @@ class TwitterAccount(Subscription):
             }
         )
         results = callback.response["results"]
-        self._timeline.update_tweets(results)
+        if isinstance(results, list) and results:
+            self._timeline.update_tweets(results)
+        elif isinstance(results, dict):
+            if results.get("title") and results['title'] == "Authorization Error":
+                await self.delete()
         return self._timeline
 
     async def unsubscribe(self, channel: Channel):
@@ -224,7 +234,7 @@ class TwitterAccount(Subscription):
 
     async def _remove_from_cache(self) -> None:
         """
-        Remove the TwitchAccount object from cache.
+        Remove the TwitterAccount object from cache.
 
         :returns: None
         """
