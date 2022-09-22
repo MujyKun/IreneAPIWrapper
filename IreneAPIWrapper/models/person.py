@@ -128,7 +128,7 @@ class Person(AbstractModel):
         self.description: str = description
         self.height: int = height
         self.call_count: int = call_count
-        self.media_count: int = media_count
+        self.media_count: int = media_count or 0
         self.tags: List[Tag] = tags
         self.aliases: List[PersonAlias] = aliases
         self.affiliations: List[Affiliation] = []

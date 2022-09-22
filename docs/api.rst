@@ -347,3 +347,10 @@ IncorrectNumberOfItems
 
 .. autoexception:: IreneAPIWrapper.exceptions.IncorrectNumberOfItems
     :members:
+
+====================
+FailedObjectCreation
+====================
+
+.. autoexception:: IreneAPIWrapper.exceptions.FailedObjectCreation
+    :members:

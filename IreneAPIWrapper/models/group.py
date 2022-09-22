@@ -102,7 +102,7 @@ class Group(AbstractModel):
         self.display: Display = display
         self.website: str = website
         self.social: Social = social
-        self.media_count: int = media_count
+        self.media_count: int = media_count or 0
         self.tags: List[Tag] = tags
         self.aliases: List[GroupAlias] = aliases
         self.affiliations: List[Affiliation] = []
