@@ -160,7 +160,12 @@ class IreneAPIClient:
             ) as ws:
                 self.connected = True
                 self.logger.info("Connected to IreneAPI.")
-                asyncio.run_coroutine_threadsafe(self.__load_up_cache(), asyncio.get_event_loop())
+
+                if self._preload_cache.force:
+                    asyncio.run_coroutine_threadsafe(self.__load_up_cache(), asyncio.get_event_loop())
+                else:
+                    await self.__load_up_cache()
+
                 no_found_instance = f"Could not find CallBack instance"
                 while True:
                     # test cases
