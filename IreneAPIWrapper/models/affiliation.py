@@ -87,8 +87,7 @@ class Affiliation(AbstractModel):
         if self.person:
             card_data.append(self.person.get_card(markdown=markdown, extra=False))
 
-        if not extra:
-            return card_data
+        return card_data
 
     def __str__(self):
         return (
