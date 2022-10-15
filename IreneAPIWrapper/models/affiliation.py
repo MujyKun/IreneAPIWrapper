@@ -82,13 +82,10 @@ class Affiliation(AbstractModel):
             return card_data
 
         if self.group:
-            card_data.append(
-                f"Group: {self.group.get_card(markdown=markdown, extra=False)}"
+            card_data.append(self.group.get_card(markdown=markdown, extra=False)
             )
         if self.person:
-            card_data.append(
-                f"Person: {self.person.get_card(markdown=markdown, extra=False)}"
-            )
+            card_data.append(self.person.get_card(markdown=markdown, extra=False))
 
         if not extra:
             return card_data
