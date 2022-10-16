@@ -17,6 +17,7 @@ from .base import (
 from .interactions import Interaction, InteractionType
 from .biasgame import BiasGame
 from .eightball import EightBallResponse
+from .urban import Urban
 from .wolfram import Wolfram
 from .date import Date
 from .tag import Tag
