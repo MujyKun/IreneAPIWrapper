@@ -316,7 +316,7 @@ class Media(AbstractModel):
             return []
 
         if count_only:
-            return results[0]
+            return sum([media_info["mediaid"] for media_info in results.values()])
 
         media_objs = [
             await Media.get(media_info["mediaid"])
