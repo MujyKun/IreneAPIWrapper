@@ -283,38 +283,46 @@ class Media(AbstractModel):
             return media
 
     @staticmethod
-    async def get_all(affiliations: List[Affiliation] = None, limit=None):
+    async def get_all(affiliations: List[Affiliation] = None, limit=None, count_only=False):
         """
-        Get all Media objects in cache.
+        Get all Media objects in cache or from the API.
 
         :param affiliations: Optional[List[:ref:`Affiliation`]]
             A list of affiliations that must belong with the media.
         :param limit: Optional[int]
             A maximum number of results to be sent if fetched.
+        :param count_only: bool
+            Whether to only return the number of available media.
 
         :returns: dict_values[:ref:`Media`]
-            All Media objects from cache.
+            All Media objects from cache/API.
+        :returns: int
+            The number of media objects available for the affiliations if count_only is set to True.
         """
         if affiliations is None:
             return _media.values()
-        else:
-            callback = await basic_call(
-                request={
-                    "route": "media/affiliations",
-                    "affiliation_ids": [aff.id for aff in affiliations],
-                    "limit": limit,
-                    "method": "GET",
-                }
-            )
-            results = callback.response.get("results")
-            if not results:
-                return []
 
-            media_objs = [
-                await Media.get(media_info["mediaid"])
-                for media_info in results.values()
-            ]
-            return media_objs
+        callback = await basic_call(
+            request={
+                "route": "media/affiliations",
+                "affiliation_ids": [aff.id for aff in affiliations],
+                "limit": limit,
+                "count_only": count_only,
+                "method": "GET",
+            }
+        )
+        results = callback.response.get("results")
+        if not results:
+            return []
+
+        if count_only:
+            return results[0]
+
+        media_objs = [
+            await Media.get(media_info["mediaid"])
+            for media_info in results.values()
+        ]
+        return media_objs
 
     @staticmethod
     async def fetch(object_id: int, affiliation=False, person=False, group=False):
