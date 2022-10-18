@@ -11,6 +11,9 @@ classifiers = [
 readme = "README.md"
 repository = "https://github.com/MujyKun/IreneAPIWrapper"
 license = "MIT"
+packages = [
+        {include = "IreneAPIWrapper"}
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
