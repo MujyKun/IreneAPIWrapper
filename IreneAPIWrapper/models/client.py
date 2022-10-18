@@ -197,6 +197,13 @@ class IreneAPIClient:
                         self.logger.warning(
                             no_found_instance + ": Received data was NoneType."
                         )
+                        continue
+                    elif isinstance(_data, aiohttp.WSMessage) and _data.type == aiohttp.WSMsgType.CLOSE:
+                        self.logger.warning(
+                            f"Received WSMsgType.Close"
+                        )
+                        continue
+
                     data_response = _data.json()
 
                     response_callback_id = int(data_response.get("callback_id") or 0)
