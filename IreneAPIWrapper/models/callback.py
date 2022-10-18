@@ -47,12 +47,12 @@ class CallBack:
         self._completion_time = None
         self._expected_result = None  # used for testing.
 
-    async def wait_for_completion(self, timeout: Optional[int] = 60) -> bool:
+    async def wait_for_completion(self, timeout: Optional[int] = None) -> bool:
         r"""
         Waits for a response from the API.
 
         :param timeout: Optional[int]
-            Seconds before no longer waiting for the response. (Defaulted at 60s)
+            Seconds before no longer waiting for the response. (No timeout by default.)
         :returns: True
             Only returns when there is a response from the API.
         """
