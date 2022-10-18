@@ -49,16 +49,16 @@ class IreneAPIClient:
     """
 
     def __init__(
-        self,
-        token: str,
-        user_id: Union[int, str],
-        api_url="localhost",
-        port=5454,
-        preload_cache: Preload = None,
-        test=False,
-        reconnect=True,
-        verbose=False,
-        logger: logging.Logger = None,
+            self,
+            token: str,
+            user_id: Union[int, str],
+            api_url="localhost",
+            port=5454,
+            preload_cache: Preload = None,
+            test=False,
+            reconnect=True,
+            verbose=False,
+            logger: logging.Logger = None,
     ):
         ref_outer_client.client = self  # set our referenced client.
         self._ws_client: Optional[aiohttp.ClientSession] = None
@@ -151,16 +151,37 @@ class IreneAPIClient:
         """
         Connect to the API via a websocket indefinitely.
         """
+        while True:
+            try:
+                await self._connect()
+            except ConnectionResetError:
+                if self.connected:
+                    self.logger.error("Connection to IreneAPI Dropped.")
+                    self.connected = False
+                if self.reconnect:
+                    self.logger.info("Attempting to reconnect to IreneAPI.")
+                else:
+                    break
+            except Exception as e:
+                self.logger.error(f"API Connection Dropped: {e}")
+            finally:  # code is reached if we return from _connect
+                self.connected = False
+                break
+
+    async def _connect(self):
+        """
+        Connect to the API via a websocket indefinitely.
+        """
         if not self._ws_client:
             self._ws_client = aiohttp.ClientSession()
 
         try:
             async with self._ws_client.ws_connect(
-                self._ws_url,
-                headers=self._headers,
-                params=self._query_params,
-                max_msg_size=1073741824,
-                timeout=60,
+                    self._ws_url,
+                    headers=self._headers,
+                    params=self._query_params,
+                    max_msg_size=1073741824,
+                    timeout=60,
             ) as ws:
                 self.connected = True
                 self.logger.info("Connected to IreneAPI.")
@@ -177,14 +198,14 @@ class IreneAPIClient:
                         # pass if the api is using a debugger so the session does not close.
                         # pass
                         await self._ws_client.close()
-                        break
+                        return  # close out of the session.
 
                     # wait for a request.
                     callback: CallBack = await self._queue.get()
 
                     if callback.type == "disconnect":
                         await self._ws_client.close()
-                        break  # close out of the session.
+                        return  # close out of the session.
 
                     # make client request.
                     await ws.send_json(callback.request)
@@ -224,16 +245,9 @@ class IreneAPIClient:
         except aiohttp.WSServerHandshakeError:
             raise InvalidToken
         except (ConnectionResetError, aiohttp.ClientConnectorError):
-            if self.connected:
-                self.logger.error("Connection to IreneAPI Dropped.")
-                self.connected = False
-            if self.reconnect:
-                while True:
-                    self.logger.info("Attempting to reconnect to IreneAPI.")
-                    await asyncio.sleep(5)
-                    await self.connect()
-
-        self.connected = False
+            raise ConnectionResetError
+        except KeyboardInterrupt:
+            self.connected = False
 
     async def disconnect(self):
         """
