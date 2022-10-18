@@ -160,13 +160,12 @@ class IreneAPIClient:
                     self.connected = False
                 if self.reconnect:
                     self.logger.info("Attempting to reconnect to IreneAPI.")
+                    continue
                 else:
                     break
             except Exception as e:
                 self.logger.error(f"API Connection Dropped: {e}")
-            finally:  # code is reached if we return from _connect
-                self.connected = False
-                break
+        self.connected = False
 
     async def _connect(self):
         """
@@ -241,13 +240,15 @@ class IreneAPIClient:
                         callback.set_as_done()
                     else:
                         self.logger.warning(f"{no_found_instance}: {data_response}")
-
         except aiohttp.WSServerHandshakeError:
             raise InvalidToken
         except (ConnectionResetError, aiohttp.ClientConnectorError):
             raise ConnectionResetError
         except KeyboardInterrupt:
             self.connected = False
+        except Exception as e:
+            self.logger.error(f"API Connection Dropped - {e}")
+            raise ConnectionResetError
 
     async def disconnect(self):
         """
