@@ -69,9 +69,13 @@ class IreneAPIClient:
 
         self._query_params = {"user_id": user_id}
 
-        self._base_url = api_url or "localhost"
+        self._base_url = api_url.replace("http://", "").replace("https://", "").lower() or "localhost"
         self._base_port = port or 5454
-        self._ws_url = f"ws://{self._base_url}:{self._base_port}/ws"
+
+        if "127.0.0.1" in self._base_url or "localhost" in self._base_url:
+            self._ws_url = f"ws://{self._base_url}:{self._base_port}/ws"
+        else:
+            self._ws_url = f"https://{self._base_url}/ws"
         self._queue = asyncio.Queue()
         # asyncio.run_coroutine_threadsafe(self.connect, loop)
 
