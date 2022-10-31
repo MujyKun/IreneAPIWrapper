@@ -44,6 +44,8 @@ class IreneAPIClient:
         Whether to reconnect to the API if a connection is severed. True by default.
     verbose: bool
         Whether to print verbose messages.
+    origin: str
+        The origin meant for CORS to not return a bad request.
     logger: logging.Logger
         A logging object for messages to be sent to.
     """
@@ -58,6 +60,7 @@ class IreneAPIClient:
             test=False,
             reconnect=True,
             verbose=False,
+            origin="localhost",
             logger: logging.Logger = None,
     ):
         ref_outer_client.client = self  # set our referenced client.
@@ -65,7 +68,7 @@ class IreneAPIClient:
 
         self.connected = False
 
-        self._headers = {"Authorization": f"Bearer {token}"}
+        self._headers = {"Authorization": f"Bearer {token}", "Origin": origin}
 
         self._query_params = {"user_id": user_id}
 
