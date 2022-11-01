@@ -26,6 +26,7 @@ from .personalias import PersonAlias
 from .company import Company
 from .location import Location
 from .bloodtype import BloodType
+from .automedia import AutoMedia, AffiliationTime
 from .position import Position
 from .social import Social
 from .display import Display
