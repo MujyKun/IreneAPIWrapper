@@ -73,7 +73,7 @@ class AutoMedia(AbstractModel):
         else:
             AutoMedia(channel_id, [aff_time])
 
-        return _automedias[affiliation_id]
+        return _automedias[channel_id]
 
     async def add_to_cache(self, aff_time: AffiliationTime):
         """
