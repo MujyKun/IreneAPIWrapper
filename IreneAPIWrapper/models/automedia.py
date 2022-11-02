@@ -1,16 +1,9 @@
 from typing import Union, List, Optional, Dict
 
-from IreneAPIWrapper.sections import outer
 from . import (
-    CallBack,
-    Access,
     AbstractModel,
     internal_fetch,
     internal_fetch_all,
-    MediaSource,
-    Position,
-    Person,
-    Group,
     internal_delete,
     internal_insert,
 )
