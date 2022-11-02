@@ -160,6 +160,8 @@ class AutoMedia(AbstractModel):
         if not existing and fetch:
             await AutoMedia.fetch_all()  # have all aff times added..
             existing = _automedias.get(channel_id)
+        if not existing:
+            existing = AutoMedia(channel_id, [])
         return existing
 
     @staticmethod
