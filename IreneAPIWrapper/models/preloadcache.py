@@ -62,10 +62,13 @@ class Preload:
         Whether to preload all user notifications (Defaults to True)
     interactions: bool
         Whether to preload all interactions (Defaults to True)
+    auto_media: bool
+        Whether to preload all auto media (Defaults to True)
     """
     tags = person_aliases = group_aliases = persons = groups = twitter_accounts = \
         affiliations = bloodtypes = media = displays = companies = dates = locations = \
-        positions = socials = fandoms = languages = eight_ball_responses = notifications = interactions = names = True
+        positions = socials = fandoms = languages = eight_ball_responses = notifications = interactions = names = \
+        auto_media = True
     users = guilds = channels = twitch_subscriptions = twitter_subscriptions = False
 
     force: bool = True
@@ -74,7 +77,7 @@ class Preload:
         from . import (
             Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, Position,
             Social, Person, User, Channel, Group, Fandom, Guild, TwitchAccount, TwitterAccount, Language,
-            EightBallResponse, Notification, Interaction, Name
+            EightBallResponse, Notification, Interaction, Name, AutoMedia
         )
 
         eval_dict = {
@@ -102,7 +105,8 @@ class Preload:
             EightBallResponse: self.eight_ball_responses,
             Notification: self.notifications,
             Interaction: self.interactions,
-            Name: self.names
+            Name: self.names,
+            AutoMedia: self.auto_media
         }
 
         eval_dict_only_true = {key: val for key, val in eval_dict.items() if key}
@@ -113,4 +117,4 @@ class Preload:
             self.users = self.guilds = self.affiliations = self.bloodtypes = self.media = self.displays = \
             self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
             self.channels = self.twitch_subscriptions = self.twitter_subscriptions = self.languages = \
-            self.eight_ball_responses = self.notifications = self.interactions = self.names = False
+            self.eight_ball_responses = self.notifications = self.interactions = self.names = self.auto_media = False
