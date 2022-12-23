@@ -20,6 +20,7 @@ from .eightball import EightBallResponse
 from .urban import Urban
 from .wolfram import Wolfram
 from .date import Date
+from .reminder import Reminder
 from .tag import Tag
 from .groupalias import GroupAlias
 from .personalias import PersonAlias

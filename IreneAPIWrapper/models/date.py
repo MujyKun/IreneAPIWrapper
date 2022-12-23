@@ -77,6 +77,7 @@ class Date(AbstractModel):
             self,
             request={"route": "date/$date_id", "date_id": self.id, "method": "DELETE"},
         )
+        await self._remove_from_cache()
 
     async def update_end_date(self, end_date) -> None:
         """

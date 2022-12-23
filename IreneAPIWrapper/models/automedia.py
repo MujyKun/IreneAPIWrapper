@@ -53,7 +53,6 @@ class AutoMedia(AbstractModel):
     def priority():
         return 0
 
-
     @staticmethod
     async def create(*args, **kwargs):
         """
