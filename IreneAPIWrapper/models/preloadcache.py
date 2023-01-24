@@ -64,11 +64,13 @@ class Preload:
         Whether to preload all interactions (Defaults to True)
     auto_media: bool
         Whether to preload all auto media (Defaults to True)
+    reaction_role_messages: bool
+        Whether to preload all reaction role messages (Defaults to True)
     """
     tags = person_aliases = group_aliases = persons = groups = twitter_accounts = \
         affiliations = bloodtypes = media = displays = companies = dates = locations = \
         positions = socials = fandoms = languages = eight_ball_responses = notifications = interactions = names = \
-        auto_media = reminders = True
+        auto_media = reminders = reaction_role_messages = True
     users = guilds = channels = twitch_subscriptions = twitter_subscriptions = False
 
     force: bool = True
@@ -77,7 +79,7 @@ class Preload:
         from . import (
             Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, Position,
             Social, Person, User, Channel, Group, Fandom, Guild, TwitchAccount, TwitterAccount, Language,
-            EightBallResponse, Notification, Interaction, Name, AutoMedia, Reminder
+            EightBallResponse, Notification, Interaction, Name, AutoMedia, Reminder, ReactionRoleMessage
         )
 
         eval_dict = {
@@ -107,7 +109,8 @@ class Preload:
             Interaction: self.interactions,
             Name: self.names,
             AutoMedia: self.auto_media,
-            Reminder: self.reminders
+            Reminder: self.reminders,
+            ReactionRoleMessage: self.reaction_role_messages
         }
 
         eval_dict_only_true = {key: val for key, val in eval_dict.items() if key}
@@ -119,4 +122,4 @@ class Preload:
             self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
             self.channels = self.twitch_subscriptions = self.twitter_subscriptions = self.languages = \
             self.eight_ball_responses = self.notifications = self.interactions = self.names = self.auto_media = \
-            self.reminders = False
+            self.reminders = self.reaction_role_messages = False

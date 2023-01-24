@@ -180,12 +180,11 @@ class AutoMedia(AbstractModel):
         """
         raise NotImplementedError
 
-
     @staticmethod
     async def fetch_all():
         """Fetch all automedia.
 
-        .. NOTE:: affiliation objects are added to cache on creation.
+        .. NOTE:: automedia and affiliation objects are added to cache on creation.
         """
         return await internal_fetch_all(
             obj=AutoMedia, request={"route": "affiliation/automedia", "method": "GET"}
