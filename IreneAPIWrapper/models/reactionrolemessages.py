@@ -59,7 +59,7 @@ class ReactionRoleMessage(AbstractModel):
             }
         )
         # insert into cache.
-        await ReactionRoleMessage.create(**{"message_id": message_id})
+        await ReactionRoleMessage.create(**{"messageid": message_id})
         return True
 
     @staticmethod
