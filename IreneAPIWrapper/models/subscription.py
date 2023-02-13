@@ -49,6 +49,9 @@ class Subscription(AbstractModel):
     def __iter__(self):
         return self._followed.__iter__()
 
+    def __len__(self):
+        return len(self._followed)
+
     def __eq__(self, other):
         return self.id == other.id
 
