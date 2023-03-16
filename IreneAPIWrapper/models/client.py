@@ -5,7 +5,7 @@ import asyncio
 from IreneAPIWrapper.exceptions import InvalidToken, APIError
 from IreneAPIWrapper.sections import outer as ref_outer_client
 from typing import Union, Optional
-from IreneAPIWrapper.models import CallBack, callbacks, Preload
+from IreneAPIWrapper.models import CallBack, callbacks, Preload, basic_call
 
 
 class IreneAPIClient:
@@ -262,6 +262,37 @@ class IreneAPIClient:
         else:
             callback = CallBack(callback_type="disconnect", request=self._disconnect)
             await self.add_to_queue(callback)
+
+    async def update_commands(self, commands):
+        """
+        Update the bot commands on the API side.
+
+        :param commands:
+            A dictionary of commands. Example:
+            {
+            "Slash Commands": [
+                {
+                    "name": "Moderator",
+                    "commands": [
+                        {
+                            "name": "/kick",
+                            "description": "Kicks a user.",
+                            "syntax": "/kick (user)",
+                            "permissionsNeeded": "Admin",
+                            "notes": "Can only be used by an admin.",
+                        }
+                    ]
+                },
+                ...
+            }
+        """
+        await basic_call(
+            request={
+                "route": "bot/commands",
+                "commands": commands,
+                "method": "PUT",
+            }
+        )
 
 
 class Logger:
