@@ -14,6 +14,7 @@ from .base import (
     File,
     basic_call,
 )
+from .statsupdater import StatsUpdater
 from .reactionrolemessages import ReactionRoleMessage
 from .interactions import Interaction, InteractionType
 from .biasgame import BiasGame
