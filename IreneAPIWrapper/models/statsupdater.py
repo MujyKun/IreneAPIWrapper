@@ -9,7 +9,7 @@ class StatsUpdater:
 
     """
     @staticmethod
-    async def update(self, key, value):
+    async def update(key, value):
         """Update a stat value in the API."""
         await basic_call(
             request={
