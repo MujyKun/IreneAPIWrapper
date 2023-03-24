@@ -50,6 +50,8 @@ class Preload:
         Whether to preload all cache for fandoms (Defaults to True).
     channels: bool
         Whether to preload all text channels (Defaults to False).
+    tiktok_subscriptions: bool
+        Whether to preload all TikTok subscriptions (Defaults to False).
     twitch_subscriptions: bool
         Whether to preload all twitch subscriptions (Defaults to False).
     twitter_subscriptions: bool
@@ -71,7 +73,7 @@ class Preload:
         affiliations = bloodtypes = media = displays = companies = dates = locations = \
         positions = socials = fandoms = languages = eight_ball_responses = notifications = interactions = names = \
         auto_media = reminders = reaction_role_messages = True
-    users = guilds = channels = twitch_subscriptions = twitter_subscriptions = False
+    users = guilds = channels = twitch_subscriptions = twitter_subscriptions = tiktok_subscriptions = False
 
     force: bool = True
 
@@ -79,7 +81,7 @@ class Preload:
         from . import (
             Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, Position,
             Social, Person, User, Channel, Group, Fandom, Guild, TwitchAccount, TwitterAccount, Language,
-            EightBallResponse, Notification, Interaction, Name, AutoMedia, Reminder, ReactionRoleMessage
+            EightBallResponse, Notification, Interaction, Name, AutoMedia, Reminder, ReactionRoleMessage, TikTokAccount
         )
 
         eval_dict = {
@@ -110,16 +112,20 @@ class Preload:
             Name: self.names,
             AutoMedia: self.auto_media,
             Reminder: self.reminders,
-            ReactionRoleMessage: self.reaction_role_messages
+            ReactionRoleMessage: self.reaction_role_messages,
+            TikTokAccount: self.tiktok_subscriptions
         }
 
         eval_dict_only_true = {key: val for key, val in eval_dict.items() if key}
         return eval_dict_only_true
 
     def all_false(self):
-        self.tags = self.person_aliases = self.group_aliases = self.persons = self.groups = self.twitter_accounts = \
-            self.users = self.guilds = self.affiliations = self.bloodtypes = self.media = self.displays = \
-            self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
-            self.channels = self.twitch_subscriptions = self.twitter_subscriptions = self.languages = \
-            self.eight_ball_responses = self.notifications = self.interactions = self.names = self.auto_media = \
-            self.reminders = self.reaction_role_messages = False
+        for attr in vars(self).keys():
+            setattr(self, attr, False)
+
+        # self.tags = self.person_aliases = self.group_aliases = self.persons = self.groups = self.twitter_accounts = \
+        #     self.users = self.guilds = self.affiliations = self.bloodtypes = self.media = self.displays = \
+        #     self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
+        #     self.channels = self.twitch_subscriptions = self.twitter_subscriptions = self.languages = \
+        #     self.eight_ball_responses = self.notifications = self.interactions = self.names = self.auto_media = \
+        #     self.reminders = self.reaction_role_messages = self.tiktok_subscriptions = False

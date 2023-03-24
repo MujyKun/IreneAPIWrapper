@@ -45,6 +45,7 @@ from .guild import Guild
 from .channel import Channel
 from .language import Language, PackMessage
 from .subscription import Subscription
+from .tiktokaccount import TikTokAccount
 from .twitchaccount import TwitchAccount
 from .twitteraccount import TwitterAccount
 from .preloadcache import Preload
