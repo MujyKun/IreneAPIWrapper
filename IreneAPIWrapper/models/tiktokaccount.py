@@ -98,6 +98,22 @@ class TikTokAccount(Subscription):
         TikTokAccount(username, [user_id], [channel], dict({channel: role_id}))
         return _accounts[username]
 
+    async def get_latest_video_id(self) -> int:
+        """
+        Get the latest TikTok video ID of the account.
+
+        :return:
+        """
+        callback = await basic_call(
+            request={
+                "route": "tiktok/latest_video/$username",
+                "username": self.name,
+                "method": "GET",
+            }
+        )
+        # results = callback.response["results"]
+        return int(callback.response.get(self.name))
+
     @staticmethod
     async def create_bulk(list_of_dicts: List[dict]):
         """Bulk create TikTokAccount objects.
