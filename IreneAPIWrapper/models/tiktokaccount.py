@@ -102,7 +102,9 @@ class TikTokAccount(Subscription):
         """
         Get the latest TikTok video ID of the account.
 
-        :return:
+        :return: int
+            The latest video ID.
+            Will return -1 if the user could not be found.
         """
         callback = await basic_call(
             request={
@@ -112,6 +114,9 @@ class TikTokAccount(Subscription):
             }
         )
         # results = callback.response["results"]
+        if callback.response.get("error", "") == "User does not exist.":
+            return -1
+
         return int(callback.response.get(self.name))
 
     @staticmethod
@@ -210,7 +215,8 @@ class TikTokAccount(Subscription):
 
         setattr(channel, "user_id", user_id)
 
-        await self.insert(self.id, user_id, channel.id, role_id, fetch=False)
+        if await self.insert(self.id, user_id, channel.id, role_id, fetch=False) is False:
+            return False
         self._sub_in_cache(channel, user_id, role_id)
 
     def _sub_in_cache(
@@ -275,7 +281,7 @@ class TikTokAccount(Subscription):
         :return: :ref:`TikTokAccount`
             The TikTokAccount object.
         """
-        await basic_call(
+        callback = await basic_call(
             request={
                 "route": "tiktok",
                 "username": username,
@@ -285,6 +291,9 @@ class TikTokAccount(Subscription):
                 "method": "POST",
             }
         )
+
+        if 'User does not exist.' in callback.response.get('error', ''):
+            return False
 
         # have the model created and added to cache.
         if fetch:
