@@ -98,7 +98,7 @@ class TikTokAccount(Subscription):
         TikTokAccount(username, [user_id], [channel], dict({channel: role_id}))
         return _accounts[username]
 
-    async def get_latest_video_id(self) -> int:
+    async def get_latest_video_id(self) -> Optional[int]:
         """
         Get the latest TikTok video ID of the account.
 
@@ -117,7 +117,8 @@ class TikTokAccount(Subscription):
         if callback.response.get("status", "") == "User does not exist.":
             return -1
 
-        return int(callback.response.get(self.name))
+        result = callback.response.get(self.name)
+        return int(result) if result is not None else result
 
     @staticmethod
     async def create_bulk(list_of_dicts: List[dict]):
