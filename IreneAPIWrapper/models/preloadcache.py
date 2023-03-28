@@ -120,12 +120,9 @@ class Preload:
         return eval_dict_only_true
 
     def all_false(self):
-        for attr in vars(self).keys():
-            setattr(self, attr, False)
-
-        # self.tags = self.person_aliases = self.group_aliases = self.persons = self.groups = self.twitter_accounts = \
-        #     self.users = self.guilds = self.affiliations = self.bloodtypes = self.media = self.displays = \
-        #     self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
-        #     self.channels = self.twitch_subscriptions = self.twitter_subscriptions = self.languages = \
-        #     self.eight_ball_responses = self.notifications = self.interactions = self.names = self.auto_media = \
-        #     self.reminders = self.reaction_role_messages = self.tiktok_subscriptions = False
+        self.tags = self.person_aliases = self.group_aliases = self.persons = self.groups = self.twitter_accounts = \
+            self.users = self.guilds = self.affiliations = self.bloodtypes = self.media = self.displays = \
+            self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
+            self.channels = self.twitch_subscriptions = self.twitter_subscriptions = self.languages = \
+            self.eight_ball_responses = self.notifications = self.interactions = self.names = self.auto_media = \
+            self.reminders = self.reaction_role_messages = self.tiktok_subscriptions = False
