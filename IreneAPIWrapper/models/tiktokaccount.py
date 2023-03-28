@@ -114,7 +114,7 @@ class TikTokAccount(Subscription):
             }
         )
         # results = callback.response["results"]
-        if callback.response.get("error", "") == "User does not exist.":
+        if callback.response.get("status", "") == "User does not exist.":
             return -1
 
         return int(callback.response.get(self.name))
@@ -292,7 +292,7 @@ class TikTokAccount(Subscription):
             }
         )
 
-        if 'User does not exist.' in callback.response.get('error', ''):
+        if 'User does not exist.' in callback.response.get('status', ''):
             return False
 
         # have the model created and added to cache.
