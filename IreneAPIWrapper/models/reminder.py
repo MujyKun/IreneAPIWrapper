@@ -160,13 +160,13 @@ class Reminder(AbstractModel):
         )
 
     @staticmethod
-    async def fetch_all():
+    async def fetch_all(log_creation=True):
         """Fetch all reminders.
 
         .. NOTE::: Reminders objects are added to cache on creation.
         """
         return await internal_fetch_all(
-            obj=Reminder, request={"route": "reminder/", "method": "GET"}
+            obj=Reminder, request={"route": "reminder/", "method": "GET"}, log_creation=log_creation
         )
 
 

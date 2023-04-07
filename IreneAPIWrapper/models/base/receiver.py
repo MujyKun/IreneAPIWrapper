@@ -31,7 +31,7 @@ async def internal_fetch(obj: AbstractModel, request: dict) -> Optional[Abstract
 
 
 async def internal_fetch_all(
-    obj: AbstractModel, request: dict, bulk: bool = False
+    obj: AbstractModel, request: dict, bulk: bool = False, log_creation: bool = True
 ) -> List[AbstractModel]:
     """
     Fetch all known instances of the concrete object from the API.
@@ -44,6 +44,8 @@ async def internal_fetch_all(
         The request to pass into a Callback.
     :param bulk: bool
         Whether to generate objects in bulk (Defaults to False).
+    :param log_creation: bool
+        Whether to log the creation.
     :return: List[:ref:`AbstractModel`]
         Returns a list of abstract models.
     """
@@ -62,7 +64,7 @@ async def internal_fetch_all(
             ]
         else:
             data = await obj.create_bulk(list(callback.response["results"].values()))
-        if outer.client.logger:
+        if outer.client.logger and log_creation:
             outer.client.logger.info(f"Finished creating/fetching all cache for {obj.__name__} in "
                                      f"{perf_counter() - start}s")
         return data
