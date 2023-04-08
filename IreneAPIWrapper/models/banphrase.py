@@ -105,7 +105,7 @@ class BanPhrase(AbstractModel):
         phrase,
         punishment,
         log_channel_id
-    ) -> None:
+    ) -> int:
         r"""
         Insert a new BanPhrase into the database and cache.
 
@@ -120,7 +120,8 @@ class BanPhrase(AbstractModel):
         log_channel_id: int
             Channel to send log messages to
 
-        :returns: None
+        :returns: int
+            Phrase ID
         """
         callback = await internal_insert(
             request={
@@ -132,6 +133,14 @@ class BanPhrase(AbstractModel):
                 "method": "POST",
             }
         )
+
+        results = callback.response.get("results")
+        if not results:
+            return False
+
+        phrase_id = results["addbanphrase"]
+        await BanPhrase.fetch(phrase_id)  # add object to cache.
+
 
     @staticmethod
     async def get(phrase_id: int, fetch=True):
