@@ -72,8 +72,9 @@ class Preload:
     tags = person_aliases = group_aliases = persons = groups = twitter_accounts = \
         affiliations = bloodtypes = media = displays = companies = dates = locations = \
         positions = socials = fandoms = languages = eight_ball_responses = notifications = interactions = names = \
-        auto_media = reminders = reaction_role_messages = True
-    users = guilds = channels = twitch_subscriptions = twitter_subscriptions = tiktok_subscriptions = False
+        auto_media = reminders = reaction_role_messages = banned_phrases = True
+    users = guilds = channels = twitch_subscriptions = twitter_subscriptions = \
+        tiktok_subscriptions = False
 
     force: bool = True
 
@@ -81,7 +82,8 @@ class Preload:
         from . import (
             Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, Position,
             Social, Person, User, Channel, Group, Fandom, Guild, TwitchAccount, TwitterAccount, Language,
-            EightBallResponse, Notification, Interaction, Name, AutoMedia, Reminder, ReactionRoleMessage, TikTokAccount
+            EightBallResponse, Notification, Interaction, Name, AutoMedia, Reminder, ReactionRoleMessage, TikTokAccount,
+            BanPhrase
         )
 
         eval_dict = {
@@ -113,7 +115,8 @@ class Preload:
             AutoMedia: self.auto_media,
             Reminder: self.reminders,
             ReactionRoleMessage: self.reaction_role_messages,
-            TikTokAccount: self.tiktok_subscriptions
+            TikTokAccount: self.tiktok_subscriptions,
+            BanPhrase: self.banned_phrases
         }
 
         eval_dict_only_true = {key: val for key, val in eval_dict.items() if key}
@@ -125,4 +128,4 @@ class Preload:
             self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
             self.channels = self.twitch_subscriptions = self.twitter_subscriptions = self.languages = \
             self.eight_ball_responses = self.notifications = self.interactions = self.names = self.auto_media = \
-            self.reminders = self.reaction_role_messages = self.tiktok_subscriptions = False
+            self.reminders = self.reaction_role_messages = self.tiktok_subscriptions = self.banned_phrases = False
