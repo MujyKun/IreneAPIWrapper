@@ -34,6 +34,7 @@ from .position import Position
 from .social import Social
 from .display import Display
 from .fandom import Fandom
+from .banphrase import BanPhrase
 from .notification import Notification
 from .name import Name
 from .group import Group
