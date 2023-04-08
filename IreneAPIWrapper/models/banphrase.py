@@ -113,10 +113,12 @@ class BanPhrase(AbstractModel):
         ----------
         guild_id: int
             Guild ID.
-        user_id: int
-            User ID to be notified.
         phrase: str
-            Phrase to notify the user for.
+            Phrase to check for
+        punishment: str
+            Punishment for saying the phrase.
+        log_channel_id: int
+            Channel to send log messages to
 
         :returns: None
         """
@@ -154,8 +156,8 @@ class BanPhrase(AbstractModel):
 
         :param guild_id: int
             Guild ID to filter by
-        :returns: dict_values[:ref:`Notification`]
-            All Notification objects from cache.
+        :returns: dict_values[:ref:`BanPhrase`]
+            All BanPhrase objects from cache.
         """
         if guild_id:
             return [
