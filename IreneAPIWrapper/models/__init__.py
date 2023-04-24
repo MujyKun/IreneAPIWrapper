@@ -32,6 +32,7 @@ from .bloodtype import BloodType
 from .automedia import AutoMedia, AffiliationTime
 from .position import Position
 from .social import Social
+from .quote import Quote
 from .display import Display
 from .fandom import Fandom
 from .banphrase import BanPhrase
