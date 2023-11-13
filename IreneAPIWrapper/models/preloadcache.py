@@ -20,8 +20,6 @@ class Preload:
         Whether to preload all cache for persons (Defaults to True).
     groups: bool
         Whether to preload all cache for groups (Defaults to True).
-    twitter_accounts: bool
-        Whether to preload all cache for twitter_accounts (Defaults to True).
     users: bool
         Whether to preload all cache for users (Defaults to False).
     guilds: bool
@@ -54,8 +52,6 @@ class Preload:
         Whether to preload all TikTok subscriptions (Defaults to False).
     twitch_subscriptions: bool
         Whether to preload all twitch subscriptions (Defaults to False).
-    twitter_subscriptions: bool
-        Whether to preload all twitter subscriptions (Defaults to False).
     languages: bool
         Whether to preload all languages (Defaults to True)
     eight_ball_responses: bool
@@ -69,11 +65,11 @@ class Preload:
     reaction_role_messages: bool
         Whether to preload all reaction role messages (Defaults to True)
     """
-    tags = person_aliases = group_aliases = persons = groups = twitter_accounts = \
+    tags = person_aliases = group_aliases = persons = groups = \
         affiliations = bloodtypes = media = displays = companies = dates = locations = \
         positions = socials = fandoms = languages = eight_ball_responses = notifications = interactions = names = \
         auto_media = reminders = reaction_role_messages = banned_phrases = True
-    users = guilds = channels = twitch_subscriptions = twitter_subscriptions = \
+    users = guilds = channels = twitch_subscriptions = \
         tiktok_subscriptions = False
 
     force: bool = True
@@ -81,7 +77,7 @@ class Preload:
     def get_evaluation(self):
         from . import (
             Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, Position,
-            Social, Person, User, Channel, Group, Fandom, Guild, TwitchAccount, TwitterAccount, Language,
+            Social, Person, User, Channel, Group, Fandom, Guild, TwitchAccount, Language,
             EightBallResponse, Notification, Interaction, Name, AutoMedia, Reminder, ReactionRoleMessage, TikTokAccount,
             BanPhrase
         )
@@ -106,7 +102,6 @@ class Preload:
             Guild: self.guilds,
             Channel: self.channels,
             TwitchAccount: self.twitch_subscriptions,
-            TwitterAccount: self.twitter_accounts,
             Language: self.languages,
             EightBallResponse: self.eight_ball_responses,
             Notification: self.notifications,
@@ -123,9 +118,9 @@ class Preload:
         return eval_dict_only_true
 
     def all_false(self):
-        self.tags = self.person_aliases = self.group_aliases = self.persons = self.groups = self.twitter_accounts = \
+        self.tags = self.person_aliases = self.group_aliases = self.persons = self.groups = \
             self.users = self.guilds = self.affiliations = self.bloodtypes = self.media = self.displays = \
             self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
-            self.channels = self.twitch_subscriptions = self.twitter_subscriptions = self.languages = \
+            self.channels = self.twitch_subscriptions = self.languages = \
             self.eight_ball_responses = self.notifications = self.interactions = self.names = self.auto_media = \
             self.reminders = self.reaction_role_messages = self.tiktok_subscriptions = self.banned_phrases = False
