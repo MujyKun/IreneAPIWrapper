@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "IreneAPIWrapper"
-version = "2.3.8"
+version = "2.4"
 description = "The Wrapper for the Websocket and REST API of Irene."
 authors = ["MujyKun <mujy@irenebot.com>"]
 classifiers = [

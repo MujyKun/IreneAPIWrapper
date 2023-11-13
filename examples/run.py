@@ -19,7 +19,6 @@ class Example:
 
     async def test(self):
         from IreneAPIWrapper.models import (
-            TwitterAccount,
             Channel,
             Person,
             Group,

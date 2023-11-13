@@ -232,13 +232,6 @@ Subscription
     :members:
 
 ==============
-TwitterAccount
-==============
-
-.. autoclass:: IreneAPIWrapper.models.TwitterAccount
-    :members:
-
-==============
 TwitchAccount
 ==============
 
