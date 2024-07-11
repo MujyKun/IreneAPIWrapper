@@ -120,6 +120,9 @@ class Display(AbstractModel):
         :returns: Optional[:ref:`Display`]
             The display object requested.
         """
+        if not display_id:
+            return
+
         existing = _displays.get(display_id)
         if not existing:
             return await Display.fetch(display_id)

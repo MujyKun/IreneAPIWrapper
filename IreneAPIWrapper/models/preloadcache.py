@@ -26,16 +26,12 @@ class Preload:
         Whether to preload all cache for guilds (Defaults to False).
     affiliations: bool
         Whether to preload all cache for affiliations (Defaults to True).
-    bloodtypes: bool
-        Whether to preload all cache for bloodtypes (Defaults to True).
     media: bool
         Whether to preload all cache for media (Defaults to True).
     displays: bool
         Whether to preload all cache for displays (Defaults to True).
     companies: bool
         Whether to preload all cache for companies (Defaults to True).
-    dates: bool
-        Whether to preload all cache for dates (Defaults to True).
     locations: bool
         Whether to preload all cache for locations (Defaults to True).
     positions: bool
@@ -66,7 +62,7 @@ class Preload:
         Whether to preload all reaction role messages (Defaults to True)
     """
     tags = person_aliases = group_aliases = persons = groups = \
-        affiliations = bloodtypes = media = displays = companies = dates = locations = \
+        affiliations = media = displays = companies = locations = \
         positions = socials = fandoms = languages = eight_ball_responses = notifications = interactions = names = \
         auto_media = reminders = reaction_role_messages = banned_phrases = True
     users = guilds = channels = twitch_subscriptions = \
@@ -76,7 +72,7 @@ class Preload:
 
     def get_evaluation(self):
         from . import (
-            Tag, PersonAlias, GroupAlias, Affiliation, BloodType, Media, Display, Company, Date, Location, Position,
+            Tag, PersonAlias, GroupAlias, Affiliation, Media, Display, Company, Location, Position,
             Social, Person, User, Channel, Group, Fandom, Guild, TwitchAccount, Language,
             EightBallResponse, Notification, Interaction, Name, AutoMedia, Reminder, ReactionRoleMessage, TikTokAccount,
             BanPhrase
@@ -87,11 +83,9 @@ class Preload:
             PersonAlias: self.person_aliases,
             GroupAlias: self.group_aliases,
             Affiliation: self.affiliations,
-            BloodType: self.bloodtypes,
             Media: self.media,
             Display: self.displays,
             Company: self.companies,
-            Date: self.dates,
             Location: self.locations,
             Position: self.positions,
             Social: self.socials,
@@ -119,8 +113,8 @@ class Preload:
 
     def all_false(self):
         self.tags = self.person_aliases = self.group_aliases = self.persons = self.groups = \
-            self.users = self.guilds = self.affiliations = self.bloodtypes = self.media = self.displays = \
-            self.companies = self.dates = self.locations = self.positions = self.socials = self.fandoms = \
+            self.users = self.guilds = self.affiliations = self.media = self.displays = \
+            self.companies = self.locations = self.positions = self.socials = self.fandoms = \
             self.channels = self.twitch_subscriptions = self.languages = \
             self.eight_ball_responses = self.notifications = self.interactions = self.names = self.auto_media = \
             self.reminders = self.reaction_role_messages = self.tiktok_subscriptions = self.banned_phrases = False

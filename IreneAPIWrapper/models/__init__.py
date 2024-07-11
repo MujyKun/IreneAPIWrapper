@@ -1,3 +1,47 @@
+from datetime import date, datetime, timezone
+from typing import Optional
+
+COMMON_TIMESTAMP_FORMAT = '%a, %d %b %Y %H:%M:%S %Z'
+
+
+def convert_to_timestamp(date_string: Optional[str]) -> Optional[datetime]:
+    """
+    Convert a string to a timestamp.
+
+    :param date_string: str
+    :return: Optional[date]
+    """
+    return datetime.strptime(date_string, COMMON_TIMESTAMP_FORMAT) if date_string else None
+
+
+def convert_to_date(date_string: Optional[str]) -> Optional[date]:
+    """
+    Convert a string to a date.
+
+    :param date_string: str
+    :return: Optional[date]
+    """
+    timestamp = convert_to_timestamp(date_string)
+    if timestamp:
+        return timestamp.date()
+
+
+def convert_to_common_timestring(timestamp: datetime):
+    """
+    Convert a timestamp to a common format.
+
+    :param timestamp: datetime
+    :returns: datetime
+    """
+    if not timestamp:
+        return None
+
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=timezone.utc)
+
+    return timestamp.strftime(COMMON_TIMESTAMP_FORMAT)
+
+
 from .access import Access, GOD, OWNER, DEVELOPER, SUPER_PATRON, FRIEND, USER
 from .difficulty import get_difficulty, Difficulty, EASY, MEDIUM, HARD
 from .callback import CallBack, callbacks
@@ -19,14 +63,12 @@ from .biasgame import BiasGame
 from .eightball import EightBallResponse
 from .urban import Urban
 from .wolfram import Wolfram
-from .date import Date
 from .reminder import Reminder
 from .tag import Tag
 from .groupalias import GroupAlias
 from .personalias import PersonAlias
 from .company import Company
 from .location import Location
-from .bloodtype import BloodType
 from .automedia import AutoMedia, AffiliationTime
 from .position import Position
 from .social import Social

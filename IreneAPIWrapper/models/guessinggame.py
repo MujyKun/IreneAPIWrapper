@@ -1,3 +1,4 @@
+import datetime
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
@@ -16,6 +17,8 @@ from . import (
     Difficulty,
     get_difficulty,
     basic_call,
+    convert_to_timestamp,
+    convert_to_common_timestring
 )
 
 
@@ -26,8 +29,6 @@ class GuessingGame(AbstractModel):
 
     Parameters
     ----------
-    date_id: int
-        The date object ID.
     media_ids: List[int]
         The media IDs.
     status_ids: List[int]
@@ -38,11 +39,13 @@ class GuessingGame(AbstractModel):
         The difficulty of the game.
     is_nsfw: bool
         Whether the content may be NSFW.
+    start_date: Optional[datetime.datetime]
+        Time the game started.
+    end_date: Optional[datetime.datetime]
+        Time the game ended.
 
     Attributes
     ----------
-    date_id: int
-        The date object ID.
     media_ids: List[int]
         The media IDs.
     status_ids: List[int]
@@ -53,25 +56,31 @@ class GuessingGame(AbstractModel):
         The difficulty of the game.
     is_nsfw: bool
         Whether the content may be NSFW.
+    start_date: Optional[datetime.datetime]
+        Time the game started.
+    end_date: Optional[datetime.datetime]
+        Time the game ended.
     """
 
     def __init__(
         self,
         game_id: int,
-        date_id: int,
         media_ids: List[int],
         status_ids: List[int],
         mode_id: int,
         difficulty: Difficulty,
         is_nsfw: bool,
+        start_date,
+        end_date
     ):
         super(GuessingGame, self).__init__(game_id)
-        self.date_id = date_id
         self.media_ids = media_ids
         self.status_ids = status_ids
         self.mode_id = mode_id
         self.difficulty = difficulty
         self.is_nsfw = is_nsfw
+        self.start_date = start_date
+        self.end_date = end_date
 
         if not _ggs.get(self.id):
             # we need to make sure not to override the current object in cache.
@@ -85,17 +94,16 @@ class GuessingGame(AbstractModel):
         :returns: :ref:`GuessingGame`
         """
         game_id = kwargs.get("gameid")
-        date_id = kwargs.get("dateid")
         media_ids = kwargs.get("mediaids")
         status_ids = kwargs.get("statusids")
         mode_id = kwargs.get("modeid")
         difficulty_id = kwargs.get("difficultyid")
         difficulty = get_difficulty(difficulty_id)
         is_nsfw = kwargs.get("isnsfw")
+        start_time = convert_to_timestamp(kwargs.get("startdate"))
+        end_time = convert_to_timestamp(kwargs.get("enddate"))
 
-        GuessingGame(
-            game_id, date_id, media_ids, status_ids, mode_id, difficulty, is_nsfw
-        )
+        GuessingGame(game_id, media_ids, status_ids, mode_id, difficulty, is_nsfw, start_time, end_time)
 
         return _ggs[game_id]
 
@@ -145,7 +153,7 @@ class GuessingGame(AbstractModel):
 
     @staticmethod
     async def insert(
-        date_id: int,
+        start_date: datetime.datetime,
         media_ids: List[int],
         status_ids: List[int],
         mode_id: int,
@@ -155,8 +163,8 @@ class GuessingGame(AbstractModel):
         """
         Insert a new GuessingGame into the database.
 
-        :param date_id: int
-            The Date ID
+        :param start_date: timestamp
+            The start timestamp.
         :param media_ids: List[int]
             A list of media object ids.
         :param status_ids: List[int]
@@ -170,10 +178,11 @@ class GuessingGame(AbstractModel):
         :return: int
             The guessing game ID.
         """
+        start_time = convert_to_common_timestring(start_date)
         callback = await internal_insert(
             request={
                 "route": "guessinggame",
-                "date_id": date_id,
+                "start_date": start_time,
                 "media_ids": media_ids,
                 "status_ids": status_ids,
                 "mode_id": mode_id,
@@ -237,6 +246,23 @@ class GuessingGame(AbstractModel):
                 "route": "guessinggame/$gg_id",
                 "game_id": game_id,
                 "method": "GET",
+            },
+        )
+
+    async def update_end_date(self, end_time: datetime.datetime):
+        """
+        Update the end time of the guessing game.
+
+        :param end_time: datetime.datetime
+            Timestamp
+        """
+        end_timestring = convert_to_common_timestring(end_time)
+        return await basic_call(
+            request={
+                "route": "guessinggame/$gg_id",
+                "game_id": self.id,
+                "end_time": end_timestring,
+                "method": "POST",
             },
         )
 

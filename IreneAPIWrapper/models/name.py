@@ -121,6 +121,9 @@ class Name(AbstractModel):
             Whether to fetch from the API if not found in cache.
         :returns: :ref:`Name`
         """
+        if not name_id:
+            return
+
         existing = _names.get(name_id)
         if not existing and fetch:
             return await Name.fetch(name_id)

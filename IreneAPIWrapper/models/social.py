@@ -252,6 +252,9 @@ class Social(AbstractModel):
             Whether to fetch from the API if not found in cache.
         :returns: :ref:`Social`
         """
+        if not social_id:
+            return
+
         existing = _socials.get(social_id)
         if not existing and fetch:
             return await Social.fetch(social_id)

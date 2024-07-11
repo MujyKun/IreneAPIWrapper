@@ -147,8 +147,10 @@ class IreneAPIClient:
                         self.__futures.append(asyncio.run_coroutine_threadsafe(
                             category_class.fetch_all(), loop
                         ))
-            except Exception as e:
+            except APIError as e:
                 self.logger.warning(msg=f"Cache for {category_class.__name__} did not load. - {e}")
+            except Exception as e:
+                raise e
 
     async def connect(self):
         """
@@ -186,7 +188,7 @@ class IreneAPIClient:
                     timeout=60,
             ) as ws:
                 self.connected = True
-                self.logger.info("Connected to IreneAPI.")
+                self.logger.debug("Connected to IreneAPI.")
 
                 if self._preload_cache.force:
                     asyncio.run_coroutine_threadsafe(self.__load_up_cache(), asyncio.get_event_loop())
@@ -327,6 +329,11 @@ class Logger:
         self.print(msg)
         if self.logger:
             self.logger.info(msg)
+
+    def debug(self, msg, *args, **kwargs):
+        self.print(msg)
+        if self.logger:
+            self.logger.debug(msg)
 
     def error(self, msg, *args, **kwargs):
         self.print(msg)

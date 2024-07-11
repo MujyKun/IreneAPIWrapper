@@ -114,6 +114,9 @@ class Location(AbstractModel):
         :param fetch: bool
             Whether to fetch from the API if not found in cache.
         """
+        if not location_id:
+            return
+
         existing = _locations.get(location_id)
         if not existing and fetch:
             return await Location.fetch(location_id)
