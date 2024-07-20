@@ -4,7 +4,6 @@ from IreneAPIWrapper.sections import outer
 from . import (
     CallBack,
     Access,
-    Date,
     AbstractModel,
     internal_fetch,
     internal_fetch_all,
@@ -12,11 +11,13 @@ from . import (
     Display,
     Social,
     Location,
-    BloodType,
     Tag,
     internal_delete,
     internal_insert,
+    convert_to_date
 )
+
+from datetime import date, datetime
 
 if TYPE_CHECKING:
     from . import Affiliation, PersonAlias
@@ -34,8 +35,6 @@ class Person(AbstractModel):
     ----------
     person_id: int
         The person's ID.
-    date: :ref:`Date`
-        Birth/Death date of a person.
     name: :ref:`Name`
         The official Name of the person.
     former_name: :ref:`Name`
@@ -46,7 +45,7 @@ class Person(AbstractModel):
         All social media references for the person.
     location: :ref:`Location`
         The birth location of the person.
-    blood_type: :ref:`BloodType`
+    blood_type: str
         The blood type of the person.
     gender: str
         The gender of the person.
@@ -62,13 +61,15 @@ class Person(AbstractModel):
         The tags associated with the person.
     aliases: List[:ref:`PersonAlias`]
         The aliases associated with the person.
+    birth_date: date
+        Birth date of a person.
+    death_date: date
+        Death date of a person.
 
     Attributes
     ----------
     id: int
         The person's ID.
-    date: :ref:`Date`
-        Birth/Death date of a person.
     name: :ref:`Name`
         The official Name of the person.
     former_name: :ref:`Name`
@@ -79,7 +80,7 @@ class Person(AbstractModel):
         All social media references for the person.
     location: :ref:`Location`
         The birth location of the person.
-    blood_type: :ref:`BloodType`
+    blood_type: str
         The blood type of the person.
     gender: str
         The gender of the person.
@@ -97,11 +98,14 @@ class Person(AbstractModel):
         The aliases associated with the person.
     affiliations: List[:ref:`Affiliation`]
         A list of :ref:`Affiliation` objects between the :ref:`Person` and the :ref:`Group` objects they are in.
+    birth_date: date
+        Birth date of a person.
+    death_date: date
+        Death date of a person.
     """
     def __init__(
         self,
         person_id,
-        date,
         name,
         former_name,
         display,
@@ -115,15 +119,16 @@ class Person(AbstractModel):
         media_count,
         tags,
         aliases,
+        birth_date,
+        death_date
     ):
         super(Person, self).__init__(person_id)
-        self.date: Date = date
-        self.name: Name = name
-        self.former_name: Name = former_name
+        self.name: Optional[Name] = name
+        self.former_name: Optional[Name] = former_name
         self.display: Display = display
         self.social: Social = social
         self.location: Location = location
-        self.blood_type: BloodType = blood_type
+        self.blood_type: str = blood_type
         self.gender: str = gender
         self.description: str = description
         self.height: int = height
@@ -132,6 +137,8 @@ class Person(AbstractModel):
         self.tags: List[Tag] = tags
         self.aliases: List[PersonAlias] = aliases
         self.affiliations: List[Affiliation] = []
+        self.birth_date: Optional[date] = birth_date
+        self.death_date: Optional[date] = death_date
 
         if not _persons.get(self.id):
             _persons[self.id] = self
@@ -159,14 +166,11 @@ class Person(AbstractModel):
         if self.height:
             card_data.append(f"Height: {self.height}cm")
         if self.blood_type:
-            card_data.append(f"BloodType: {self.blood_type.name}")
+            card_data.append(f"BloodType: {self.blood_type}")
         if self.location:
             card_data.append(f"Birth Location: {str(self.location)}")
         if self.gender:
             card_data.append(f"Gender: {self.gender}")
-        if self.date:
-            date_card = await self.date.get_card(markdown=markdown)
-            [card_data.append(info) for info in date_card]
         if self.display:
             display_card = await self.display.get_card(markdown=markdown)
             [card_data.append(info) for info in display_card]
@@ -189,8 +193,11 @@ class Person(AbstractModel):
         """Create a Person object."""
         person_id = kwargs.get("personid")
 
-        date_id = kwargs.get("dateid")
-        date = await Date.get(date_id)
+        birth_date = kwargs.get("birthdate")
+        death_date = kwargs.get("deathdate")
+
+        birth_date_obj = convert_to_date(birth_date)
+        death_date_obj = convert_to_date(death_date)
 
         name_id = kwargs.get("nameid")
         name = await Name.get(name_id)
@@ -207,8 +214,7 @@ class Person(AbstractModel):
         location_id = kwargs.get("locationid")
         location: Location = await Location.get(location_id)
 
-        blood_id = kwargs.get("bloodid")
-        blood_type: BloodType = await BloodType.get(blood_id)
+        blood_type = kwargs.get('bloodtype')
 
         gender = kwargs.get("gender")
 
@@ -235,7 +241,6 @@ class Person(AbstractModel):
 
         Person(
             person_id,
-            date,
             name,
             former_name,
             display,
@@ -249,6 +254,8 @@ class Person(AbstractModel):
             media_count,
             tags,
             aliases,
+            birth_date_obj,
+            death_date_obj
         )
         return _persons[person_id]
 
@@ -284,7 +291,6 @@ class Person(AbstractModel):
 
     @staticmethod
     async def insert(
-        date_id,
         name_id,
         former_name_id,
         gender,
@@ -294,17 +300,16 @@ class Person(AbstractModel):
         social_id,
         location_id,
         tag_ids,
-        blood_id,
+        blood_type,
         call_count,
+        birth_date,
+        death_date
     ) -> None:
         r"""
         Insert a new person into the database.
 
-
         Parameters
         ----------
-        date_id: int
-            The :ref:`Date` ID of the person.
         name_id: int
             The official :ref:`Name` ID of the person.
         former_name_id: int
@@ -323,17 +328,20 @@ class Person(AbstractModel):
             The Birth :ref:`Location` ID of the person.
         tag_ids: List[int]
             A list of :ref:`Tag` IDs of the person.
-        blood_id: int
-            The :ref:`BloodType` ID of the person.
+        blood_type: str
+            The blood type of the person.
         call_count: int
             The number of times the person has been called.
+        birth_date: date
+            Birth Date
+        death_date: date
+            Death Date
 
         :returns: None
         """
         await internal_insert(
             request={
                 "route": "person",
-                "date_id": date_id,
                 "name_id": name_id,
                 "former_name_id": former_name_id,
                 "gender": gender,
@@ -343,8 +351,10 @@ class Person(AbstractModel):
                 "social_id": social_id,
                 "location_id": location_id,
                 "tag_ids": tag_ids,
-                "blood_id": blood_id,
+                "blood_type": blood_type,
                 "call_count": call_count,
+                "birth_date": str(birth_date) if birth_date else None,
+                "death_date": str(birth_date) if death_date else None,
                 "method": "POST",
             }
         )

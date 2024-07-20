@@ -1,4 +1,5 @@
 from typing import Union, List, Optional, Dict, TYPE_CHECKING
+from datetime import datetime, date
 
 from IreneAPIWrapper.sections import outer
 from . import (
@@ -8,13 +9,13 @@ from . import (
     internal_fetch,
     internal_fetch_all,
     MediaSource,
-    Date,
     Company,
     Display,
     Social,
     Tag,
     internal_delete,
     internal_insert,
+    convert_to_date
 )
 
 if TYPE_CHECKING:
@@ -32,8 +33,6 @@ class Group(AbstractModel):
         The group's unique ID.
     name: str
         The name of the group.
-    date: :ref:`Date`
-        The creation and disbandment of the group.
     description: str
         An overall description of the group.
     company: :ref:`Company`
@@ -50,6 +49,10 @@ class Group(AbstractModel):
         The tags that affiliated with the group.
     aliases: List[:ref:`GroupAlias`]
         Aliases of the group.
+    debut_date: date
+        The creation date of the group.
+    disband_date: date
+        The disbandment date of the group.
 
     Attributes
     ----------
@@ -57,8 +60,6 @@ class Group(AbstractModel):
         The group's unique ID.
     name: str
         The name of the group.
-    date: :ref:`Date`
-        The creation and disbandment of the group.
     description: str
         An overall description of the group.
     company: :ref:`Company`
@@ -77,14 +78,16 @@ class Group(AbstractModel):
         Aliases of the group.
     affiliations: List[:ref:`Affiliation`]
         All affiliations that are associated with the Group.
-
+    debut_date: date
+        The creation date of the group.
+    disband_date: date
+        The disbandment date of the group.
     """
 
     def __init__(
         self,
         group_id,
         name,
-        date,
         description,
         company,
         display,
@@ -93,10 +96,11 @@ class Group(AbstractModel):
         media_count,
         tags,
         aliases,
+        debut_date,
+        disband_date
     ):
         super(Group, self).__init__(group_id)
         self.name: str = name
-        self.date: Date = date
         self.description = description
         self.company: Company = company
         self.display: Display = display
@@ -106,6 +110,8 @@ class Group(AbstractModel):
         self.tags: List[Tag] = tags
         self.aliases: List[GroupAlias] = aliases
         self.affiliations: List[Affiliation] = []
+        self.debut_date: Optional[date] = debut_date
+        self.disband_date: Optional[date] = disband_date
         if not _groups.get(self.id):
             _groups[self.id] = self
 
@@ -125,9 +131,6 @@ class Group(AbstractModel):
         if not extra:
             return card_data
 
-        if self.date:
-            date_card = await self.date.get_card(markdown=markdown)
-            [card_data.append(info) for info in date_card]
         if self.company:
             company_card = await self.company.get_card(markdown=markdown)
             [card_data.append(info) for info in company_card]
@@ -162,8 +165,11 @@ class Group(AbstractModel):
         group_id = kwargs.get("groupid")
         name = kwargs.get("name")
 
-        date_id = kwargs.get("dateid")
-        date = await Date.get(date_id)
+        debut_date = kwargs.get("debutdate")
+        disband_date = kwargs.get("disbanddate")
+
+        debut_date_obj = convert_to_date(debut_date)
+        disband_date_obj = convert_to_date(disband_date)
 
         description = kwargs.get("description")
 
@@ -197,7 +203,6 @@ class Group(AbstractModel):
         Group(
             group_id,
             name,
-            date,
             description,
             company,
             display,
@@ -206,6 +211,8 @@ class Group(AbstractModel):
             media_count,
             tags,
             aliases,
+            debut_date_obj,
+            disband_date_obj
         )
         return _groups[group_id]
 
@@ -242,21 +249,20 @@ class Group(AbstractModel):
     @staticmethod
     async def insert(
         group_name: str,
-        date_id: int = None,
         description: str = None,
         company_id: int = None,
         display_id: int = None,
         website: str = None,
         social_id: int = None,
         tag_ids: List[int] = None,
+        debut_date: date = None,
+        disband_date: date = None
     ) -> None:
         """
         Insert a new group into the database.
 
         :param group_name: str
             The group's name.
-        :param date_id: int
-            :ref:`Date` ID including the creation and disbandment dates.
         :param description: str
             Description of the overall group.
         :param company_id: int
@@ -269,19 +275,24 @@ class Group(AbstractModel):
             ID of the :ref:`Social` the group has.
         :param tag_ids: List[int]
             A list of :ref:`Tag` IDs.
+        :param debut_date: date
+            Debut Date
+        :param disband_date: date
+            Disbandment Date
         :return: None
         """
         await internal_insert(
             request={
                 "route": "group",
                 "group_name": group_name,
-                "date_id": date_id,
                 "description": description,
                 "company_id": company_id,
                 "display_id": display_id,
                 "website": website,
                 "social_id": social_id,
                 "tag_ids": tag_ids,
+                "debut_date": str(debut_date) if debut_date else None,
+                "disband_date": str(disband_date) if disband_date else None,
                 "method": "POST",
             }
         )

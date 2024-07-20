@@ -1,4 +1,5 @@
 from typing import Union, List, Optional, Dict
+from datetime import datetime
 
 from IreneAPIWrapper.sections import outer
 from . import (
@@ -10,7 +11,7 @@ from . import (
     internal_insert,
     internal_delete,
     basic_call,
-    Date
+    convert_to_timestamp
 )
 
 
@@ -27,42 +28,49 @@ class Reminder(AbstractModel):
         The user ID to notify.
     reason: str,
         The reason for being reminded.
-    date: :ref:`Date`
+    start_date: datetime
+        The date when the user created the reminder.
+    notify_date: datetime
         The date object containing when the user should be reminded.
 
     Attributes
     ----------
     user_id: int
         The user ID to notify.
-    reason: str,
+    reason: str
         The reason for being reminded.
-    date: :ref:`Date`
+    start_date: datetime
+        The date when the user created the reminder.
+    notify_date: datetime
         The date object containing when the user should be reminded.
     """
-
-    def __init__(self, reminder_id, user_id: int, reason: str, date: Date):
+    def __init__(self, reminder_id, user_id: int, reason: str, start_date: datetime, notify_date: datetime):
         super(Reminder, self).__init__(reminder_id)
         self.user_id: int = user_id
         self.reason: str = reason
-        self.date: Date = date
+        self.start_date = start_date
+        self.notify_date = notify_date
 
         if not _reminders.get(self.id):
             _reminders[self.id] = self
 
-    @staticmethod
-    async def create(*args, **kwargs):
+    @classmethod
+    async def create(cls, *args, **kwargs):
         """
         Create a Reminder object.
 
         :returns: :ref:`Reminder`
         """
-        remind_id = kwargs.get("remindid")
+        remind_id = kwargs.get("id")
         user_id = kwargs.get("userid")
         reason = kwargs.get("reason")
-        date_id = kwargs.get("dateid")
-        date = await Date.get(date_id)
+        start_date_str = kwargs.get("startdate")
+        notify_date_str = kwargs.get("notifydate")
 
-        Reminder(remind_id, user_id, reason, date)
+        start_date = convert_to_timestamp(start_date_str)
+        notify_date = convert_to_timestamp(notify_date_str)
+
+        Reminder(remind_id, user_id, reason, start_date, notify_date)
         return _reminders[remind_id]
 
     async def delete(self) -> None:
@@ -84,7 +92,7 @@ class Reminder(AbstractModel):
         _reminders.pop(self.id)
 
     @staticmethod
-    async def insert(user_id, reason, date: Date) -> int:
+    async def insert(user_id, reason, notify_date: datetime) -> int:
         """
         Insert a new reminder into the database.
 
@@ -92,8 +100,8 @@ class Reminder(AbstractModel):
             The User ID to remind.
         :param reason: str
             The reason to remind the user.
-        :param date: :ref:`Date`
-            The date object containing when the user should be reminded.
+        :param notify_date: datetime
+            The datetime object containing when the user should be reminded (in UTC)
         :returns: int
             The reminder id
         """
@@ -101,8 +109,8 @@ class Reminder(AbstractModel):
             request={
                 "route": "reminder",
                 "user_id": user_id,
-                "reason": reason or "Do Nothing",
-                "date_id": date.id,
+                "reason": reason or "Nothing",
+                "notify_date": str(notify_date),
                 "method": "POST",
             }
         )
@@ -130,7 +138,7 @@ class Reminder(AbstractModel):
             return None
         existing = _reminders.get(remind_id)
         if not existing and fetch:
-            return await Date.fetch(remind_id)
+            return await Reminder.fetch(remind_id)
         return existing
 
     @staticmethod

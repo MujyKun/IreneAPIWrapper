@@ -1,3 +1,4 @@
+import datetime
 from typing import Union, List, Optional, Dict
 
 from IreneAPIWrapper.sections import outer
@@ -11,6 +12,8 @@ from . import (
     Difficulty,
     get_difficulty,
     basic_call,
+    convert_to_timestamp,
+    convert_to_common_timestring
 )
 
 
@@ -21,40 +24,46 @@ class UnscrambleGame(AbstractModel):
 
     Parameters
     ----------
-    date_id: int
-        The date object ID.
     status_ids: List[int]
         The status IDs.
     mode_id: int
         The mode of the game.
     difficulty: :ref:`Difficulty`
         The difficulty of the game.
+    start_date: Optional[datetime.datetime]
+        Time the game started.
+    end_date: Optional[datetime.datetime]
+        Time the game ended.
 
     Attributes
     ----------
-    date_id: int
-        The date object ID.
     status_ids: List[int]
         The status IDs.
     mode_id: int
         The mode of the game.
     difficulty: :ref:`Difficulty`
         The difficulty of the game.
+    start_date: Optional[datetime.datetime]
+        Time the game started.
+    end_date: Optional[datetime.datetime]
+        Time the game ended.
     """
 
     def __init__(
         self,
         game_id: int,
-        date_id: int,
         status_ids: List[int],
         mode_id: int,
         difficulty: Difficulty,
+        start_date,
+        end_date
     ):
         super(UnscrambleGame, self).__init__(game_id)
-        self.date_id = date_id
         self.status_ids = status_ids
         self.mode_id = mode_id
         self.difficulty = difficulty
+        self.start_date = start_date
+        self.end_date = end_date
 
         if not _uss.get(self.id):
             # we need to make sure not to override the current object in cache.
@@ -68,13 +77,14 @@ class UnscrambleGame(AbstractModel):
         :returns: :ref:`UnscrambleGame`
         """
         game_id = kwargs.get("gameid")
-        date_id = kwargs.get("dateid")
         status_ids = kwargs.get("statusids")
         mode_id = kwargs.get("modeid")
         difficulty_id = kwargs.get("difficultyid")
         difficulty = get_difficulty(difficulty_id)
+        start_time = convert_to_timestamp(kwargs.get("startdate"))
+        end_time = convert_to_timestamp(kwargs.get("enddate"))
 
-        UnscrambleGame(game_id, date_id, status_ids, mode_id, difficulty)
+        UnscrambleGame(game_id, status_ids, mode_id, difficulty, start_time, end_time)
 
         return _uss[game_id]
 
@@ -120,7 +130,7 @@ class UnscrambleGame(AbstractModel):
 
     @staticmethod
     async def insert(
-        date_id: int,
+        start_date: datetime.datetime,
         status_ids: List[int],
         mode_id: int,
         difficulty_id: int,
@@ -128,8 +138,8 @@ class UnscrambleGame(AbstractModel):
         """
         Insert a new UnscrambleGame into the database.
 
-        :param date_id: int
-            The Date ID
+        :param start_date: timestamp
+            The start timestamp.
         :param status_ids: List[int]
             A list of status ids
         :param mode_id: int
@@ -141,10 +151,11 @@ class UnscrambleGame(AbstractModel):
         :return: int
             The guessing game ID.
         """
+        start_time = convert_to_common_timestring(start_date)
         callback = await internal_insert(
             request={
                 "route": "unscramblegame",
-                "date_id": date_id,
+                "start_date": start_time,
                 "status_ids": status_ids,
                 "mode_id": mode_id,
                 "difficulty_id": difficulty_id,
@@ -206,6 +217,23 @@ class UnscrambleGame(AbstractModel):
                 "route": "unscramblegame/$us_id",
                 "game_id": game_id,
                 "method": "GET",
+            },
+        )
+
+    async def update_end_date(self, end_time: datetime.datetime):
+        """
+        Update the end time of the unscramble game.
+
+        :param end_time: datetime.datetime
+            Timestamp
+        """
+        end_timestring = convert_to_common_timestring(end_time)
+        return await basic_call(
+            request={
+                "route": "unscramblegame/$us_id",
+                "game_id": self.id,
+                "end_time": end_timestring,
+                "method": "POST",
             },
         )
 

@@ -3,7 +3,6 @@ from typing import List, Optional
 
 from .. import CallBack
 from IreneAPIWrapper.sections import outer
-from IreneAPIWrapper.exceptions import FailedObjectCreation
 from . import AbstractModel
 from time import perf_counter
 
@@ -52,24 +51,26 @@ async def internal_fetch_all(
     callback = CallBack(request=request)
     await outer.client.add_and_wait(callback)
 
-    if not callback.response.get("results"):
+    results = callback.response.get("results")
+    if not results:
+
         return []
 
-    try:
-        start = perf_counter()
-        if not bulk:
+    start = perf_counter()
+    if not bulk:
+        try:
             data = [
                 await obj.create(**info)
-                for info in callback.response["results"].values()
+                for info in results.values()
             ]
-        else:
-            data = await obj.create_bulk(list(callback.response["results"].values()))
-        if outer.client.logger and log_creation:
-            outer.client.logger.info(f"Finished creating/fetching all cache for {obj.__name__} in "
-                                     f"{perf_counter() - start}s")
-        return data
-    except Exception as e:
-        raise FailedObjectCreation(callback)
+        except Exception as e:
+            outer.client.logger.debug(f"{e}")
+    else:
+        data = await obj.create_bulk(list(results.values()))
+    if outer.client.logger and log_creation:
+        outer.client.logger.info(f"Finished creating/fetching all cache for {obj.__name__} in "
+                                 f"{perf_counter() - start}s")
+    return data
 
 
 async def internal_delete(obj: AbstractModel, request: dict) -> CallBack:

@@ -8,10 +8,12 @@ from . import (
     internal_fetch,
     internal_fetch_all,
     MediaSource,
-    Date,
     internal_delete,
     internal_insert,
+    convert_to_date
 )
+
+from datetime import date, datetime
 
 
 class Company(AbstractModel):
@@ -27,8 +29,10 @@ class Company(AbstractModel):
         The company's name.
     description: str
         A general description of the company as a whole.
-    date: :ref:`Date`
-        The Date object that involves the creation and retirement of the company.
+    start_date: datetime.Date
+        The Date object that involves the creation of the company.
+    end_date: datetime.Date
+        The Date object that involves the retirement of the company.
 
     Attributes
     ----------
@@ -38,16 +42,18 @@ class Company(AbstractModel):
         The company's name.
     description: str
         A general description of the company as a whole.
-    date: :ref:`Date`
-        The Date object that involves the creation and retirement of the company.
-
+    start_date: date
+        The Date object that involves the creation of the company.
+    end_date: date
+        The Date object that involves the retirement of the company.
     """
 
-    def __init__(self, company_id, name, description, date, *args, **kwargs):
+    def __init__(self, company_id, name, description, start_date, end_date, *args, **kwargs):
         super(Company, self).__init__(company_id)
         self.name = name
         self.description = description
-        self.date: Date = date
+        self.start_date: Optional[date] = start_date
+        self.end_date: Optional[date] = end_date
         if not _companies.get(self.id):
             _companies[self.id] = self
 
@@ -70,10 +76,13 @@ class Company(AbstractModel):
         name = kwargs.get("name")
         description = kwargs.get("description")
 
-        date_id = kwargs.get("dateid")
-        date = await Date.get(date_id)
+        start_date = kwargs.get("startdate")
+        end_date = kwargs.get("enddate")
 
-        Company(company_id, name, description, date)
+        start_date_obj = convert_to_date(start_date)
+        end_date_obj = convert_to_date(end_date)
+
+        Company(company_id, name, description, start_date_obj, end_date_obj)
         return _companies[company_id]
 
     async def delete(self):
@@ -93,7 +102,7 @@ class Company(AbstractModel):
         _companies.pop(self.id)
 
     @staticmethod
-    async def insert(company_name, description, date: Date) -> None:
+    async def insert(company_name, description, start_date: date, end_date: date) -> None:
         """
         Insert a new company into the database.
 
@@ -101,8 +110,10 @@ class Company(AbstractModel):
             The company's name.
         :param description:
             A description of the company as a whole.
-        :param date:
-            The :ref:`Date` object for the creation and retirement of the company.
+        :param start_date: datetime.Date
+            The creation date of the company.
+        :param end_date: datetime.Date
+            The date the company is no longer active.
         :return: None
         """
         await internal_insert(
@@ -110,7 +121,8 @@ class Company(AbstractModel):
                 "route": "company",
                 "name": company_name,
                 "description": description,
-                "date_id": date.id,
+                "start_date": str(start_date) if start_date else None,
+                "end_date": str(end_date) if end_date else None,
             }
         )
 
